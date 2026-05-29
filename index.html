@@ -53,6 +53,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .week-sel{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;outline:none;margin-left:auto}
 .week-sel option{background:var(--surface2)}
 .co-legend{font-size:10px;color:var(--muted);margin-left:4px}
+/* plan toggle */
+.plan-bar{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border)}
+.plan-bar-label{font-size:11px;color:var(--muted2);font-weight:600;white-space:nowrap}
+.plan-toggle{display:flex;gap:3px;background:var(--surface2);border-radius:10px;padding:3px;border:1px solid var(--border)}
+.plan-btn{padding:5px 14px;border-radius:7px;border:none;background:transparent;color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.plan-btn:hover{color:var(--text)}
+.plan-btn.active[data-plan="all"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.plan-btn.active[data-plan="faang"]{background:linear-gradient(135deg,#818cf844,#60a5fa44);color:#818cf8;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.plan-btn.active[data-plan="startup"]{background:linear-gradient(135deg,#f9731644,#06b6d444);color:#f97316;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.startup-badge{display:inline-block;background:rgba(249,115,22,.15);color:#f97316;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:5px;vertical-align:middle}
 .content{padding:20px 24px;max-width:1600px;margin:0 auto}
 .week-group{margin-bottom:28px}
 .week-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
@@ -158,6 +168,15 @@ a.prob-name:hover{color:#60a5fa}
 </div>
 <div class="section-pills" id="pills"></div>
 <div class="section-cards" id="sec-cards"></div>
+<div class="plan-bar">
+  <span class="plan-bar-label">Plan:</span>
+  <div class="plan-toggle">
+    <button class="plan-btn active" data-plan="all">All Topics</button>
+    <button class="plan-btn" data-plan="faang">🏢 FAANG+</button>
+    <button class="plan-btn" data-plan="startup">🚀 Startup</button>
+  </div>
+  <span style="font-size:11px;color:var(--muted2);margin-left:8px" id="plan-hint">Showing all 107 topics across both tracks</span>
+</div>
 <div class="filter-bar">
   <span class="filter-label">Status:</span>
   <button class="f-btn active" data-f="all">All</button>
@@ -193,16 +212,33 @@ const CO = {
 
 // ── SECTIONS ──────────────────────────────────────────────────────────────────
 const S = {
-  dsa:  {label:'DSA',            color:'#818cf8'},
-  mt:   {label:'Multithreading', color:'#fbbf24'},
-  lld:  {label:'LLD',            color:'#34d399'},
-  hld:  {label:'HLD',            color:'#60a5fa'},
-  proj: {label:'Projects',       color:'#f472b6'},
-  beh:  {label:'Behavioral',     color:'#a78bfa'},
+  dsa:   {label:'DSA',            color:'#818cf8'},
+  mt:    {label:'Multithreading', color:'#fbbf24'},
+  lld:   {label:'LLD',            color:'#34d399'},
+  hld:   {label:'HLD',            color:'#60a5fa'},
+  proj:  {label:'Projects',       color:'#f472b6'},
+  beh:   {label:'Behavioral',     color:'#a78bfa'},
+  // ── Startup-specific sections ──
+  prac:  {label:'Practical Code', color:'#f97316', startup:true},
+  fs:    {label:'Full-Stack',     color:'#06b6d4', startup:true},
+  devops:{label:'DevOps/Cloud',   color:'#84cc16', startup:true},
+  prod:  {label:'Product Eng',    color:'#e879f9', startup:true},
 };
 
 const WK={1:'Arrays · Two Pointers · Sliding Window  ⊕  Thread Lifecycle',2:'Binary Search · Stack · Monotonic Stack  ⊕  SOLID Principles',3:'Linked Lists · Binary Trees  ⊕  Synchronization & Locks',4:'BST · Heaps · Tries  ⊕  Creational Patterns',5:'Graphs BFS/DFS · Union Find  ⊕  JMM & Atomics',6:'Topological Sort · Shortest Path  ⊕  Structural Patterns',7:'Backtracking · Greedy  ⊕  wait/notify & ThreadPool',8:'DP: 1D & 2D Grid  ⊕  Behavioral Patterns',9:'DP: Knapsack · Sequences  ⊕  Classic Concurrency Problems',10:'DP Advanced · Bit Manipulation  ⊕  HLD Fundamentals',11:'Segment Tree · Adv Graphs · Math  ⊕  HLD: Databases & CAP',12:'DSA Hard Marathon  ⊕  HLD: Queues & APIs  ·  LLD Anti-patterns',13:'LLD Problems I  ⊕  HLD: URL Shortener · Rate Limiter · Twitter',14:'LLD Problems II  ⊕  HLD: WhatsApp · YouTube · Uber',15:'HLD: Advanced Systems + Mocks  ⊕  Projects',16:'Projects · Behavioral · Full Loop Mocks'};
-const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':'Month 4';
+const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup Wk 1-4':w<=24?'🚀 Startup Wk 5-8':'';
+
+// append startup week labels to WK
+Object.assign(WK,{
+  17:'🚀 S1 · Clean Code · TDD · Code Review',
+  18:'🚀 S2 · REST APIs · SQL Deep Dive · Authentication',
+  19:'🚀 S3 · Data Layer · Redis · ORM patterns',
+  20:'🚀 S4 · HTTP internals · React basics · API Integration',
+  21:'🚀 S5 · Docker · CI/CD · AWS Essentials',
+  22:'🚀 S6 · Kubernetes · Observability · Production Ops',
+  23:'🚀 S7 · Startup System Design · Build vs Buy · Tech Debt',
+  24:'🚀 S8 · Take-Home Prep · Startup Behavioral · Offer Negotiation',
+});
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 // q fields: n=name, lc=LC#, d=difficulty, co=[companies], link=override URL
@@ -781,7 +817,172 @@ const T=[
   {n:'Re-whiteboard every system design marked Revisit — from scratch',d:'H'},
   {n:'Polish and sharpen every behavioral story marked Revisit',d:'M'},
 ]},
-];
+
+// ══ STARTUP TRACK: S1–S8 (Weeks 17–24) ═══════════════════════════════════════
+// ── S1 (Wk 17): Clean Code · TDD · Code Review ────────────────────────────────
+{id:'sp01',s:'prac',w:17,h:6,t:'Clean Code — naming, functions, DRY, YAGNI, KISS',qs:[
+  {n:'Rename variables/functions in a messy 50-line function to be self-documenting',d:'E',link:'https://refactoring.guru/refactoring/techniques/composing-methods'},
+  {n:'Extract a 100-line God function into single-responsibility helpers',d:'M',link:'https://refactoring.guru/extract-method'},
+  {n:'Find all YAGNI and KISS violations in a given codebase snippet',d:'M',link:'https://refactoring.guru/refactoring'},
+  {n:'Magic Number smell: replace all magic numbers with named constants',d:'E',link:'https://refactoring.guru/replace-magic-number-with-symbolic-constant'},
+]},
+{id:'sp02',s:'prac',w:17,h:6,t:'Test-Driven Development — Red-Green-Refactor, unit tests, mocks',qs:[
+  {n:'TDD: implement a password validator using strict Red-Green-Refactor',d:'M',link:'https://www.baeldung.com/java-test-driven-list'},
+  {n:'Write unit tests for an authentication function that currently has none',d:'M',link:'https://www.baeldung.com/java-unit-testing-best-practices'},
+  {n:'Mock an external payment API dependency in your service layer tests',d:'M',link:'https://www.baeldung.com/mockito-series'},
+  {n:'Integration test: test a REST endpoint hitting a real in-memory DB',d:'H',link:'https://www.baeldung.com/integration-testing-in-spring'},
+]},
+{id:'sp03',s:'prac',w:17,h:5,t:'Code Review — checklist, PR etiquette, giving & receiving feedback',qs:[
+  {n:'Review a 200-line PR: find bugs, naming issues, missing tests, and security problems',d:'M',link:'https://google.github.io/eng-practices/review/reviewer/'},
+  {n:'Write a PR description for a complex feature — what must it include?',d:'E',link:'https://google.github.io/eng-practices/review/developer/cl-descriptions.html'},
+  {n:'When should you request changes vs approve with comments vs just comment?',d:'M',link:'https://google.github.io/eng-practices/review/reviewer/standard.html'},
+]},
+{id:'sp04',s:'prac',w:17,h:4,t:'Refactoring techniques — extract, rename, move, eliminate duplication',qs:[
+  {n:'Apply Strangler Fig Pattern to incrementally extract a feature from a monolith',d:'H',link:'https://refactoring.guru/refactoring/techniques'},
+  {n:'Replace Conditional with Polymorphism: switch on type → Strategy pattern',d:'M',link:'https://refactoring.guru/replace-conditional-with-polymorphism'},
+  {n:'Introduce Parameter Object: a method with 6+ parameters',d:'E',link:'https://refactoring.guru/introduce-parameter-object'},
+]},
+// ── S2 (Wk 18): REST APIs · SQL · Auth ────────────────────────────────────────
+{id:'sp05',s:'fs',w:18,h:6,t:'REST API Design — status codes, versioning, pagination, error formats',qs:[
+  {n:'Design a RESTful API for a Twitter-like feed: endpoints, pagination, auth headers',d:'M',link:'https://www.baeldung.com/rest-api-pagination-in-spring'},
+  {n:'Status codes: what does 400 vs 422 vs 409 vs 429 vs 503 mean for an API consumer?',d:'E',link:'https://www.baeldung.com/rest-api-error-handling-best-practices'},
+  {n:'Implement API versioning: /v1/users vs /v2/users with backward compatibility',d:'M',link:'https://www.baeldung.com/rest-api-versioning'},
+  {n:'Design idempotent endpoints: POST /payments should be safe to retry',d:'H',link:'https://www.baeldung.com/cs/idempotent-operations'},
+]},
+{id:'sp06',s:'fs',w:18,h:7,t:'SQL Deep Dive — joins, window functions, EXPLAIN, indexes, transactions',qs:[
+  {n:'Write a query: top 3 users by post count in the last 30 days using window functions',d:'M',link:'https://www.postgresqltutorial.com/postgresql-window-function/'},
+  {n:'EXPLAIN ANALYZE a slow query and add the right index to fix it',d:'H',link:'https://www.postgresql.org/docs/current/using-explain.html'},
+  {n:'Design a schema for a multi-tenant SaaS — row-level security vs separate schemas',d:'H',link:'https://www.postgresql.org/docs/current/ddl-rowsecurity.html'},
+  {n:'Fix the N+1 problem: ORM generates 101 queries for a 100-post feed — fix with JOIN',d:'M',link:'https://www.baeldung.com/hibernate-common-performance-problems-in-logs'},
+  {n:'Serializable vs REPEATABLE READ vs READ COMMITTED — when does each matter?',d:'M',link:'https://www.postgresql.org/docs/current/transaction-iso.html'},
+]},
+{id:'sp07',s:'fs',w:18,h:5,t:'Authentication & Authorization — JWT, OAuth2, RBAC, refresh tokens',qs:[
+  {n:'Implement JWT refresh token rotation — access token expires in 15min, refresh in 7 days',d:'H',link:'https://www.baeldung.com/spring-security-oauth-jwt'},
+  {n:'OAuth2 flows: auth code vs client credentials vs implicit — when to use each',d:'M',link:'https://www.baeldung.com/spring-security-oauth-authorization-code-flow'},
+  {n:'RBAC: users have roles, roles have permissions, enforce in middleware (not UI)',d:'M',link:'https://www.baeldung.com/spring-security-role-filter-registered'},
+  {n:'HTTPS: what does TLS actually do? What is a man-in-the-middle attack?',d:'E',link:'https://www.baeldung.com/cs/https-urls-encrypted'},
+]},
+// ── S3 (Wk 19): Data Layer · Redis · Schema Design ────────────────────────────
+{id:'sp08',s:'fs',w:19,h:6,t:'Database Schema Design — normalization, ERD, constraints, trade-offs',qs:[
+  {n:'Design an e-commerce schema: Users, Products, Orders, OrderItems, Payments',d:'M',link:'https://www.geeksforgeeks.org/how-to-design-a-database-for-an-e-commerce-website/'},
+  {n:'1NF vs 2NF vs 3NF vs BCNF — when is denormalization the right choice?',d:'M',link:'https://www.postgresql.org/docs/current/ddl.html'},
+  {n:'Soft deletes vs hard deletes — implement and choose when to use each',d:'M',link:'https://www.baeldung.com/jpa-soft-delete'},
+  {n:'Design a multi-tenancy model: one DB vs schema-per-tenant vs DB-per-tenant',d:'H',link:'https://www.baeldung.com/hibernate-5-multitenancy'},
+]},
+{id:'sp09',s:'fs',w:19,h:5,t:'Redis Practical — caching, pub/sub, sorted sets, Lua, rate limiting',qs:[
+  {n:'Cache-aside pattern: cache user profiles with TTL + explicit invalidation on update',d:'M',link:'https://www.baeldung.com/spring-cache-tutorial'},
+  {n:'Real-time leaderboard using Redis ZADD / ZRANGE with scores and ranks',d:'M',link:'https://redis.io/docs/data-types/sorted-sets/'},
+  {n:'Rate limiting per user: Redis INCR + EXPIRE — atomic with Lua script',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Redis pub/sub for real-time notifications — what are its limitations vs Kafka?',d:'M',link:'https://redis.io/docs/manual/pubsub/'},
+]},
+{id:'sp10',s:'fs',w:19,h:4,t:'ORM Patterns — N+1, eager/lazy loading, raw SQL when needed, migrations',qs:[
+  {n:'Zero-downtime DB migration: add a NOT NULL column to a 50M-row table',d:'H',link:'https://www.baeldung.com/db-migrations-with-flyway'},
+  {n:'Flyway vs Liquibase: when to use each, how to handle rollbacks',d:'M',link:'https://www.baeldung.com/liquibase-vs-flyway'},
+  {n:'When to drop the ORM and write raw SQL — performance threshold and patterns',d:'M',link:'https://www.baeldung.com/spring-data-jpa-query'},
+]},
+// ── S4 (Wk 20): HTTP · React basics · API Integration ─────────────────────────
+{id:'sp11',s:'fs',w:20,h:5,t:'HTTP/HTTPS Deep Dive — headers, CORS, cookies, status codes, TLS',qs:[
+  {n:'CORS: why does it exist? How does preflight work? Fix a common CORS error',d:'M',link:'https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS'},
+  {n:'Cookie attributes: HttpOnly, Secure, SameSite=Strict vs Lax vs None',d:'M',link:'https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies'},
+  {n:'HTTP/2 vs HTTP/1.1: head-of-line blocking, multiplexing, header compression',d:'M',link:'https://www.baeldung.com/http-2'},
+  {n:'TLS handshake: what happens between client and server before the first byte?',d:'M',link:'https://www.baeldung.com/cs/https-urls-encrypted'},
+]},
+{id:'sp12',s:'prac',w:20,h:5,t:'React/TypeScript Essentials — enough to navigate and contribute to a frontend',qs:[
+  {n:'React component lifecycle: when does useEffect run vs useLayoutEffect?',d:'M',link:'https://react.dev/learn/lifecycle-of-reactive-effects'},
+  {n:'State management: useState vs useReducer vs Context vs Zustand — when to use each',d:'M',link:'https://react.dev/learn/managing-state'},
+  {n:'TypeScript: interfaces vs types, generics, discriminated unions for API response types',d:'M',link:'https://www.typescriptlang.org/docs/handbook/2/everyday-types.html'},
+  {n:'Implement a debounced search input with proper loading/error/empty states',d:'M',link:'https://react.dev/reference/react/useCallback'},
+]},
+{id:'sp13',s:'prac',w:20,h:4,t:'API Integration Patterns — error handling, retries, circuit breaker',qs:[
+  {n:'Implement exponential backoff with jitter for a flaky external API call',d:'M',link:'https://www.baeldung.com/resilience4j-backoff-jitter'},
+  {n:'Circuit breaker pattern: implement open/closed/half-open states in code',d:'H',link:'https://www.baeldung.com/resilience4j-circuit-breaker-spring-boot2'},
+  {n:'Idempotency key pattern: make a POST endpoint safe to retry on network failure',d:'H',link:'https://www.baeldung.com/cs/idempotent-operations'},
+]},
+// ── S5 (Wk 21): Docker · CI/CD · AWS Essentials ───────────────────────────────
+{id:'sp14',s:'devops',w:21,h:6,t:'Docker — Dockerfile, multi-stage, docker-compose, volumes, networking',qs:[
+  {n:'Write a multi-stage Dockerfile for a Node.js app (dev vs production image)',d:'M',link:'https://docs.docker.com/develop/develop-images/multistage-build/'},
+  {n:'docker-compose.yml: app + PostgreSQL + Redis with health checks and named volumes',d:'M',link:'https://docs.docker.com/compose/'},
+  {n:'CMD vs ENTRYPOINT: what is the difference and when to use each?',d:'E',link:'https://docs.docker.com/engine/reference/builder/'},
+  {n:'Debug a container that exits immediately: common causes and fixes',d:'M',link:'https://docs.docker.com/config/containers/logging/'},
+]},
+{id:'sp15',s:'devops',w:21,h:5,t:'CI/CD with GitHub Actions — test, build, deploy, secrets',qs:[
+  {n:'Write a workflow: run tests → build Docker image → push to ECR → deploy to EC2',d:'H',link:'https://docs.github.com/en/actions/publishing-packages/publishing-docker-images'},
+  {n:'Branch protection: PRs require passing CI + 1 review before merge',d:'E',link:'https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches'},
+  {n:'Secrets management in CI: GitHub Secrets vs AWS Secrets Manager vs .env files',d:'M',link:'https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions'},
+  {n:'Blue-green vs canary deployment — implement with GitHub Actions',d:'H',link:'https://docs.github.com/en/actions/deployment/targeting-different-environments'},
+]},
+{id:'sp16',s:'devops',w:21,h:6,t:'AWS Core Services — EC2, S3, RDS, Lambda, IAM, VPC, basic architecture',qs:[
+  {n:'Design a startup AWS architecture: ALB → EC2 Auto Scaling → RDS + Read Replica → S3 + CloudFront',d:'H',link:'https://aws.amazon.com/architecture/'},
+  {n:'IAM least privilege: create a role that can only read from a specific S3 bucket',d:'M',link:'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'},
+  {n:'Lambda vs EC2 vs ECS vs EKS — choose the right compute for each workload type',d:'M',link:'https://aws.amazon.com/products/compute/'},
+  {n:'RDS vs Aurora vs DynamoDB — when would you pick each for a startup?',d:'M',link:'https://aws.amazon.com/rds/'},
+  {n:'VPC basics: public vs private subnet, NAT gateway, security groups vs NACLs',d:'M',link:'https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html'},
+]},
+// ── S6 (Wk 22): Kubernetes · Observability · Production Ops ───────────────────
+{id:'sp17',s:'devops',w:22,h:6,t:'Kubernetes Basics — pods, deployments, services, ingress, HPA, ConfigMaps',qs:[
+  {n:'Write a Deployment + ClusterIP Service + Ingress for a containerized REST API',d:'M',link:'https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'},
+  {n:'ConfigMap + Secret: inject config without rebuilding the container image',d:'M',link:'https://kubernetes.io/docs/concepts/configuration/configmap/'},
+  {n:'HPA: auto-scale pods when CPU > 70% — write the HorizontalPodAutoscaler manifest',d:'M',link:'https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/'},
+  {n:'Liveness vs Readiness probes: how Kubernetes decides when a pod is healthy',d:'M',link:'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/'},
+]},
+{id:'sp18',s:'devops',w:22,h:5,t:'Observability — structured logging, metrics, distributed tracing',qs:[
+  {n:'Add structured JSON logging to a REST API — what fields should every log line include?',d:'M',link:'https://www.baeldung.com/java-log-json-output'},
+  {n:'Design SLO: 99.9% availability = how many minutes of downtime per month allowed?',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+  {n:'Prometheus metrics: what 4 golden signals should every API expose?',d:'M',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'Distributed tracing: how does trace_id propagate across 3 microservices?',d:'H',link:'https://www.baeldung.com/spring-cloud-sleuth-single-application'},
+]},
+{id:'sp19',s:'devops',w:22,h:4,t:'Production Incident Response — on-call, runbooks, SLO/SLA, postmortems',qs:[
+  {n:'Write a runbook for: "API error rate spikes above 5% for 5 minutes"',d:'M',link:'https://sre.google/sre-book/being-on-call/'},
+  {n:'Conduct a blameless postmortem: 5-whys analysis for a real (past) incident',d:'M',link:'https://sre.google/sre-book/postmortem-culture/'},
+  {n:'SLO vs SLA vs SLI — define each for a payment processing API',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+]},
+// ── S7 (Wk 23): Startup System Design · Build vs Buy · Tech Debt ──────────────
+{id:'sp20',s:'prod',w:23,h:7,t:'Startup System Design — design for 0→1K→100K users step by step',qs:[
+  {n:'Design a URL shortener starting from a single server — when and how to scale',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'Design a real-time chat app MVP: what does v1 look like vs v2 at 10K users?',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Design Notion/Airtable at startup scale — relational vs document vs hybrid storage',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'You have 2 weeks: design an MVP ride-sharing backend — what do you cut?',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Design a multi-tenant SaaS billing system at startup scale',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'sp21',s:'prod',w:23,h:5,t:'Build vs Buy Decisions — off-the-shelf vs custom, vendor evaluation',qs:[
+  {n:'Auth: build your own vs Auth0 vs Cognito — decision framework with cost/complexity matrix',d:'M',link:'https://martinfowler.com/articles/build-vs-buy.html'},
+  {n:'Payments: Stripe vs build — what does Stripe actually save you from building?',d:'E',link:'https://stripe.com/docs'},
+  {n:'Search: Elasticsearch vs Algolia vs PostgreSQL full-text — choose for a 1M-doc corpus',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Infrastructure: managed k8s (EKS/GKE) vs raw EC2 vs serverless for a 3-person team',d:'M',link:'https://aws.amazon.com/products/compute/'},
+]},
+{id:'sp22',s:'prod',w:23,h:4,t:'Technical Debt — identify, quantify, prioritize, manage',qs:[
+  {n:'Identify tech debt in a codebase: tight coupling, no tests, magic numbers, hardcoded URLs',d:'M',link:'https://refactoring.guru/refactoring/technical-debt'},
+  {n:'Strangler Fig Pattern: replace a monolith payment endpoint with a microservice incrementally',d:'H',link:'https://martinfowler.com/bliki/StranglerFigApplication.html'},
+  {n:'Engineering metrics: DORA — deployment frequency, lead time, MTTR, change failure rate',d:'M',link:'https://dora.dev/devops-capabilities/'},
+  {n:'When is tech debt worth taking on intentionally? Write a tech debt register entry',d:'M',link:'https://martinfowler.com/bliki/TechnicalDebt.html'},
+]},
+// ── S8 (Wk 24): Take-Home Prep · Startup Behavioral · Offer ───────────────────
+{id:'sp23',s:'prod',w:24,h:6,t:'Take-Home Assignment Strategy — README first, tests, Docker, time-boxing',qs:[
+  {n:'Given "Build a REST API for a todo app in 4h" — write your approach plan first',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'What must a 10/10 take-home submission include? (tests, Docker, README, trade-offs doc)',d:'M',link:'https://google.github.io/eng-practices/'},
+  {n:'Time-box 4 hours: what do you build first vs skip, and how do you communicate that?',d:'M',link:'https://google.github.io/eng-practices/'},
+  {n:'Avoid the two biggest take-home mistakes: over-engineering and missing tests',d:'E',link:'https://refactoring.guru/refactoring'},
+]},
+{id:'sp24',s:'beh',w:24,h:5,t:'Startup Behavioral — ambiguity, ownership, wearing many hats',qs:[
+  {n:'Why startups, not FAANG? Must be specific, not generic — what problem excites you?',d:'M'},
+  {n:'Tell me about a time you built something from scratch with no clear spec',d:'M'},
+  {n:'Describe a time you wore many hats: coding + talking to users + on-call + hiring',d:'M'},
+  {n:'How do you decide what NOT to build when resources are limited?',d:'M'},
+  {n:'Tell me about a time a product you built failed — what did you learn?',d:'M'},
+]},
+{id:'sp25',s:'prod',w:24,h:4,t:'Startup Company Research — product-market fit, stage, stack, culture',qs:[
+  {n:'Research the company: what stage (pre-seed/seed/A/B), burn rate, growth signals?',d:'E',link:'https://www.ycombinator.com/library'},
+  {n:'What is their core technical challenge? Read their engineering blog if it exists',d:'E',link:'https://www.ycombinator.com/library'},
+  {n:'What does their tech stack tell you about engineering culture and debt?',d:'M'},
+  {n:'What would you change about their product in the first 90 days?',d:'M'},
+]},
+{id:'sp26',s:'prod',w:24,h:4,t:'Offer Negotiation — equity, vesting, cliff, strike price, dilution',qs:[
+  {n:'ISOs vs NSOs: tax treatment difference and when it matters at exit',d:'M',link:'https://www.ycombinator.com/library/9l-what-are-stock-options'},
+  {n:'Evaluate this offer: $120K + 0.5% equity, Series A, 4yr vest + 1yr cliff, $200M post-money',d:'H',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+  {n:'What questions must you ask before signing: liquidation preference, pro-rata, 409A valuation',d:'H',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+  {n:'How to negotiate: counter-offer, competing offers, base vs equity vs title vs remote',d:'M',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+]},
+]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const KEY='faang_v3';
@@ -810,13 +1011,36 @@ function toggleProbs(id){
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function secTopics(sec){return T.filter(t=>t.s===sec);}
 function secDone(sec){return secTopics(sec).filter(t=>state[t.id]==='done').length;}
+function planList(){
+  if(activePlan==='faang')   return T.filter(t=>getPlan(t)!=='startup');
+  if(activePlan==='startup') return T.filter(t=>getPlan(t)!=='faang');
+  return T;
+}
 function globalStats(){
-  const done=T.filter(t=>state[t.id]==='done').length;
-  const rev=T.filter(t=>state[t.id]==='revisit').length;
-  return{total:T.length,done,rev,pct:Math.round(done/T.length*100)};
+  const list=planList();
+  const done=list.filter(t=>state[t.id]==='done').length;
+  const rev=list.filter(t=>state[t.id]==='revisit').length;
+  return{total:list.length,done,rev,pct:list.length?Math.round(done/list.length*100):0};
 }
 function lcSlug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-let activeTab='all',activeFilter='all',activeWeek='all';
+// Topics too advanced/irrelevant for typical startup interviews
+const FAANG_ONLY=new Set([
+  'd21',       // DP Intervals / Bitmask (Burst Balloons, TSP)
+  'd23',       // Segment Tree & BIT
+  'd24',       // Math & Number Theory (competitive-programming level)
+  'd25',       // Advanced Graphs: SCC, Bridges, Articulation Points
+  'd26',       // DSA Hard Marathon × 15
+  'd27',       // DSA Mock Interviews × 4
+  'h13',       // Raft / Paxos / Consensus
+  'h14',       // 2PC / Saga / Distributed Transactions
+  'h15',       // Google Search — web-scale crawler + inverted index
+  'h18',       // HLD Mock Sessions × 3
+]);
+// Topics only in the startup track
+const STARTUP_ONLY=new Set(T.filter(t=>t.w>=17).map(t=>t.id));
+function getPlan(t){if(STARTUP_ONLY.has(t.id))return'startup';if(FAANG_ONLY.has(t.id))return'faang';return'both';}
+
+let activeTab='all',activeFilter='all',activeWeek='all',activePlan='all';
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
 
 // ── RENDER ─────────────────────────────────────────────────────────────────────
@@ -839,18 +1063,33 @@ function renderPills(){
   }).join('');
 }
 function renderSecCards(){
-  document.getElementById('sec-cards').innerHTML=Object.entries(S).map(([k,v])=>{
-    const total=secTopics(k).length,done=secDone(k),pct=total?Math.round(done/total*100):0;
-    return`<div class="sec-card" onclick="setTab('${k}')"><div class="sc-title" style="color:${v.color}">${v.label}</div><div class="sc-nums">${done}/${total}</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${pct}%;background:${v.color}"></div></div></div>`;
+  const visibleSecs=Object.entries(S).filter(([k,v])=>{
+    if(activePlan==='faang'&&v.startup)return false;
+    if(activePlan==='startup'&&!v.startup&&!['lld','hld','beh','proj','dsa','mt'].includes(k))return false;
+    return true;
+  });
+  document.getElementById('sec-cards').innerHTML=visibleSecs.map(([k,v])=>{
+    const total=secTopics(k).filter(t=>activePlan==='faang'?getPlan(t)!=='startup':activePlan==='startup'?getPlan(t)!=='faang':true).length;
+    const done=secTopics(k).filter(t=>{
+      if(activePlan==='faang'&&getPlan(t)==='startup')return false;
+      if(activePlan==='startup'&&getPlan(t)==='faang')return false;
+      return state[t.id]==='done';
+    }).length;
+    const pct=total?Math.round(done/total*100):0;
+    const badge=v.startup?`<span class="startup-badge">🚀</span>`:'';
+    return`<div class="sec-card" onclick="setTab('${k}')"><div class="sc-title" style="color:${v.color}">${v.label}${badge}</div><div class="sc-nums">${done}/${total}</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${pct}%;background:${v.color}"></div></div></div>`;
   }).join('');
 }
 function filtered(){
-  let list=T;
+  let list=planList();
+  // section tab
   if(activeTab==='revisit')list=list.filter(t=>state[t.id]==='revisit');
   else if(activeTab!=='all')list=list.filter(t=>t.s===activeTab);
+  // status
   if(activeFilter==='done')list=list.filter(t=>state[t.id]==='done');
   if(activeFilter==='revisit')list=list.filter(t=>state[t.id]==='revisit');
   if(activeFilter==='pending')list=list.filter(t=>!state[t.id]||state[t.id]==='pending');
+  // week
   if(activeWeek!=='all')list=list.filter(t=>t.w===+activeWeek);
   return list;
 }
@@ -900,9 +1139,29 @@ document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
 const wkSel=document.getElementById('wk-sel');
 [...new Set(T.map(t=>t.w))].sort((a,b)=>a-b).forEach(w=>{
   const o=document.createElement('option');
-  o.value=w;o.textContent=`Week ${w} — ${MONTH(w)}`;wkSel.appendChild(o);
+  const label=w<=16?`Week ${w} — ${MONTH(w)}`:`S${w-16} — ${MONTH(w)}`;
+  o.value=w;o.textContent=label;wkSel.appendChild(o);
 });
 wkSel.addEventListener('change',e=>{activeWeek=e.target.value;render();});
+
+// plan toggle
+const PLAN_HINTS={
+  all:`All ${T.length} topics — FAANG+ 16-week plan + Startup 8-week track`,
+  faang:`FAANG+ track — 16 weeks, deep DSA/MT/LLD/HLD for big tech`,
+  startup:`Startup track — 8 weeks, practical code/full-stack/DevOps/product`,
+};
+document.querySelectorAll('.plan-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.plan-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  activePlan=b.dataset.plan;
+  activeTab='all'; activeWeek='all'; // reset sub-filters on plan switch
+  document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelector('.f-btn[data-f="all"]').classList.add('active');
+  activeFilter='all';
+  document.getElementById('wk-sel').value='all';
+  document.getElementById('plan-hint').textContent=PLAN_HINTS[activePlan]||'';
+  renderPills(); render();
+}));
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
 function encodeState(s){
