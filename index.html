@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAANG+ Prep Tracker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080d1a;--surface:#0f1629;--surface2:#162035;
+  --border:#1e2d45;--border2:#253652;
+  --text:#e2e8f0;--muted:#4a6080;--muted2:#6b84a0;
+  --dsa:#818cf8;--mt:#fbbf24;--lld:#34d399;--hld:#60a5fa;--proj:#f472b6;--beh:#a78bfa;
+  --done:#4ade80;--revisit:#fb923c;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#818cf8,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo h1{font-size:16px;font-weight:700}
+.logo p{font-size:11px;color:var(--muted2);margin-top:1px}
+.stats-row{display:flex;align-items:center;gap:20px}
+.stat{text-align:center;min-width:44px}
+.stat .n{font-size:22px;font-weight:800;line-height:1;display:block}
+.stat .l{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em}
+.pct-ring{position:relative;width:52px;height:52px;flex-shrink:0}
+.pct-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--border2);stroke-width:4}
+.ring-fill{fill:none;stroke:url(#grad);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.pct-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.global-bar-wrap{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px 10px}
+.global-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.global-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#818cf8,#60a5fa,#34d399);transition:width .5s ease}
+.section-pills{display:flex;gap:8px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.section-pills::-webkit-scrollbar{display:none}
+.sec-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .18s;color:var(--muted2);display:flex;align-items:center;gap:6px}
+.sec-pill:hover{border-color:var(--border2);color:var(--text)}
+.sec-pill.active{color:#fff;border-color:transparent}
+.sec-pill .pill-cnt{font-size:10px;padding:1px 5px;border-radius:6px;background:rgba(255,255,255,.08)}
+.section-cards{display:flex;gap:10px;padding:12px 24px;overflow-x:auto;scrollbar-width:none}
+.section-cards::-webkit-scrollbar{display:none}
+.sec-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;cursor:pointer;transition:border-color .2s}
+.sec-card:hover{border-color:var(--border2)}
+.sc-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.sc-nums{font-size:11px;color:var(--muted2);margin-bottom:6px}
+.sc-bar{height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.sc-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.filter-bar{display:flex;align-items:center;gap:8px;padding:10px 24px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.filter-label{font-size:11px;color:var(--muted2)}
+.f-btn{background:transparent;border:1px solid var(--border);border-radius:14px;padding:4px 12px;font-size:11px;color:var(--muted2);cursor:pointer;transition:all .15s}
+.f-btn:hover{background:var(--surface2);color:var(--text)}
+.f-btn.active{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+.week-sel{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;outline:none;margin-left:auto}
+.week-sel option{background:var(--surface2)}
+.co-legend{font-size:10px;color:var(--muted);margin-left:4px}
+.content{padding:20px 24px;max-width:1600px;margin:0 auto}
+.week-group{margin-bottom:28px}
+.week-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.wk-badge{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--muted2);white-space:nowrap}
+.wk-month{font-size:10px;color:var(--muted);padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;white-space:nowrap}
+.wk-label{font-size:12px;color:var(--muted2);flex:1;min-width:0}
+.wk-prog{font-size:11px;color:var(--muted2);white-space:nowrap}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:10px}
+.topic-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;transition:border-color .2s}
+.topic-card:hover{border-color:var(--border2)}
+.topic-card.done{border-color:rgba(74,222,128,.25);background:linear-gradient(145deg,rgba(74,222,128,.04),var(--surface))}
+.topic-card.revisit{border-color:rgba(251,146,60,.25);background:linear-gradient(145deg,rgba(251,146,60,.04),var(--surface))}
+.card-top{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start}
+.sec-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.card-title{font-size:13px;font-weight:500;line-height:1.45;flex:1}
+.card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mtag{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted2)}
+.card-btns{display:flex;gap:6px}
+.cbtn{flex:1;padding:6px 4px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.cbtn:hover{background:var(--surface2);color:var(--text)}
+.cbtn.done-btn.on{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);color:var(--done)}
+.cbtn.rev-btn.on{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.35);color:var(--revisit)}
+/* Problems panel */
+.probs-toggle{width:100%;margin-top:8px;padding:5px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:5px}
+.probs-toggle:hover{background:var(--surface2);color:var(--muted2);border-color:var(--border2)}
+.probs-panel{margin-top:7px;display:none}
+.probs-panel.open{display:block}
+.prob-row{display:flex;align-items:flex-start;gap:6px;padding:5px 2px;border-bottom:1px solid var(--border)}
+.prob-row:last-child{border-bottom:none}
+.diff{padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px}
+.diff.E{background:rgba(74,222,128,.12);color:#4ade80}
+.diff.M{background:rgba(251,191,36,.12);color:#fbbf24}
+.diff.H{background:rgba(248,113,113,.12);color:#f87171}
+.prob-name{font-size:11px;flex:1;line-height:1.4;color:var(--text);text-decoration:none}
+a.prob-name:hover{color:#60a5fa}
+.prob-lc{font-size:10px;color:var(--muted)}
+.prob-co{display:flex;gap:2px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:72px}
+.co-tag{font-size:8px;font-weight:800;padding:1px 3px;border-radius:3px;cursor:default;line-height:1.5}
+/* Misc */
+.empty{text-align:center;padding:60px 20px;color:var(--muted2)}
+.empty h3{font-size:15px;margin-bottom:6px;color:var(--text)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#818cf8,#34d399);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+@media(max-width:640px){.header{flex-direction:column;align-items:flex-start}.stats-row{flex-wrap:wrap}.content{padding:14px}.topic-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🎯</div>
+    <div>
+      <h1>FAANG+ Interview Prep</h1>
+      <p>Senior SWE · 10 YOE · 5h/day · 16-Week Blended Plan</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><span class="n" id="s-total">—</span><span class="l">Topics</span></div>
+    <div class="stat"><span class="n" style="color:var(--done)" id="s-done">0</span><span class="l">Done</span></div>
+    <div class="stat"><span class="n" style="color:var(--revisit)" id="s-rev">0</span><span class="l">Revisit</span></div>
+    <div class="pct-ring">
+      <svg viewBox="0 0 52 52" width="52" height="52">
+        <circle class="ring-bg" cx="26" cy="26" r="22"/>
+        <circle class="ring-fill" cx="26" cy="26" r="22" id="ring" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+      </svg>
+      <div class="pct-text" id="s-pct">0%</div>
+    </div>
+  </div>
+</div>
+<div class="global-bar-wrap">
+  <div class="global-bar"><div class="global-bar-fill" id="gbar" style="width:0%"></div></div>
+</div>
+<div class="section-pills" id="pills"></div>
+<div class="section-cards" id="sec-cards"></div>
+<div class="filter-bar">
+  <span class="filter-label">Status:</span>
+  <button class="f-btn active" data-f="all">All</button>
+  <button class="f-btn" data-f="pending">Pending</button>
+  <button class="f-btn" data-f="done">✓ Done</button>
+  <button class="f-btn" data-f="revisit">↻ Revisit</button>
+  <select class="week-sel" id="wk-sel"><option value="all">All Weeks</option></select>
+  <span class="co-legend">Company tags: <b style="color:#4285f4">G</b>oogle · <b style="color:#1877f2">M</b>eta · <b style="color:#ff9900">A</b>mazon · <b style="color:#00a4ef">Ms</b> · <b style="color:#9b9b9b">Ub</b>er · verified 2024-25</span>
+</div>
+<div class="content" id="content"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── COMPANIES ─────────────────────────────────────────────────────────────────
+const CO = {
+  G:  ['Google',    '#4285f4'],
+  M:  ['Meta',      '#1877f2'],
+  A:  ['Amazon',    '#ff9900'],
+  Ms: ['Microsoft', '#00a4ef'],
+  Ub: ['Uber',      '#9b9b9b'],
+};
+
+// ── SECTIONS ──────────────────────────────────────────────────────────────────
+const S = {
+  dsa:  {label:'DSA',            color:'#818cf8'},
+  mt:   {label:'Multithreading', color:'#fbbf24'},
+  lld:  {label:'LLD',            color:'#34d399'},
+  hld:  {label:'HLD',            color:'#60a5fa'},
+  proj: {label:'Projects',       color:'#f472b6'},
+  beh:  {label:'Behavioral',     color:'#a78bfa'},
+};
+
+const WK={1:'Arrays · Two Pointers · Sliding Window  ⊕  Thread Lifecycle',2:'Binary Search · Stack · Monotonic Stack  ⊕  SOLID Principles',3:'Linked Lists · Binary Trees  ⊕  Synchronization & Locks',4:'BST · Heaps · Tries  ⊕  Creational Patterns',5:'Graphs BFS/DFS · Union Find  ⊕  JMM & Atomics',6:'Topological Sort · Shortest Path  ⊕  Structural Patterns',7:'Backtracking · Greedy  ⊕  wait/notify & ThreadPool',8:'DP: 1D & 2D Grid  ⊕  Behavioral Patterns',9:'DP: Knapsack · Sequences  ⊕  Classic Concurrency Problems',10:'DP Advanced · Bit Manipulation  ⊕  HLD Fundamentals',11:'Segment Tree · Adv Graphs · Math  ⊕  HLD: Databases & CAP',12:'DSA Hard Marathon  ⊕  HLD: Queues & APIs  ·  LLD Anti-patterns',13:'LLD Problems I  ⊕  HLD: URL Shortener · Rate Limiter · Twitter',14:'LLD Problems II  ⊕  HLD: WhatsApp · YouTube · Uber',15:'HLD: Advanced Systems + Mocks  ⊕  Projects',16:'Projects · Behavioral · Full Loop Mocks'};
+const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':'Month 4';
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+// q fields: n=name, lc=LC#, d=difficulty, co=[companies], link=override URL
+const T=[
+// ══ WEEK 1 ══════════════════════════════════════════════════════════════════
+{id:'d01',s:'dsa',w:1,h:7,t:'Arrays & Hashing — 15 medium/hard problems',qs:[
+  {n:'Two Sum',lc:1,d:'E',co:['G','M','A','Ms']},
+  {n:'Group Anagrams',lc:49,d:'M',co:['M','G','A']},
+  {n:'Top K Frequent Elements',lc:347,d:'M',co:['G','M','A']},
+  {n:'Product of Array Except Self',lc:238,d:'M',co:['G','M','A']},
+  {n:'Valid Sudoku',lc:36,d:'M',co:['Ms','G']},
+  {n:'Encode and Decode Strings',lc:271,d:'M',co:['G','M']},
+  {n:'Longest Consecutive Sequence',lc:128,d:'M',co:['G','A']},
+  {n:'Subarray Sum Equals K',lc:560,d:'M',co:['M','G','A']},
+  {n:'Minimum Size Subarray Sum',lc:209,d:'M',co:['A','G']},
+]},
+{id:'d02',s:'dsa',w:1,h:5,t:'Two Pointers — 10 problems',qs:[
+  {n:'Valid Palindrome',lc:125,d:'E',co:['M','A']},
+  {n:'Two Sum II Input Array Is Sorted',lc:167,d:'M',co:['A','M']},
+  {n:'3Sum',lc:15,d:'M',co:['M','G','A']},
+  {n:'Container With Most Water',lc:11,d:'M',co:['M','A','G']},
+  {n:'Trapping Rain Water',lc:42,d:'H',co:['G','A','M']},
+  {n:'Move Zeroes',lc:283,d:'E',co:['M','A']},
+]},
+{id:'d03',s:'dsa',w:1,h:5,t:'Sliding Window — 10 problems',qs:[
+  {n:'Best Time to Buy and Sell Stock',lc:121,d:'E',co:['A','G','M']},
+  {n:'Longest Substring Without Repeating Characters',lc:3,d:'M',co:['A','G','M']},
+  {n:'Longest Repeating Character Replacement',lc:424,d:'M',co:['G']},
+  {n:'Permutation in String',lc:567,d:'M',co:['M','A']},
+  {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
+  {n:'Sliding Window Maximum',lc:239,d:'H',co:['G','A']},
+  {n:'Maximum Points You Can Obtain from Cards',lc:1423,d:'M',co:['G','A']},
+]},
+{id:'m01',s:'mt',w:1,h:4,t:'Thread Lifecycle & Creation — Thread, Runnable, Callable, daemon',qs:[
+  {n:'Thread vs Runnable vs Callable — when to use each',d:'E',link:'https://www.baeldung.com/java-runnable-callable'},
+  {n:'Thread.start() vs Thread.run() — explain the difference with code',d:'E',link:'https://www.baeldung.com/java-start-thread'},
+  {n:'5 threads each print their ID in sequence using join()',d:'M',link:'https://www.baeldung.com/java-thread-join'},
+  {n:'Daemon vs non-daemon: when does the JVM exit?',d:'M',link:'https://www.baeldung.com/java-daemon-thread'},
+]},
+
+// ══ WEEK 2 ══════════════════════════════════════════════════════════════════
+{id:'d04',s:'dsa',w:2,h:7,t:'Binary Search — 12 problems (rotated array, search range, median)',qs:[
+  {n:'Binary Search',lc:704,d:'E',co:['A']},
+  {n:'Search a 2D Matrix',lc:74,d:'M',co:['G','M']},
+  {n:'Koko Eating Bananas',lc:875,d:'M',co:['G']},
+  {n:'Find Minimum in Rotated Sorted Array',lc:153,d:'M',co:['M','G','A']},
+  {n:'Search in Rotated Sorted Array',lc:33,d:'M',co:['M','G','A']},
+  {n:'Time Based Key Value Store',lc:981,d:'M',co:['G','Ub']},
+  {n:'Median of Two Sorted Arrays',lc:4,d:'H',co:['G','A','M']},
+  {n:'Capacity To Ship Packages Within D Days',lc:1011,d:'M',co:['A','G']},
+]},
+{id:'d05',s:'dsa',w:2,h:7,t:'Stack & Monotonic Stack — 12 problems',qs:[
+  {n:'Valid Parentheses',lc:20,d:'E',co:['A','G','M','Ms']},
+  {n:'Min Stack',lc:155,d:'M',co:['A','G','Ms']},
+  {n:'Evaluate Reverse Polish Notation',lc:150,d:'M',co:['A']},
+  {n:'Generate Parentheses',lc:22,d:'M',co:['G','M']},
+  {n:'Daily Temperatures',lc:739,d:'M',co:['A','G']},
+  {n:'Car Fleet',lc:853,d:'M',co:['G']},
+  {n:'Largest Rectangle in Histogram',lc:84,d:'H',co:['G','A']},
+  {n:'Minimum Remove to Make Valid Parentheses',lc:1249,d:'M',co:['M']},
+]},
+{id:'l01',s:'lld',w:2,h:4,t:'SOLID Principles — examples, violations, refactors',qs:[
+  {n:'SRP: split a 200-line UserManager into focused single-responsibility services',d:'M',link:'https://www.baeldung.com/solid-principles'},
+  {n:'OCP: add a new Shape to an area calculator without modifying existing code',d:'M',link:'https://refactoring.guru/didactics/solid'},
+  {n:'LSP: why does Square extends Rectangle break LSP? Fix it.',d:'M',link:'https://www.baeldung.com/solid-principles'},
+  {n:'ISP: split a fat IWorker interface into role-specific interfaces',d:'E',link:'https://www.baeldung.com/solid-principles'},
+  {n:'DIP: decouple OrderService from MySQLOrderRepo using an interface',d:'M',link:'https://www.baeldung.com/solid-principles'},
+]},
+
+// ══ WEEK 3 ══════════════════════════════════════════════════════════════════
+{id:'d06',s:'dsa',w:3,h:7,t:'Linked Lists — 10 problems (reverse, cycle, merge)',qs:[
+  {n:'Reverse Linked List',lc:206,d:'E',co:['M','A','Ms']},
+  {n:'Merge Two Sorted Lists',lc:21,d:'E',co:['A','G']},
+  {n:'Linked List Cycle',lc:141,d:'E',co:['A','G','M']},
+  {n:'Reorder List',lc:143,d:'M',co:['M']},
+  {n:'Remove Nth Node From End of List',lc:19,d:'M',co:['G','A']},
+  {n:'Copy List With Random Pointer',lc:138,d:'M',co:['M','A']},
+  {n:'Add Two Numbers',lc:2,d:'M',co:['G','M']},
+  {n:'LRU Cache',lc:146,d:'M',co:['G','M','A','Ms']},
+  {n:'Merge K Sorted Lists',lc:23,d:'H',co:['G','A']},
+  {n:'Reverse Nodes in K Group',lc:25,d:'H',co:['M','A']},
+]},
+{id:'d07',s:'dsa',w:3,h:8,t:'Binary Trees — LCA, Diameter, Max Path Sum — 15 problems',qs:[
+  {n:'Invert Binary Tree',lc:226,d:'E',co:['G','M']},
+  {n:'Maximum Depth of Binary Tree',lc:104,d:'E',co:['A','G']},
+  {n:'Diameter of Binary Tree',lc:543,d:'E',co:['G','M']},
+  {n:'Binary Tree Level Order Traversal',lc:102,d:'M',co:['A','G','M']},
+  {n:'Binary Tree Right Side View',lc:199,d:'M',co:['M','A']},
+  {n:'Count Good Nodes in Binary Tree',lc:1448,d:'M',co:['G']},
+  {n:'Lowest Common Ancestor of a Binary Tree',lc:236,d:'M',co:['M','G','A']},
+  {n:'Construct Binary Tree from Preorder and Inorder Traversal',lc:105,d:'M',co:['G','A']},
+  {n:'Binary Tree Maximum Path Sum',lc:124,d:'H',co:['G','M','A']},
+  {n:'Serialize and Deserialize Binary Tree',lc:297,d:'H',co:['G','M','A']},
+  {n:'Vertical Order Traversal of a Binary Tree',lc:987,d:'H',co:['M']},
+]},
+{id:'m02',s:'mt',w:3,h:5,t:'Synchronization — synchronized, ReentrantLock, ReadWriteLock',qs:[
+  {n:'Thread-safe counter: synchronized vs AtomicInteger — benchmark both',d:'M',link:'https://www.baeldung.com/java-synchronized'},
+  {n:'Implement a thread-safe LRU Cache using ReadWriteLock',d:'H',link:'https://www.baeldung.com/java-read-write-locks'},
+  {n:'Why is double-checked locking broken without volatile?',d:'M',link:'https://www.baeldung.com/java-double-checked-locking-with-delay-initialization'},
+  {n:'Lock striping: implement a striped HashMap with N lock buckets',d:'H',link:'https://www.baeldung.com/guava-striped'},
+]},
+
+// ══ WEEK 4 ══════════════════════════════════════════════════════════════════
+{id:'d08',s:'dsa',w:4,h:7,t:'BST — 10 problems (validate, kth smallest, iterator)',qs:[
+  {n:'Validate Binary Search Tree',lc:98,d:'M',co:['A','G']},
+  {n:'Kth Smallest Element in a BST',lc:230,d:'M',co:['G','M']},
+  {n:'Lowest Common Ancestor of a Binary Search Tree',lc:235,d:'M',co:['A','M']},
+  {n:'Construct BST from Preorder Traversal',lc:1008,d:'M',co:['G']},
+  {n:'Delete Node in a BST',lc:450,d:'M',co:['G']},
+  {n:'Binary Search Tree Iterator',lc:173,d:'M',co:['M','G']},
+  {n:'Convert BST to Greater Tree',lc:538,d:'M',co:['G']},
+]},
+{id:'d09',s:'dsa',w:4,h:7,t:'Heaps & Priority Queue — K-th, merge K lists, scheduling',qs:[
+  {n:'Kth Largest Element in a Stream',lc:703,d:'E',co:['A']},
+  {n:'K Closest Points to Origin',lc:973,d:'M',co:['G','M','A']},
+  {n:'Kth Largest Element in an Array',lc:215,d:'M',co:['A','G']},
+  {n:'Task Scheduler',lc:621,d:'M',co:['A','G']},
+  {n:'Design Twitter',lc:355,d:'M',co:['M']},
+  {n:'Find Median from Data Stream',lc:295,d:'H',co:['G','M','A']},
+  {n:'Minimum Cost to Connect Sticks',lc:1167,d:'M',co:['A']},
+]},
+{id:'d10',s:'dsa',w:4,h:5,t:'Tries — implement, prefix search, autocomplete, word search II',qs:[
+  {n:'Implement Trie Prefix Tree',lc:208,d:'M',co:['G','M','A']},
+  {n:'Design Add and Search Words Data Structure',lc:211,d:'M',co:['G','M']},
+  {n:'Word Search II',lc:212,d:'H',co:['G','M']},
+  {n:'Design Search Autocomplete System',lc:642,d:'H',co:['G']},
+]},
+{id:'l02',s:'lld',w:4,h:7,t:'Creational Patterns — Singleton, Factory, Builder, Abstract Factory, Prototype',qs:[
+  {n:'Thread-safe Singleton: lazy + double-check + enum — compare all three',d:'M',link:'https://refactoring.guru/design-patterns/singleton'},
+  {n:'Factory Method: LoggerFactory returning File, Console, or DB logger',d:'M',link:'https://refactoring.guru/design-patterns/factory-method'},
+  {n:'Builder Pattern: fluent SQL QueryBuilder',d:'M',link:'https://refactoring.guru/design-patterns/builder'},
+  {n:'Abstract Factory: UI component factory for Web vs Mobile platforms',d:'H',link:'https://refactoring.guru/design-patterns/abstract-factory'},
+  {n:'Prototype: deep clone a complex nested Document object',d:'M',link:'https://refactoring.guru/design-patterns/prototype'},
+]},
+
+// ══ WEEK 5 ══════════════════════════════════════════════════════════════════
+{id:'d11',s:'dsa',w:5,h:9,t:'Graphs: BFS & DFS — 15 problems (islands, components, paths)',qs:[
+  {n:'Number of Islands',lc:200,d:'M',co:['A','G','M']},
+  {n:'Clone Graph',lc:133,d:'M',co:['G','M']},
+  {n:'Max Area of Island',lc:695,d:'M',co:['G','A']},
+  {n:'Pacific Atlantic Water Flow',lc:417,d:'M',co:['G']},
+  {n:'Surrounded Regions',lc:130,d:'M',co:['G']},
+  {n:'Rotting Oranges',lc:994,d:'M',co:['A','G']},
+  {n:'Course Schedule',lc:207,d:'M',co:['Ub','A','G']},
+  {n:'Number of Connected Components',lc:323,d:'M',co:['G','M']},
+  {n:'Word Ladder',lc:127,d:'H',co:['G','A']},
+  {n:'Buildings With an Ocean View',lc:1762,d:'M',co:['M']},
+]},
+{id:'d12',s:'dsa',w:5,h:5,t:'Union Find (DSU) — path compression, union by rank',qs:[
+  {n:'Redundant Connection',lc:684,d:'M',co:['G']},
+  {n:'Accounts Merge',lc:721,d:'M',co:['G','M']},
+  {n:'Number of Operations to Make Network Connected',lc:1319,d:'M',co:['G']},
+  {n:'Satisfiability of Equality Equations',lc:990,d:'M',co:['G']},
+]},
+{id:'m03',s:'mt',w:5,h:4,t:'Java Memory Model — volatile, happens-before, visibility',qs:[
+  {n:'Visibility problem without volatile — demonstrate and fix',d:'M',link:'https://www.baeldung.com/java-volatile'},
+  {n:'Why volatile cannot replace synchronized for compound ops like i++',d:'M',link:'https://www.baeldung.com/java-volatile'},
+  {n:'3 examples of happens-before relationships in JMM',d:'M',link:'https://www.baeldung.com/java-happens-before-synchronization'},
+  {n:'Memory barriers and their relation to volatile reads/writes',d:'H',link:'https://www.baeldung.com/java-volatile'},
+]},
+{id:'m04',s:'mt',w:5,h:4,t:'Atomic classes — AtomicInteger, AtomicReference, CAS, ABA',qs:[
+  {n:'Lock-free stack using AtomicReference and CAS',d:'H',link:'https://www.baeldung.com/java-atomic-variables'},
+  {n:'ABA problem explained — how AtomicStampedReference solves it',d:'H',link:'https://www.baeldung.com/cs/aba-concurrency'},
+  {n:'Lock-free counter — benchmark vs synchronized',d:'M',link:'https://www.baeldung.com/java-atomic-variables'},
+]},
+
+// ══ WEEK 6 ══════════════════════════════════════════════════════════════════
+{id:'d13',s:'dsa',w:6,h:5,t:"Topological Sort — Kahn's + DFS, alien dict, scheduling",qs:[
+  {n:'Course Schedule',lc:207,d:'M',co:['Ub','A','G']},
+  {n:'Course Schedule II',lc:210,d:'M',co:['G','A','Ub']},
+  {n:'Alien Dictionary',lc:269,d:'H',co:['G']},
+  {n:'Minimum Height Trees',lc:310,d:'M',co:['G']},
+  {n:'Sequence Reconstruction',lc:444,d:'M',co:['G']},
+]},
+{id:'d14',s:'dsa',w:6,h:8,t:'Shortest Path — Dijkstra, Bellman-Ford, Floyd-Warshall',qs:[
+  {n:'Network Delay Time',lc:743,d:'M',co:['G']},
+  {n:'Cheapest Flights Within K Stops',lc:787,d:'M',co:['G','A']},
+  {n:'Path With Minimum Effort',lc:1631,d:'M',co:['G']},
+  {n:'Swim in Rising Water',lc:778,d:'H',co:['G']},
+  {n:'Find the City With the Smallest Number of Neighbors',lc:1334,d:'M',co:['Ms']},
+  {n:'Minimum Cost to Reach Destination in Time',lc:1928,d:'H',co:['G']},
+]},
+{id:'l03',s:'lld',w:6,h:7,t:'Structural Patterns — Adapter, Decorator, Proxy, Facade, Composite',qs:[
+  {n:'Proxy: caching proxy for an expensive external price API',d:'M',link:'https://refactoring.guru/design-patterns/proxy'},
+  {n:'Decorator: add logging, retry, and circuit-breaker to an HTTP client',d:'H',link:'https://refactoring.guru/design-patterns/decorator'},
+  {n:'Adapter: wrap a legacy XML payment API to a JSON interface',d:'M',link:'https://refactoring.guru/design-patterns/adapter'},
+  {n:'Facade: HomeAutomationFacade controlling lights, AC, TV in one call',d:'E',link:'https://refactoring.guru/design-patterns/facade'},
+  {n:'Composite: file system getSize() recurses correctly over files and folders',d:'M',link:'https://refactoring.guru/design-patterns/composite'},
+]},
+
+// ══ WEEK 7 ══════════════════════════════════════════════════════════════════
+{id:'d15',s:'dsa',w:7,h:8,t:'Backtracking — 12 problems (subsets, permutations, N-Queens)',qs:[
+  {n:'Subsets',lc:78,d:'M',co:['G','M']},
+  {n:'Combination Sum',lc:39,d:'M',co:['G','M','A']},
+  {n:'Permutations',lc:46,d:'M',co:['G','M','A']},
+  {n:'Subsets II',lc:90,d:'M',co:['G']},
+  {n:'Combination Sum II',lc:40,d:'M',co:['G','A']},
+  {n:'Word Search',lc:79,d:'M',co:['G','M']},
+  {n:'Palindrome Partitioning',lc:131,d:'M',co:['G','M']},
+  {n:'Letter Combinations of a Phone Number',lc:17,d:'M',co:['G','M','A']},
+  {n:'N Queens',lc:51,d:'H',co:['G']},
+]},
+{id:'d16',s:'dsa',w:7,h:7,t:'Greedy — intervals, scheduling, jump game — 8 problems',qs:[
+  {n:'Maximum Subarray',lc:53,d:'M',co:['G','A']},
+  {n:'Jump Game',lc:55,d:'M',co:['G','A']},
+  {n:'Jump Game II',lc:45,d:'M',co:['G','A']},
+  {n:'Gas Station',lc:134,d:'M',co:['A','G']},
+  {n:'Merge Intervals',lc:56,d:'M',co:['G','M','A']},
+  {n:'Non-overlapping Intervals',lc:435,d:'M',co:['G','M']},
+  {n:'Partition Labels',lc:763,d:'M',co:['G','M']},
+  {n:'Task Scheduler',lc:621,d:'M',co:['A','G']},
+]},
+{id:'m05',s:'mt',w:7,h:5,t:'wait/notify/notifyAll — Condition Variables, spurious wakeups',qs:[
+  {n:'BoundedBlockingQueue using wait/notifyAll — no Java library',d:'H',link:'https://www.baeldung.com/java-bounded-blocking-queue'},
+  {n:'Semaphore from scratch using wait/notifyAll',d:'H',link:'https://www.baeldung.com/java-semaphore'},
+  {n:'Why must wait() always be inside a while loop, not an if?',d:'M',link:'https://www.baeldung.com/java-wait-notify'},
+  {n:'Print FooBar Alternately',lc:1115,d:'M',co:['G','M']},
+]},
+{id:'m06',s:'mt',w:7,h:5,t:'ThreadPool, ExecutorService, Future, CompletableFuture',qs:[
+  {n:'Fixed-size ThreadPool from scratch — no ExecutorService',d:'H',link:'https://www.baeldung.com/thread-pool-java-and-guava'},
+  {n:'Chain: fetch user → fetch orders → compute total via CompletableFuture',d:'M',link:'https://www.baeldung.com/java-completablefuture'},
+  {n:'Timeout + fallback: orTimeout() + exceptionally() patterns',d:'M',link:'https://www.baeldung.com/java-completablefuture'},
+  {n:'RejectedExecutionHandler policies: Abort, CallerRuns, Discard compared',d:'M',link:'https://www.baeldung.com/java-rejectedexecutionhandler'},
+  {n:'Parallel merge sort using ForkJoinPool / RecursiveTask',d:'H',link:'https://www.baeldung.com/java-fork-join'},
+]},
+
+// ══ WEEK 8 ══════════════════════════════════════════════════════════════════
+{id:'d17',s:'dsa',w:8,h:7,t:'DP: 1D — 11 problems (house robber, LIS, decode ways)',qs:[
+  {n:'Climbing Stairs',lc:70,d:'E',co:['A','G']},
+  {n:'House Robber',lc:198,d:'M',co:['A','G']},
+  {n:'House Robber II',lc:213,d:'M',co:['G']},
+  {n:'Longest Palindromic Substring',lc:5,d:'M',co:['G','A','Ms']},
+  {n:'Decode Ways',lc:91,d:'M',co:['G','A','M']},
+  {n:'Coin Change',lc:322,d:'M',co:['G','A','M']},
+  {n:'Maximum Product Subarray',lc:152,d:'M',co:['G','A']},
+  {n:'Word Break',lc:139,d:'M',co:['G','M','A']},
+  {n:'Longest Increasing Subsequence',lc:300,d:'M',co:['G','Ms']},
+  {n:'Partition Equal Subset Sum',lc:416,d:'M',co:['G','A']},
+  {n:'Delete and Earn',lc:740,d:'M',co:['G']},
+]},
+{id:'d18',s:'dsa',w:8,h:7,t:'DP: 2D Grid — 8 problems (LCS, edit distance, unique paths)',qs:[
+  {n:'Unique Paths',lc:62,d:'M',co:['G','A']},
+  {n:'Longest Common Subsequence',lc:1143,d:'M',co:['G','M']},
+  {n:'Best Time to Buy and Sell Stock with Cooldown',lc:309,d:'M',co:['G']},
+  {n:'Coin Change II',lc:518,d:'M',co:['G','A']},
+  {n:'Target Sum',lc:494,d:'M',co:['G']},
+  {n:'Interleaving String',lc:97,d:'H',co:['G']},
+  {n:'Edit Distance',lc:72,d:'H',co:['G','Ms']},
+  {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
+]},
+{id:'l04',s:'lld',w:8,h:7,t:'Behavioral Patterns — Observer, Strategy, Command, State, Template Method',qs:[
+  {n:'Observer: type-safe event bus / pub-sub with listener registry',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
+  {n:'Strategy: payment system — Credit Card, UPI, Crypto interchangeable',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+  {n:'State: vending machine — Idle → HasMoney → Dispensing → OutOfStock',d:'H',link:'https://refactoring.guru/design-patterns/state'},
+  {n:'Command: undo/redo text editor using command history stack',d:'H',link:'https://refactoring.guru/design-patterns/command'},
+  {n:'Template Method: DataProcessor with override hooks for parse, validate, save',d:'M',link:'https://refactoring.guru/design-patterns/template-method'},
+]},
+
+// ══ WEEK 9 ══════════════════════════════════════════════════════════════════
+{id:'d19',s:'dsa',w:9,h:7,t:'DP: Knapsack variants — 0/1, unbounded, bounded',qs:[
+  {n:'Partition Equal Subset Sum',lc:416,d:'M',co:['G','A']},
+  {n:'Last Stone Weight II',lc:1049,d:'M',co:['G']},
+  {n:'Ones and Zeroes',lc:474,d:'M',co:['G']},
+  {n:'Coin Change II',lc:518,d:'M',co:['G','A']},
+  {n:'Target Sum',lc:494,d:'M',co:['G']},
+  {n:'Minimum Difficulty of a Job Schedule',lc:1335,d:'H',co:['A']},
+]},
+{id:'d20',s:'dsa',w:9,h:7,t:'DP: LCS, Edit Distance, Longest Palindromic Subsequence',qs:[
+  {n:'Longest Common Subsequence',lc:1143,d:'M',co:['G','M']},
+  {n:'Edit Distance',lc:72,d:'H',co:['G','Ms']},
+  {n:'Longest Palindromic Subsequence',lc:516,d:'M',co:['G']},
+  {n:'Shortest Common Supersequence',lc:1092,d:'H',co:['G']},
+  {n:'Distinct Subsequences',lc:115,d:'H',co:['G']},
+  {n:'Regular Expression Matching',lc:10,d:'H',co:['G']},
+]},
+{id:'m07',s:'mt',w:9,h:3,t:'Concurrent Collections — ConcurrentHashMap, BlockingQueue, CopyOnWriteArrayList',qs:[
+  {n:'ConcurrentHashMap vs Hashtable — segment locking vs CAS explained',d:'M',link:'https://www.baeldung.com/java-concurrent-hashmap'},
+  {n:'Rate limiter using ConcurrentHashMap + AtomicLong (sliding window per user)',d:'H',link:'https://www.baeldung.com/java-concurrent-hashmap'},
+  {n:'When to use CopyOnWriteArrayList over synchronizedList',d:'M',link:'https://www.baeldung.com/java-copy-on-write-arraylist'},
+]},
+{id:'m08',s:'mt',w:9,h:3,t:'Deadlock, Livelock, Starvation — detection and prevention',qs:[
+  {n:'Deliberately deadlock two threads on two locks — then fix it',d:'M',link:'https://www.baeldung.com/java-deadlock'},
+  {n:'Deadlock prevention via lock ordering (resource hierarchy)',d:'M',link:'https://www.baeldung.com/java-deadlock'},
+  {n:'Dining Philosophers — solution without deadlock or starvation',d:'H',link:'https://www.baeldung.com/java-dining-philoshophers'},
+  {n:'Detect deadlock programmatically using ThreadMXBean',d:'M',link:'https://www.baeldung.com/java-detect-deadlock'},
+]},
+{id:'m09',s:'mt',w:9,h:4,t:'Classic Problems: Producer-Consumer, Readers-Writers, Dining Philosophers',qs:[
+  {n:'Producer-Consumer: BoundedBuffer with 2 producers + 3 consumers',d:'M',link:'https://www.baeldung.com/java-producer-consumer-problem'},
+  {n:'Readers-Writers with writer preference (no writer starvation)',d:'H',link:'https://www.geeksforgeeks.org/readers-writers-problem-set-1-introduction-and-readers-preference-solution/'},
+  {n:'Print FooBar Alternately',lc:1115,d:'M',co:['G','M']},
+  {n:'Print Zero Even Odd',lc:1116,d:'M',co:['G']},
+  {n:'Building H2O',lc:1117,d:'M',co:['G']},
+]},
+{id:'m10',s:'mt',w:9,h:3,t:'CountDownLatch, Semaphore, CyclicBarrier, Phaser',qs:[
+  {n:'CountDownLatch: wait for 5 services to boot before accepting requests',d:'E',link:'https://www.baeldung.com/java-countdown-latch'},
+  {n:'Semaphore: connection pool capped at 10 connections',d:'M',link:'https://www.baeldung.com/java-semaphore'},
+  {n:'CyclicBarrier: multi-phase parallel computation (map-reduce pattern)',d:'M',link:'https://www.baeldung.com/java-cyclic-barrier'},
+  {n:'Building H2O',lc:1117,d:'M',co:['G']},
+]},
+
+// ══ WEEK 10 ══════════════════════════════════════════════════════════════════
+{id:'d21',s:'dsa',w:10,h:6,t:'DP: Intervals, Trees, Bitmask — Burst Balloons, House Robber III',qs:[
+  {n:'Burst Balloons',lc:312,d:'H',co:['G']},
+  {n:'House Robber III',lc:337,d:'M',co:['G','A']},
+  {n:'Strange Printer',lc:664,d:'H',co:['G']},
+  {n:'Palindrome Partitioning II',lc:132,d:'H',co:['G']},
+  {n:'Maximum Profit in Job Scheduling',lc:1235,d:'H',co:['G','A']},
+]},
+{id:'d22',s:'dsa',w:10,h:5,t:'Bit Manipulation — XOR tricks, bitmasking, power set',qs:[
+  {n:'Single Number',lc:136,d:'E',co:['A','G']},
+  {n:'Number of 1 Bits',lc:191,d:'E',co:['A']},
+  {n:'Counting Bits',lc:338,d:'E',co:['G']},
+  {n:'Reverse Bits',lc:190,d:'E',co:['A']},
+  {n:'Missing Number',lc:268,d:'E',co:['A','M']},
+  {n:'Sum of Two Integers',lc:371,d:'M',co:['M']},
+]},
+{id:'h01',s:'hld',w:10,h:5,t:'HLD: Scalability, Load Balancing, CDN, Reverse Proxy',qs:[
+  {n:'Scalability concepts: horizontal vs vertical scaling, stateless services',d:'M',link:'https://github.com/donnemartin/system-design-primer#scalability'},
+  {n:'L4 vs L7 load balancing — when would you use each?',d:'M',link:'https://github.com/donnemartin/system-design-primer#load-balancer'},
+  {n:'Consistent hashing: how does it minimize reshuffling when adding/removing servers?',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistent-hashing'},
+  {n:'CDN design: how do you route users to the nearest Point of Presence?',d:'M',link:'https://github.com/donnemartin/system-design-primer#content-delivery-network'},
+]},
+{id:'h02',s:'hld',w:10,h:5,t:'HLD: Caching — Redis, Memcached, patterns, eviction',qs:[
+  {n:'Cache-aside vs write-through vs write-back — when to use each',d:'M',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'Redis AOF vs RDB persistence trade-offs at scale',d:'M',link:'https://github.com/donnemartin/system-design-primer#redis'},
+  {n:'Hot-key / celebrity problem in a distributed cache — mitigation strategies',d:'H',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'LRU Cache',lc:146,d:'M',co:['G','M','A','Ms']},
+]},
+
+// ══ WEEK 11 ══════════════════════════════════════════════════════════════════
+{id:'d23',s:'dsa',w:11,h:7,t:'Segment Tree & Binary Indexed Tree (Fenwick) — range queries',qs:[
+  {n:'Range Sum Query Mutable',lc:307,d:'M',co:['G']},
+  {n:'Count of Smaller Numbers After Self',lc:315,d:'H',co:['G','M']},
+  {n:'Reverse Pairs',lc:493,d:'H',co:['G']},
+  {n:'The Skyline Problem',lc:218,d:'H',co:['G']},
+]},
+{id:'d24',s:'dsa',w:11,h:5,t:'Math & Number Theory — GCD, Sieve, Modular Arithmetic, Fast Power',qs:[
+  {n:'Happy Number',lc:202,d:'E',co:['G']},
+  {n:'Pow x to the n',lc:50,d:'M',co:['G','M']},
+  {n:'Multiply Strings',lc:43,d:'M',co:['G','A']},
+  {n:'Spiral Matrix',lc:54,d:'M',co:['G','M']},
+  {n:'Rotate Image',lc:48,d:'M',co:['G','M']},
+  {n:'Text Justification',lc:68,d:'H',co:['G']},
+]},
+{id:'d25',s:'dsa',w:11,h:6,t:'Advanced Graph — Bridges, Articulation Points, SCC',qs:[
+  {n:'Critical Connections in a Network',lc:1192,d:'H',co:['G']},
+  {n:'Find Eventual Safe States',lc:802,d:'M',co:['G']},
+  {n:'Minimum Number of Vertices to Reach All Nodes',lc:1557,d:'M',co:['G']},
+  {n:'Number of Provinces',lc:547,d:'M',co:['G','M']},
+  {n:'Check if There is a Valid Path in a Grid',lc:1391,d:'M',co:['G']},
+]},
+{id:'h03',s:'hld',w:11,h:5,t:'HLD: Databases — SQL vs NoSQL, Sharding, Replication, Indexing',qs:[
+  {n:'Sharding strategy for a Users table with 1B rows — range vs hash vs directory',d:'H',link:'https://github.com/donnemartin/system-design-primer#sharding'},
+  {n:'Read replicas: routing reads and handling replication lag',d:'M',link:'https://github.com/donnemartin/system-design-primer#master-slave-replication'},
+  {n:'Cassandra vs MySQL for time-series data — trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer#nosql'},
+  {n:'Index design: (user_id, timestamp, type) for a social feed query',d:'H',link:'https://github.com/donnemartin/system-design-primer#sql-or-nosql'},
+]},
+{id:'h04',s:'hld',w:11,h:4,t:'HLD: CAP Theorem, PACELC, Consistency Patterns',qs:[
+  {n:'CAP: why can you only have 2 of 3? Real system examples (DynamoDB, Cassandra)',d:'M',link:'https://github.com/donnemartin/system-design-primer#cap-theorem'},
+  {n:'Eventual consistency: what guarantees does it actually provide?',d:'M',link:'https://github.com/donnemartin/system-design-primer#eventual-consistency'},
+  {n:'Design a system: strongly consistent writes, eventually consistent reads',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistency-patterns'},
+]},
+
+// ══ WEEK 12 ══════════════════════════════════════════════════════════════════
+{id:'d26',s:'dsa',w:12,h:20,t:'DSA Hard Marathon — 3 Leetcode Hard/day × 5 days (tagged by company)',qs:[
+  {n:'Merge K Sorted Lists',lc:23,d:'H',co:['G','A']},
+  {n:'Median of Two Sorted Arrays',lc:4,d:'H',co:['G','A','M']},
+  {n:'Serialize and Deserialize Binary Tree',lc:297,d:'H',co:['G','M','A']},
+  {n:'Word Ladder II',lc:126,d:'H',co:['G']},
+  {n:'Alien Dictionary',lc:269,d:'H',co:['G']},
+  {n:'Trapping Rain Water',lc:42,d:'H',co:['G','A','M']},
+  {n:'Largest Rectangle in Histogram',lc:84,d:'H',co:['G','A']},
+  {n:'Regular Expression Matching',lc:10,d:'H',co:['G']},
+  {n:'Russian Doll Envelopes',lc:354,d:'H',co:['G']},
+  {n:'Maximum Profit in Job Scheduling',lc:1235,d:'H',co:['G','A']},
+  {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
+  {n:'Count of Smaller Numbers After Self',lc:315,d:'H',co:['G','M']},
+  {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
+  {n:'Burst Balloons',lc:312,d:'H',co:['G']},
+  {n:'Minimum Cost to Hire K Workers',lc:857,d:'H',co:['G']},
+]},
+{id:'d27',s:'dsa',w:12,h:12,t:'DSA Mock Interviews ×4 — timed 45-min sessions',qs:[
+  {n:'Mock 1 (Google): 2 medium problems cold in 45 min',d:'M'},
+  {n:'Mock 2 (Meta): array/string + tree, optimize for space',d:'M'},
+  {n:'Mock 3 (Amazon): graph/DP + full complexity analysis',d:'H'},
+  {n:'Mock 4 (Mixed): 1 coding + 1 mini system design',d:'H'},
+]},
+{id:'l05',s:'lld',w:12,h:4,t:'Anti-patterns & Refactoring — God Object, Shotgun Surgery, Feature Envy',qs:[
+  {n:'Refactor a God Class: OrderService doing validation + pricing + notification + DB',d:'H',link:'https://refactoring.guru/smells/large-class'},
+  {n:'Feature Envy: method uses more from another class than its own',d:'M',link:'https://refactoring.guru/smells/feature-envy'},
+  {n:'Shotgun Surgery: new payment method requires changes in 8 different files',d:'M',link:'https://refactoring.guru/smells/shotgun-surgery'},
+  {n:'Break circular dependency A→B→A using dependency injection',d:'M',link:'https://www.baeldung.com/circular-dependencies-in-spring'},
+]},
+{id:'h05',s:'hld',w:12,h:5,t:'HLD: Message Queues — Kafka, RabbitMQ, SQS, exactly-once',qs:[
+  {n:'Kafka pipeline for real-time order processing at 1M events/sec',d:'H',link:'https://github.com/donnemartin/system-design-primer#message-queues'},
+  {n:'Kafka ordering: guaranteed within partition, not across — design implications',d:'M',link:'https://github.com/donnemartin/system-design-primer#kafka'},
+  {n:'Exactly-once semantics: producer idempotence + transactional consumers',d:'H',link:'https://github.com/donnemartin/system-design-primer#kafka'},
+  {n:'RabbitMQ vs Kafka: when to prefer push-based over pull-based messaging',d:'M',link:'https://github.com/donnemartin/system-design-primer#message-queues'},
+]},
+{id:'h06',s:'hld',w:12,h:4,t:'HLD: API Design — REST vs GraphQL vs gRPC, versioning, idempotency',qs:[
+  {n:'Idempotent payment API: prevent duplicate charges on retry',d:'H',link:'https://github.com/donnemartin/system-design-primer#representational-state-transfer-rest'},
+  {n:'REST vs GraphQL: when is GraphQL wrong? (caching, complexity, over-fetching)',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'API versioning strategy supporting v1 and v2 simultaneously',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'gRPC vs REST for internal microservices — latency, schema, trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+
+// ══ WEEK 13 ══════════════════════════════════════════════════════════════════
+{id:'l06',s:'lld',w:13,h:4,t:'LLD Design: Parking Lot — multi-level, vehicle types, pricing',qs:[
+  {n:'Full class diagram: multi-level lot with Bike, Car, Truck spot types',d:'M',link:'https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/'},
+  {n:'Strategy pattern for pricing: flat vs hourly vs peak-hour multiplier',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+  {n:'Entry/exit ticket system with real-time spot availability counter',d:'H',link:'https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/'},
+]},
+{id:'l07',s:'lld',w:13,h:4,t:'LLD Design: Elevator System — multiple cars, LOOK/SCAN scheduling',qs:[
+  {n:'State machine: IDLE → MOVING_UP → MOVING_DOWN → MAINTENANCE',d:'M',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+  {n:'LOOK algorithm: serve all pending floors in one direction before reversing',d:'H',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+  {n:'Multi-elevator dispatch: minimize average wait time across 4 elevators',d:'H',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+]},
+{id:'l08',s:'lld',w:13,h:4,t:'LLD Design: ATM Machine — auth, transactions, cash dispensing',qs:[
+  {n:'State machine: Idle → CardInserted → PINVerified → TransactionComplete',d:'M',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+  {n:'Cash dispensing with greedy denomination selection + availability constraints',d:'M',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+  {n:'Thread safety: two users withdraw from same account simultaneously — prevent overdraft',d:'H',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+]},
+{id:'h07',s:'hld',w:13,h:3,t:'HLD: URL Shortener — hashing, redirect, analytics',qs:[
+  {n:'Full design: short URL generation, collision resolution, 301 vs 302 redirect',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'100M URLs/day with < 50ms redirect latency — storage and caching strategy',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'Analytics: click count, geo, device — without impacting redirect latency',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+]},
+{id:'h08',s:'hld',w:13,h:3,t:'HLD: Rate Limiter — token bucket, sliding window, distributed',qs:[
+  {n:'Token bucket in Redis using Lua script — atomic INCR + EXPIRE',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+  {n:'Sliding window log vs sliding window counter at 10K req/sec',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+  {n:'Distributed rate limiter across 10 servers without single-point bottleneck',d:'H',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+]},
+{id:'h09',s:'hld',w:13,h:4,t:'HLD: Twitter/X — news feed, fanout, celebrity problem',qs:[
+  {n:'Home timeline: push (fanout-on-write) vs pull (fanout-on-read)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md'},
+  {n:'Celebrity problem: user with 10M followers — avoid O(10M) writes per tweet',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md'},
+  {n:'Trending topics: distributed leaderboard with time-decay scoring',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+
+// ══ WEEK 14 ══════════════════════════════════════════════════════════════════
+{id:'l09',s:'lld',w:14,h:4,t:'LLD Design: Hotel Booking — rooms, reservations, pricing rules',qs:[
+  {n:'Room hierarchy with Decorator for amenities (breakfast, wifi, sea view)',d:'M',link:'https://refactoring.guru/design-patterns/decorator'},
+  {n:'Availability calendar: find all free rooms for [check-in, check-out] range',d:'H',link:'https://www.geeksforgeeks.org/hotel-management-system-design/'},
+  {n:'Pricing engine with Strategy: seasonal + discount + loyalty tier stacking',d:'H',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'l10',s:'lld',w:14,h:4,t:'LLD Design: Library Management — books, members, borrow/return, fines',qs:[
+  {n:'Catalog search by title/author/ISBN with Observer for reservation waitlist',d:'M',link:'https://www.geeksforgeeks.org/library-management-system-design/'},
+  {n:'Waitlist queue: when a book is returned, notify next in queue automatically',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
+  {n:'Fine calculation via Strategy: flat vs per-day vs tiered structure',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'l11',s:'lld',w:14,h:4,t:'LLD Design: Chess — pieces, move validation, check/checkmate',qs:[
+  {n:'Piece hierarchy: King, Queen, Rook, Bishop, Knight, Pawn + Strategy for moves',d:'M',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+  {n:'isValidMove() for each piece including castling and en passant',d:'H',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+  {n:'Detect check and checkmate — incremental attack tracking, not brute-force',d:'H',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+]},
+{id:'l12',s:'lld',w:14,h:5,t:'LLD Design: Food Delivery (Swiggy/DoorDash) — order lifecycle, notifications',qs:[
+  {n:'Order state machine: PLACED → ACCEPTED → PREPARING → OUT_FOR_DELIVERY → DELIVERED',d:'M',link:'https://www.geeksforgeeks.org/design-food-ordering-system/'},
+  {n:'Search/filter by cuisine, rating, ETA — designed for extensibility',d:'M',link:'https://www.geeksforgeeks.org/design-food-ordering-system/'},
+  {n:'Observer: notify customer, restaurant, and driver at each state change',d:'H',link:'https://refactoring.guru/design-patterns/observer'},
+]},
+{id:'l13',s:'lld',w:14,h:5,t:'LLD Design: Ride Sharing (Uber/Lyft) — driver matching, trip state machine',qs:[
+  {n:'Trip state machine: BOOKING → DRIVER_ASSIGNED → RIDE_STARTED → COMPLETED',d:'M',link:'https://www.geeksforgeeks.org/design-a-ride-sharing-app-like-ola-uber/'},
+  {n:'Driver matching: nearest available driver using geohash grid',d:'H',link:'https://www.geeksforgeeks.org/design-a-ride-sharing-app-like-ola-uber/'},
+  {n:'Surge pricing: Strategy — multiplier computed from demand/supply ratio',d:'H',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'h10',s:'hld',w:14,h:4,t:'HLD: WhatsApp — messaging, delivery receipts, group chat',qs:[
+  {n:'Message delivery pipeline: WebSocket → message store → push notification',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Group chat with 512 members: fan-out strategy at scale',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Message ordering guarantee: causal consistency with vector clocks',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h11',s:'hld',w:14,h:4,t:'HLD: YouTube/Netflix — upload, transcoding, CDN, adaptive streaming',qs:[
+  {n:'Video upload pipeline: chunked upload → object store → transcoding queue',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+  {n:'Adaptive bitrate streaming (HLS/DASH): how player decides segment quality',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+  {n:'Netflix CDN: pre-position content to ISP caches (Open Connect model)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+]},
+{id:'h12',s:'hld',w:14,h:4,t:'HLD: Uber — real-time location, driver matching, surge pricing',qs:[
+  {n:'Driver location updates at scale: geohash vs Uber\'s H3 hexagonal grid',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Matching algorithm: nearest driver with fairness constraint',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Surge pricing: demand/supply ratio per geo-cell in real time',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+]},
+
+// ══ WEEK 15 ══════════════════════════════════════════════════════════════════
+{id:'h13',s:'hld',w:15,h:5,t:'HLD: Distributed Consensus — Raft, Paxos, Leader Election',qs:[
+  {n:'Raft leader election: split vote, term numbers, log replication walkthrough',d:'H',link:'https://raft.github.io/'},
+  {n:'ZooKeeper distributed locks using ephemeral znodes + sequential ordering',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Snowflake ID generator: globally unique IDs across 100 nodes without coordination',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h14',s:'hld',w:15,h:4,t:'HLD: Distributed Transactions — 2PC, Saga, idempotency',qs:[
+  {n:'2PC vs Saga: when does 2PC fail? Design Saga for Order + Payment + Inventory',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Idempotency keys for payment API: safe to retry without double charge',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Compensating transactions: rollback design for a partial Saga failure',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h15',s:'hld',w:15,h:3,t:'HLD: Google Search — crawling, indexing, ranking, typeahead',qs:[
+  {n:'Web crawler: politeness, dedup (Bloom filter), priority queue, distributed frontier',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md'},
+  {n:'Inverted index construction at web scale using MapReduce',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md'},
+  {n:'Typeahead < 10ms: trie + ML ranking + distributed caching strategy',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md'},
+]},
+{id:'h16',s:'hld',w:15,h:3,t:'HLD: Notification System — fan-out, priority, dedup, exactly-once',qs:[
+  {n:'Fan-out for 500M users with priority queues (transactional > promotional)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Exactly-once delivery for critical notifications across push/email/SMS',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Per-user per-channel rate limiting to avoid spamming',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+]},
+{id:'h17',s:'hld',w:15,h:3,t:'HLD: Payment System — ledger, idempotency, reconciliation',qs:[
+  {n:'Double-entry ledger: guarantee no money created or lost during transfers',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Idempotent payment API: safe to retry without double charge',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Async reconciliation: detect discrepancies between internal ledger and bank',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h18',s:'hld',w:15,h:9,t:'HLD Mock Sessions ×3 — full whiteboard 45 min each',qs:[
+  {n:'Mock 1: Design a ride-sharing service end-to-end (Uber)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Mock 2: Design a real-time collaborative document editor (Google Docs)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Mock 3: Design a distributed job scheduler (like AWS Batch or Airflow)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'p01',s:'proj',w:15,h:20,t:'Project: Distributed Key-Value Store — WAL, LSM-tree, consistent hashing',qs:[
+  {n:'Write-Ahead Log (WAL) for crash recovery before MemTable flush',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'LSM-tree: MemTable + SSTable + compaction (leveled vs tiered)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Consistent hashing ring with virtual nodes — add/remove gracefully',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistent-hashing'},
+  {n:'Raft leader election between 3 nodes',d:'H',link:'https://raft.github.io/'},
+]},
+
+// ══ WEEK 16 ══════════════════════════════════════════════════════════════════
+{id:'p02',s:'proj',w:16,h:12,t:'Project: Real-time Chat App — WebSocket, Redis pub/sub, message ordering',qs:[
+  {n:'WebSocket server handling 10K concurrent connections — connection lifecycle',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Message ordering using Lamport timestamps or per-room sequence numbers',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Presence system: online/offline/typing indicators without polling',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'p03',s:'proj',w:16,h:3,t:'Polish GitHub — architecture diagrams, READMEs, contribution graph',qs:[
+  {n:'README: architecture diagram, tech decisions, and explicit trade-offs section',d:'E'},
+  {n:'Add CONTRIBUTING.md, issue templates, and CI badge',d:'E'},
+]},
+{id:'b01',s:'beh',w:16,h:5,t:'STAR Method — build a story bank of 10+ unique experiences',qs:[
+  {n:'Tell me about the most complex system you\'ve architected end-to-end',d:'M'},
+  {n:'Describe a time you disagreed with a major technical decision',d:'M'},
+  {n:'Give an example of influencing a team without direct authority',d:'M'},
+  {n:'Tell me about a project that failed — root cause and what you changed',d:'M'},
+]},
+{id:'b02',s:'beh',w:16,h:4,t:'Amazon Leadership Principles — map all 16 LPs to personal stories',qs:[
+  {n:'Customer Obsession: went beyond requirements to serve the customer',d:'M'},
+  {n:'Ownership: took responsibility for a failure partly caused by others',d:'M'},
+  {n:'Invent and Simplify: creative solution that significantly reduced complexity',d:'M'},
+  {n:'Dive Deep: caught a critical problem others missed by going into details',d:'M'},
+]},
+{id:'b03',s:'beh',w:16,h:3,t:'Conflict & Difficult Stakeholder stories ×3',qs:[
+  {n:'Conflict with a peer engineer over technical approach — resolution outcome',d:'M'},
+  {n:'Disagreement with manager on product priority — what did you do?',d:'M'},
+  {n:'Difficult external stakeholder — how did you manage expectations?',d:'M'},
+]},
+{id:'b04',s:'beh',w:16,h:3,t:'Leadership & Ownership stories — driving impact without authority',qs:[
+  {n:'Led a cross-team project with no direct reports — how did you align everyone?',d:'M'},
+  {n:'Proactively identified and fixed a critical issue before it became a P0',d:'M'},
+  {n:'Mentored a junior engineer — specific measurable growth you enabled',d:'M'},
+]},
+{id:'b05',s:'beh',w:16,h:2,t:'Failure & Learning stories ×2 — honest and growth-oriented',qs:[
+  {n:'Production incident you caused — what happened and what changed afterward',d:'M'},
+  {n:'Technical decision that turned out to be wrong 6 months later',d:'M'},
+]},
+{id:'b06',s:'beh',w:16,h:2,t:'Innovation & Ambiguity — first-principles, data-driven decisions',qs:[
+  {n:'Built something from scratch with no clear requirements — how did you navigate?',d:'M'},
+  {n:'Novel technical solution that improved system performance by 10x+',d:'M'},
+]},
+{id:'b07',s:'beh',w:16,h:4,t:'Company Research — eng blogs, recent launches, culture fit angle',qs:[
+  {n:'Why this company? Must be technical + cultural, never generic',d:'M'},
+  {n:'Read their engineering blog: what hard problem have they solved publicly?',d:'E'},
+  {n:'What would you change about their product from an engineering perspective?',d:'M'},
+]},
+{id:'b08',s:'beh',w:16,h:9,t:'Behavioral Mock Sessions ×3 — record, review, sharpen',qs:[
+  {n:'Mock 1: Amazon Leadership Principles deep dive (45 min)',d:'M'},
+  {n:'Mock 2: Meta/Google general behavioral — STAR answers under 2 min',d:'M'},
+  {n:'Mock 3: Self-record — identify weak stories and filler words',d:'M'},
+]},
+{id:'b09',s:'beh',w:16,h:12,t:'Full Loop Simulations ×3 — DSA + System Design + Behavioral',qs:[
+  {n:'Loop 1: Coding (2×45min) + System Design (60min) + Behavioral (30min)',d:'H'},
+  {n:'Loop 2: Same format, different company template',d:'H'},
+  {n:'Loop 3: With a coach or senior engineer — calibrate, get brutal feedback',d:'H'},
+]},
+{id:'b10',s:'beh',w:16,h:6,t:'Weak Area Sprint — revisit all ↻ tagged topics, timed re-attempts',qs:[
+  {n:'Re-attempt every DSA problem marked Revisit — cold, no notes',d:'H'},
+  {n:'Re-whiteboard every system design marked Revisit — from scratch',d:'H'},
+  {n:'Polish and sharpen every behavioral story marked Revisit',d:'M'},
+]},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const KEY='faang_v3';
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}');}catch{}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function status(id){return state[id]||'pending';}
+function toggle(id,val){
+  state[id]=state[id]===val?'pending':val;
+  save();
+  if(val==='done'&&state[id]==='done'){
+    const done=T.filter(t=>state[t.id]==='done').length;
+    if(done%10===0)showToast(`${done} topics done 🔥`);
+    if(done===T.length)showToast('🏆 ALL DONE! You crushed it!');
+  }
+  render();
+}
+function toggleProbs(id){
+  const panel=document.getElementById('pp-'+id);
+  const btn=document.getElementById('pb-'+id);
+  if(!panel||!btn)return;
+  const open=panel.classList.toggle('open');
+  btn.textContent=(open?'▾':'▸')+' '+btn.dataset.label;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function secTopics(sec){return T.filter(t=>t.s===sec);}
+function secDone(sec){return secTopics(sec).filter(t=>state[t.id]==='done').length;}
+function globalStats(){
+  const done=T.filter(t=>state[t.id]==='done').length;
+  const rev=T.filter(t=>state[t.id]==='revisit').length;
+  return{total:T.length,done,rev,pct:Math.round(done/T.length*100)};
+}
+function lcSlug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+let activeTab='all',activeFilter='all',activeWeek='all';
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────────
+function renderStats(){
+  const{total,done,rev,pct}=globalStats();
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-rev').textContent=rev;
+  document.getElementById('s-pct').textContent=pct+'%';
+  document.getElementById('gbar').style.width=pct+'%';
+  document.getElementById('ring').style.strokeDashoffset=2*Math.PI*22*(1-pct/100);
+}
+function renderPills(){
+  const tabs=[{key:'all',label:'All Topics',color:'#818cf8'},...Object.entries(S).map(([k,v])=>({key:k,label:v.label,color:v.color})),{key:'revisit',label:'↻ Revisit',color:'#fb923c'}];
+  document.getElementById('pills').innerHTML=tabs.map(tab=>{
+    const cnt=tab.key==='all'?T.length:tab.key==='revisit'?T.filter(t=>state[t.id]==='revisit').length:secTopics(tab.key).length;
+    const on=activeTab===tab.key;
+    const st=on?`background:${tab.color}22;border-color:${tab.color}55;color:${tab.color}`:'';
+    return`<button class="sec-pill ${on?'active':''}" style="${st}" onclick="setTab('${tab.key}')">${tab.label}<span class="pill-cnt">${cnt}</span></button>`;
+  }).join('');
+}
+function renderSecCards(){
+  document.getElementById('sec-cards').innerHTML=Object.entries(S).map(([k,v])=>{
+    const total=secTopics(k).length,done=secDone(k),pct=total?Math.round(done/total*100):0;
+    return`<div class="sec-card" onclick="setTab('${k}')"><div class="sc-title" style="color:${v.color}">${v.label}</div><div class="sc-nums">${done}/${total}</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${pct}%;background:${v.color}"></div></div></div>`;
+  }).join('');
+}
+function filtered(){
+  let list=T;
+  if(activeTab==='revisit')list=list.filter(t=>state[t.id]==='revisit');
+  else if(activeTab!=='all')list=list.filter(t=>t.s===activeTab);
+  if(activeFilter==='done')list=list.filter(t=>state[t.id]==='done');
+  if(activeFilter==='revisit')list=list.filter(t=>state[t.id]==='revisit');
+  if(activeFilter==='pending')list=list.filter(t=>!state[t.id]||state[t.id]==='pending');
+  if(activeWeek!=='all')list=list.filter(t=>t.w===+activeWeek);
+  return list;
+}
+// co-tag rendering is inlined in card()
+function card(t){
+  const sec=S[t.s],st=status(t.id),qCount=t.qs?t.qs.length:0;
+  const label=`${qCount} ${t.s==='dsa'?'problems':'questions'}`;
+  const probsHtml=qCount?`
+    <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">▸ ${label}</button>
+    <div class="probs-panel" id="pp-${t.id}">${t.qs.map(q=>{
+      const href=q.lc?`https://leetcode.com/problems/${lcSlug(q.n)}/`:q.link||null;
+      const nameEl=href
+        ?`<a class="prob-name" href="${href}" target="_blank" rel="noopener">${q.n}${q.lc?` <span class="prob-lc">#${q.lc}</span>`:' <span class="prob-lc">↗</span>'}</a>`
+        :`<span class="prob-name">${q.n}</span>`;
+      const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
+      const _co=q.co&&q.co.length?`<span class="prob-co">${q.co.map(c=>{const d=_ci[c]||[c,'#888'];return`<span class="co-tag" title="${d[0]}" style="background:${d[1]}22;color:${d[1]}">${c}</span>`;}).join('')}</span>`:'';
+      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}</div>`;
+    }).join('')}</div>`:''
+  ;
+  return`<div class="topic-card ${st}">
+    <div class="card-top"><div class="sec-dot" style="background:${sec.color};box-shadow:0 0 5px ${sec.color}66"></div><div class="card-title">${t.t}</div></div>
+    <div class="card-meta"><span class="mtag" style="color:${sec.color};border-color:${sec.color}33">${sec.label}</span><span class="mtag">~${t.h}h</span><span class="mtag">Wk ${t.w}</span></div>
+    <div class="card-btns">
+      <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
+      <button class="cbtn rev-btn ${st==='revisit'?'on':''}" onclick="toggle('${t.id}','revisit')">↻ Revisit</button>
+    </div>${probsHtml}
+  </div>`;
+}
+function renderContent(){
+  const list=filtered();
+  const el=document.getElementById('content');
+  if(!list.length){el.innerHTML=`<div class="empty"><h3>Nothing here</h3><p>No topics match these filters.</p></div>`;return;}
+  const byWeek={};
+  list.forEach(t=>(byWeek[t.w]=byWeek[t.w]||[]).push(t));
+  el.innerHTML=Object.entries(byWeek).sort(([a],[b])=>+a-+b).map(([w,ts])=>{
+    const doneW=ts.filter(t=>state[t.id]==='done').length;
+    return`<div class="week-group"><div class="week-hdr"><span class="wk-badge">Week ${w}</span><span class="wk-month">${MONTH(+w)}</span><span class="wk-label">${WK[w]||''}</span><span class="wk-prog">${doneW}/${ts.length}</span></div><div class="topic-grid">${ts.map(card).join('')}</div></div>`;
+  }).join('');
+}
+function setTab(k){activeTab=k;render();}
+function render(){renderStats();renderPills();renderSecCards();renderContent();}
+
+document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');activeFilter=b.dataset.f;render();
+}));
+const wkSel=document.getElementById('wk-sel');
+[...new Set(T.map(t=>t.w))].sort((a,b)=>a-b).forEach(w=>{
+  const o=document.createElement('option');
+  o.value=w;o.textContent=`Week ${w} — ${MONTH(w)}`;wkSel.appendChild(o);
+});
+wkSel.addEventListener('change',e=>{activeWeek=e.target.value;render();});
+render();
+</script>
+</body>
+</html>
