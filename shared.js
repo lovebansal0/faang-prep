@@ -21,6 +21,36 @@ function topicQStats(t){
   return {done,rev,total,attempted:done+rev};
 }
 
+// ── per-problem annotations (code + design image), shared key with main tracker ──
+let annot={}; try{annot=JSON.parse(localStorage.getItem('faang_annot')||'{}');}catch{}
+const pnames={}; let annotKey=null;
+function saveAnnot(){try{localStorage.setItem('faang_annot',JSON.stringify(annot));}catch(e){showToast('⚠ Storage full — try a smaller image or an image URL.');}}
+function hasAnnot(k){const a=annot[k];return !!(a&&(a.code||a.img));}
+function openAnnot(k){
+  annotKey=k;const a=annot[k]||{};
+  document.getElementById('annot-name').textContent=pnames[k]||'Problem';
+  document.getElementById('annot-code').value=a.code||'';
+  document.getElementById('annot-img-url').value='';
+  renderAnnotPreview(a.img);
+  document.getElementById('annot-modal').style.display='flex';
+}
+function renderAnnotPreview(img){const p=document.getElementById('annot-preview');p.innerHTML=img?`<img src="${img}" alt="design">`:'No image yet — upload a diagram or paste a URL.';}
+function annotCodeInput(v){if(!annotKey)return;annot[annotKey]=annot[annotKey]||{};annot[annotKey].code=v;saveAnnot();}
+function annotSetImgUrl(){const u=document.getElementById('annot-img-url').value.trim();if(!u||!annotKey)return;annot[annotKey]=annot[annotKey]||{};annot[annotKey].img=u;saveAnnot();renderAnnotPreview(u);}
+function annotUpload(input){
+  const f=input.files&&input.files[0];if(!f||!annotKey)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const im=new Image();im.onload=()=>{
+    const max=900;let w=im.width,h=im.height;if(w>max){h=Math.round(h*max/w);w=max;}
+    const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+    const data=c.toDataURL('image/jpeg',0.72);annot[annotKey]=annot[annotKey]||{};annot[annotKey].img=data;saveAnnot();renderAnnotPreview(data);
+  };im.src=e.target.result;};
+  reader.readAsDataURL(f);
+}
+function annotClear(){if(!annotKey)return;delete annot[annotKey];saveAnnot();closeAnnotModal();renderAll();}
+function closeAnnotModal(){document.getElementById('annot-modal').style.display='none';annotKey=null;}
+function annotDone(){if(annotKey&&annot[annotKey]&&!annot[annotKey].code&&!annot[annotKey].img){delete annot[annotKey];saveAnnot();}closeAnnotModal();renderAll();}
+
 // ── theme ──
 function applyTheme(t){document.body.classList.toggle('light',t==='light');const b=document.getElementById('theme-toggle');if(b)b.textContent=t==='light'?'☀️':'🌙';}
 function toggleTheme(){const n=document.body.classList.contains('light')?'dark':'light';localStorage.setItem('faang_theme',n);applyTheme(n);}
@@ -40,7 +70,7 @@ function card(t){
   const qs=topicQStats(t);
   const noun=['dsa','mcr','query'].includes(t.s)?'problems':'questions';
   const label=`${qs.total} ${noun}${qs.attempted?` · ✓${qs.done}${qs.rev?` ↻${qs.rev}`:''}`:''}`;
-  const pqBtns=(k,ps)=>`<span class="pq-btns"><button class="pq-btn done ${ps==='done'?'on':''}" title="Done" onclick="event.stopPropagation();togglePQ('${k}','done')">✓</button><button class="pq-btn rev ${ps==='revisit'?'on':''}" title="Revisit" onclick="event.stopPropagation();togglePQ('${k}','revisit')">↻</button></span>`;
+  const pqBtns=(k,ps,nm)=>{pnames[k]=nm;return`<span class="pq-btns"><button class="pq-btn annot ${hasAnnot(k)?'on':''}" title="Add code / design image" onclick="event.stopPropagation();openAnnot('${k}')">✎</button><button class="pq-btn done ${ps==='done'?'on':''}" title="Done" onclick="event.stopPropagation();togglePQ('${k}','done')">✓</button><button class="pq-btn rev ${ps==='revisit'?'on':''}" title="Revisit" onclick="event.stopPropagation();togglePQ('${k}','revisit')">↻</button></span>`;};
   const probsHtml=qCount?`
     <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">▸ ${label}</button>
     <div class="probs-panel" id="pp-${t.id}">${t.qs.map(q=>{
@@ -48,7 +78,7 @@ function card(t){
       const nameEl=href?`<a class="prob-name" href="${href}" target="_blank" rel="noopener">${q.n}${q.lc?` <span class="prob-lc">#${q.lc}</span>`:' <span class="prob-lc">↗</span>'}</a>`:`<span class="prob-name">${q.n}</span>`;
       const _co=q.co&&q.co.length?`<span class="prob-co">${q.co.map(c=>{const d=_CI[c]||[c,'#888'];return`<span class="co-tag" title="${d[0]}" style="background:${d[1]}22;color:${d[1]}">${c}</span>`;}).join('')}</span>`:'';
       const k=pkey(t.id,q),ps=pstatus(k),rc=ps==='done'?'pdone':ps==='revisit'?'previsit':'';
-      return`<div class="prob-row ${rc}"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}${pqBtns(k,ps)}</div>`;
+      return`<div class="prob-row ${rc}"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}${pqBtns(k,ps,q.n)}</div>`;
     }).join('')}</div>`:'';
   return`<div class="topic-card ${st}" style="border-left-color:${sec.color}33">
     <div class="card-top"><div class="sec-dot" style="background:${sec.color};box-shadow:0 0 6px ${sec.color}77"></div><div class="card-title">${t.t}</div></div>

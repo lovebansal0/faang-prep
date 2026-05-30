@@ -24,6 +24,25 @@
 </div>
 <div class="content" id="content"></div>
 <div class="toast" id="toast"></div>
+<div class="modal-overlay" id="annot-modal" style="display:none" onclick="if(event.target===this)annotDone()">
+  <div class="modal">
+    <h3>✎ Solution &amp; Design Notes</h3>
+    <div class="annot-name" id="annot-name"></div>
+    <div class="annot-section-label">💻 Code / approach</div>
+    <textarea class="annot-code" id="annot-code" placeholder="Paste your solution, key insight, complexity, or approach…" oninput="annotCodeInput(this.value)" onkeydown="if(event.key==='Tab'){event.preventDefault();const s=this.selectionStart;this.value=this.value.slice(0,s)+'  '+this.value.slice(this.selectionEnd);this.selectionStart=this.selectionEnd=s+2;annotCodeInput(this.value);}"></textarea>
+    <div class="annot-section-label">🖼 Design image (diagram, whiteboard photo)</div>
+    <div class="annot-img-controls">
+      <label class="annot-upload-btn">⬆ Upload image<input type="file" accept="image/*" style="display:none" onchange="annotUpload(this)"></label>
+      <input class="annot-img-url" id="annot-img-url" placeholder="…or paste an image URL (excalidraw, imgur)" onkeydown="if(event.key==='Enter')annotSetImgUrl()">
+      <button class="annot-upload-btn" onclick="annotSetImgUrl()">Set URL</button>
+    </div>
+    <div class="annot-preview" id="annot-preview"></div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="annotClear()">Clear all</button>
+      <button class="modal-btn primary" onclick="annotDone()">Done</button>
+    </div>
+  </div>
+</div>
 <script src="data.js"></script>
 <script src="shared.js"></script>
 <script>DISCIPLINE=['hld','lld','mcr'];renderAll();</script>
