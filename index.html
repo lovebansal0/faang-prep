@@ -202,7 +202,18 @@ a.prob-name:hover{color:#60a5fa}
 .modal-btn.primary{background:linear-gradient(135deg,#818cf8,#60a5fa);color:#fff}
 .modal-btn.secondary{background:var(--surface2);border:1px solid var(--border);color:var(--muted2)}
 .modal-btn:hover{opacity:.85}
-@media(max-width:640px){.header{flex-direction:column;align-items:flex-start}.stats-row{flex-wrap:wrap}.content{padding:14px}.topic-grid{grid-template-columns:1fr}.sync-btns{margin-left:0}}
+/* scroll to top */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#60a5fa);border:none;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .15s;z-index:150}
+.scroll-top.show{opacity:1;pointer-events:auto}
+.scroll-top:hover{transform:translateY(-3px)}
+/* collapse-all btn */
+.ce-btn{padding:4px 11px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:11px;cursor:pointer;transition:all .15s}
+.ce-btn:hover{background:var(--surface2);color:var(--text)}
+/* ETA banner */
+.eta-banner{background:linear-gradient(90deg,rgba(129,140,248,.08),rgba(52,211,153,.06));border-bottom:1px solid var(--border);padding:7px 24px;font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.eta-banner b{color:var(--text);font-weight:700}
+.eta-pill{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:2px 10px}
+@media(max-width:640px){.header{flex-direction:column;align-items:flex-start}.stats-row{flex-wrap:wrap}.content{padding:14px}.topic-grid{grid-template-columns:1fr}.sync-btns{margin-left:0}.scroll-top{bottom:16px;right:16px}}
 </style>
 </head>
 <body>
@@ -241,6 +252,7 @@ a.prob-name:hover{color:#60a5fa}
 <div class="global-bar-wrap">
   <div class="global-bar"><div class="global-bar-fill" id="gbar" style="width:0%"></div></div>
 </div>
+<div class="eta-banner" id="eta-banner"></div>
 <div class="search-wrap">
   <div class="search-row">
     <span class="search-icon">🔍</span>
@@ -268,10 +280,13 @@ a.prob-name:hover{color:#60a5fa}
   <button class="f-btn" data-f="revisit">↻ Revisit</button>
   <select class="week-sel" id="wk-sel"><option value="all">All Weeks</option></select>
   <button class="jump-btn" onclick="jumpToNext()" title="Scroll to first incomplete topic">▶ Next incomplete</button>
+  <button class="ce-btn" onclick="collapseAll()" title="Collapse all weeks">⊟ Collapse all</button>
+  <button class="ce-btn" onclick="expandAll()" title="Expand all weeks">⊞ Expand all</button>
   <span class="co-legend">Company tags: <b style="color:#4285f4">G</b>oogle · <b style="color:#1877f2">M</b>eta · <b style="color:#ff9900">A</b>mazon · <b style="color:#00a4ef">Ms</b> · <b style="color:#9b9b9b">Ub</b>er · verified 2025-26</span>
 </div>
 <div class="content" id="content"></div>
 <div class="toast" id="toast"></div>
+<button class="scroll-top" id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 <!-- Add Topic Modal -->
 <div class="modal-overlay" id="add-topic-modal" style="display:none" onclick="if(event.target===this)closeAddTopic()">
   <div class="modal" style="max-width:560px">
@@ -341,10 +356,11 @@ const S = {
   mcr:   {label:'Machine Coding', color:'#f43f5e'},
   query: {label:'Adv Queries',    color:'#0ea5e9'},
   ai:    {label:'AI/ML for SWE',  color:'#a855f7'},
+  cto:   {label:'CTO / Exec',     color:'#fbbf24'},
 };
 
 const WK={1:'Arrays · Two Pointers · Sliding Window  ⊕  Thread Lifecycle',2:'Binary Search · Stack · Monotonic Stack  ⊕  SOLID Principles',3:'Linked Lists · Binary Trees  ⊕  Synchronization & Locks',4:'BST · Heaps · Tries  ⊕  Creational Patterns',5:'Graphs BFS/DFS · Union Find  ⊕  JMM & Atomics',6:'Topological Sort · Shortest Path  ⊕  Structural Patterns',7:'Backtracking · Greedy  ⊕  wait/notify & ThreadPool',8:'DP: 1D & 2D Grid  ⊕  Behavioral Patterns',9:'DP: Knapsack · Sequences  ⊕  Classic Concurrency Problems',10:'DP Advanced · Bit Manipulation  ⊕  HLD Fundamentals',11:'Segment Tree · Adv Graphs · Math  ⊕  HLD: Databases & CAP',12:'DSA Hard Marathon  ⊕  HLD: Queues & APIs  ·  LLD Anti-patterns',13:'LLD Problems I  ⊕  HLD: URL Shortener · Rate Limiter · Twitter',14:'LLD Problems II  ⊕  HLD: WhatsApp · YouTube · Uber',15:'HLD: Advanced Systems + Mocks  ⊕  Projects',16:'Projects · Behavioral · Full Loop Mocks'};
-const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup 1-4':w<=24?'🚀 Startup 5-8':w<=28?'Month 5 (Advanced)':'';
+const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup 1-4':w<=24?'🚀 Startup 5-8':w<=28?'Month 5 (Advanced)':'👔 CTO / Exec Track';
 
 // append startup week labels to WK
 Object.assign(WK,{
@@ -1554,6 +1570,62 @@ const T=[
   {n:'A time you were wrong at scale — the blast radius and how you rebuilt trust',d:'H'},
 ]},
 
+// ══ CTO / EXECUTIVE TRACK (Week 28+) ═════════════════════════════════════════
+{id:'cto01',s:'cto',w:29,h:5,t:'👔 Engineering Org Design — team topologies, scaling, Conway\'s Law',qs:[
+  {n:'Design an eng org from 10 → 100 → 500 engineers: when do you reorg and why?',d:'H',link:'https://teamtopologies.com/'},
+  {n:'Conway\'s Law: how does your org chart leak into your architecture? Use it deliberately',d:'H',link:'https://martinfowler.com/bliki/ConwaysLaw.html'},
+  {n:'Stream-aligned vs platform vs enabling vs complicated-subsystem teams — design the split',d:'H',link:'https://teamtopologies.com/key-concepts'},
+  {n:'Span of control: how many reports per EM, how many EMs per Director? Defend it',d:'M'},
+  {n:'Centralized vs embedded model for SRE/Security/Data — trade-offs at 200 engineers',d:'H'},
+]},
+{id:'cto02',s:'cto',w:29,h:5,t:'👔 Technical Strategy & Roadmap — vision, bets, sequencing',qs:[
+  {n:'Write a 3-year technical vision for a company at Series B — what are your 3 big bets?',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'Balance feature velocity vs platform investment: defend a 70/20/10 split to the CEO',d:'H'},
+  {n:'A competitor ships faster — how do you decide whether to copy, leapfrog, or ignore?',d:'H'},
+  {n:'Sunset a legacy product line: technical, customer, and team impact plan',d:'H'},
+  {n:'How do you keep architecture decisions aligned with business strategy as both change?',d:'M',link:'https://adr.github.io/'},
+]},
+{id:'cto03',s:'cto',w:29,h:5,t:'👔 Budget, Cloud Cost & FinOps — spend, ROI, vendor management',qs:[
+  {n:'Cloud bill grew 3× but revenue grew 1.5× — how do you diagnose and cut without slowing teams?',d:'H',link:'https://www.finops.org/introduction/what-is-finops/'},
+  {n:'Build a FinOps practice: unit economics (cost per request/tenant), showback vs chargeback',d:'H',link:'https://www.finops.org/framework/'},
+  {n:'Justify a $2M platform investment to the board with a 3-year ROI model',d:'H'},
+  {n:'Negotiate an enterprise cloud committed-use contract — what levers do you have?',d:'M'},
+  {n:'Build vs buy at company scale: framework weighing TCO, lock-in, focus, and time-to-market',d:'H',link:'https://martinfowler.com/articles/build-vs-buy.html'},
+]},
+{id:'cto04',s:'cto',w:29,h:5,t:'👔 Hiring, Leveling & Performance — talent strategy at scale',qs:[
+  {n:'Design a leveling framework (L3→L7 + staff/principal track) and calibration process',d:'H',link:'https://www.levels.fyi/'},
+  {n:'Scale hiring to 100 engineers/year without dropping the bar — pipeline + interview design',d:'H'},
+  {n:'Handle a high performer who is toxic to the team — concrete steps and timeline',d:'H'},
+  {n:'Build vs retain: when do you hire senior externally vs promote from within?',d:'M'},
+  {n:'Design an IC vs management dual-ladder so senior ICs are not forced into management',d:'M',link:'https://staffeng.com/'},
+]},
+{id:'cto05',s:'cto',w:29,h:5,t:'👔 Reliability Culture & Incident Command — SLOs, on-call, postmortems',qs:[
+  {n:'Roll out an error-budget policy company-wide — how do you get product VPs to buy in?',d:'H',link:'https://sre.google/sre-book/embracing-risk/'},
+  {n:'Stand up an incident-command process (IC roles, sev levels, comms) from scratch',d:'H',link:'https://sre.google/sre-book/managing-incidents/'},
+  {n:'Blameless postmortems: how do you change a blame culture without losing accountability?',d:'H',link:'https://sre.google/sre-book/postmortem-culture/'},
+  {n:'Set org-wide SLOs: who owns them, how do they cascade, what happens when breached?',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+]},
+{id:'cto06',s:'cto',w:29,h:5,t:'👔 Security, Compliance & Risk — SOC2, GDPR, threat posture',qs:[
+  {n:'Get to SOC 2 Type II in 6 months — what controls, evidence, and team effort?',d:'H',link:'https://www.vanta.com/resources/soc-2-compliance'},
+  {n:'GDPR + data residency for a global product: architecture and process implications',d:'H',link:'https://gdpr.eu/'},
+  {n:'Build a security program for a 100-person startup: where do you spend the first $500K?',d:'H'},
+  {n:'A breach just happened — walk the first 24 hours as the exec on point',d:'H'},
+  {n:'Risk register: how do you quantify and communicate tech risk to a non-technical board?',d:'M'},
+]},
+{id:'cto07',s:'cto',w:29,h:5,t:'👔 Board, Investors & M&A — communication and due diligence',qs:[
+  {n:'Present an engineering update to the board: what 3 metrics and what narrative?',d:'H'},
+  {n:'Technical due diligence on an acquisition target — your 2-week checklist',d:'H',link:'https://martinfowler.com/bliki/TechnicalDebt.html'},
+  {n:'Explain a major re-platforming investment to investors who want features now',d:'H'},
+  {n:'Translate technical risk into business risk for a CFO — give 3 concrete examples',d:'M'},
+  {n:'Post-acquisition integration: merge two eng teams, two stacks, two cultures',d:'H'},
+]},
+{id:'cto08',s:'cto',w:29,h:4,t:'👔 Data & AI Strategy (Exec) — governance, platform, build-vs-buy',qs:[
+  {n:'Define a company-wide data strategy: governance, lineage, privacy, self-serve analytics',d:'H',link:'https://www.montecarlodata.com/blog-what-is-data-governance/'},
+  {n:'AI strategy: where do you build vs buy vs fine-tune, and how do you measure ROI?',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Set an AI governance & safety policy for the company (PII, model risk, shadow AI)',d:'H',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
+  {n:'Make the platform-vs-product investment call for an internal data platform',d:'M'},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1629,6 +1701,21 @@ function jumpToNext(){
   setTimeout(()=>document.getElementById('wg-'+next.w)?.scrollIntoView({behavior:'smooth',block:'start'}),50);
 }
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+function collapseAll(){filtered().forEach(t=>collapsedWeeks.add(t.w));renderContent();}
+function expandAll(){collapsedWeeks.clear();renderContent();}
+function renderEta(){
+  const list=planList();
+  const pending=list.filter(t=>!state[t.id]||state[t.id]==='pending');
+  const hoursLeft=pending.reduce((s,t)=>s+(t.h||0),0);
+  const totalHours=list.reduce((s,t)=>s+(t.h||0),0);
+  const daysAt6=Math.ceil(hoursLeft/6);
+  const weeks=(daysAt6/7).toFixed(1);
+  const el=document.getElementById('eta-banner');
+  if(!el)return;
+  el.innerHTML=`<span class="eta-pill">⏳ <b>${hoursLeft}h</b> remaining of ${totalHours}h</span>`+
+    `<span class="eta-pill">📅 <b>~${daysAt6} days</b> @ 6h/day (≈${weeks} weeks)</span>`+
+    `<span class="eta-pill">✅ <b>${pending.length}</b> topics left</span>`;
+}
 
 // ── RENDER ─────────────────────────────────────────────────────────────────────
 function renderStats(){
@@ -1726,7 +1813,7 @@ function card(t){
     <div class="card-meta">
       <span class="mtag" style="color:${sec.color};border-color:${sec.color}44;background:${sec.color}11">${sec.label}</span>
       <span class="mtag">~${t.h}h</span>
-      <span class="mtag">Wk ${t.w<=28?t.w:'—'}</span>
+      <span class="mtag">${t.w<=28?'Wk '+t.w:t.w===29?'CTO':'—'}</span>
     </div>
     <div class="card-btns">
       <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
@@ -1791,7 +1878,7 @@ function renderContent(){
     const pct=Math.round(doneW/ts.length*100);
     const totalHrs=ts.reduce((s,t)=>s+t.h,0);
     const collapsed=collapsedWeeks.has(+w);
-    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'Extra';
+    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'CTO';
     const note=getNote(w);
     const progressBar=`<div style="position:absolute;bottom:0;left:0;height:2px;width:${pct}%;background:linear-gradient(90deg,#818cf8,#34d399);border-radius:2px;transition:width .4s"></div>`;
     return`<div class="week-group" id="wg-${w}">
@@ -1819,7 +1906,12 @@ function renderContent(){
   }).join('');
 }
 function setTab(k){activeTab=k;render();}
-function render(){renderStats();renderPills();renderSecCards();renderContent();}
+function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();}
+// scroll-to-top visibility
+window.addEventListener('scroll',()=>{
+  const b=document.getElementById('scroll-top');
+  if(b)b.classList.toggle('show',window.scrollY>400);
+});
 
 document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
