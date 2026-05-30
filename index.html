@@ -1626,6 +1626,30 @@ const T=[
   {n:'Make the platform-vs-product investment call for an internal data platform',d:'M'},
 ]},
 
+// ══ SENIOR/PRINCIPAL GAP-FILLERS ════════════════════════════════════════════
+{id:'wc01',s:'beh',w:16,h:5,t:'✍️ Writing & Communication (Principal) — design docs, RFC review, tech radar',qs:[
+  {n:'Write a design doc that a Director reads in 5 min and approves: structure, TL;DR, decision log',d:'H',link:'https://www.industrialempathy.com/posts/design-docs-at-google/'},
+  {n:'Review someone else\'s RFC at scale: what 5 questions do you always ask before approving?',d:'H',link:'https://google.github.io/eng-practices/review/reviewer/'},
+  {n:'Build a Tech Radar for your org (adopt/trial/assess/hold) — how do you decide placement?',d:'M',link:'https://www.thoughtworks.com/radar'},
+  {n:'Write a 1-pager that aligns 3 disagreeing teams on a single technical direction',d:'H'},
+  {n:'Communicate a hard "no" to a senior stakeholder in writing — keep trust, keep the relationship',d:'M'},
+  {n:'Async-first communication: turn a 1-hour meeting into a doc + 3 comments. When does it fail?',d:'M',link:'https://www.industrialempathy.com/posts/design-docs-at-google/'},
+]},
+{id:'api01',s:'hld',w:12,h:5,t:'🔁 API Idempotency & Evolution (deep) — keys, retries, versioning, contracts',qs:[
+  {n:'Design idempotency keys for POST /payments: storage, TTL, what to return on a replayed key',d:'H',link:'https://stripe.com/docs/api/idempotent_requests'},
+  {n:'Exactly-once API illusion: client retries on a 5xx but the write succeeded — how do you stay correct?',d:'H',link:'https://brandur.org/idempotency-keys'},
+  {n:'Evolve a public API without breaking callers: additive change, deprecation policy, sunset headers',d:'H',link:'https://cloud.google.com/apis/design/versioning'},
+  {n:'Backward + forward compatibility in payloads: tolerant reader, default fields, never-remove rule',d:'M',link:'https://martinfowler.com/articles/consumerDrivenContracts.html'},
+  {n:'Pagination contracts at scale: cursor vs offset, and why offset breaks under concurrent writes',d:'H',link:'https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/'},
+  {n:'Rate-limit + retry-after + exponential backoff: design the full client/server contract',d:'M',link:'https://learn.microsoft.com/en-us/azure/architecture/patterns/retry'},
+]},
+{id:'obs01',s:'devops',w:22,h:4,t:'🔭 Observability as Design (Senior) — SLO-driven reviews, golden signals',qs:[
+  {n:'Add an "observability section" to a design doc: what dashboards/alerts ship WITH the feature?',d:'H',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'The 4 golden signals (latency, traffic, errors, saturation) — instrument a new service from day one',d:'M',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'Design alerts that page on symptoms not causes — avoid alert fatigue with SLO burn rate',d:'H',link:'https://sre.google/workbook/alerting-on-slos/'},
+  {n:'Cardinality explosion in metrics/traces: how do you keep observability costs sane at scale?',d:'H',link:'https://www.honeycomb.io/blog/observability-cost'},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
