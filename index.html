@@ -994,6 +994,32 @@ const T=[
 {id:'op09',s:'prod',w:9, h:2,t:'🗺️ Office Planning (2h) — Code review + documentation sprint',qs:[{n:'Review 2 open PRs thoroughly. Add missing docstrings to 1 module.',d:'M'}]},
 {id:'op10',s:'prod',w:10,h:2,t:'🗺️ Office Planning (2h) — Quarter planning + interview schedule',qs:[{n:'Define next quarter goals. Book warm-up interviews for weeks 14-16.',d:'M'}]},
 
+// ══ BLENDED: HLD foundations woven into early FAANG weeks ═══════════════════
+{id:'hb01',s:'hld',w:2,h:3,t:'🏛 HLD Foundation 1 — Networking, HTTP, DNS, Client-Server basics',qs:[
+  {n:'What happens when you type a URL and press enter? (DNS → TCP → TLS → HTTP → render)',d:'M',link:'https://github.com/alex/what-happens-when'},
+  {n:'TCP vs UDP — when does each matter in system design?',d:'E',link:'https://github.com/donnemartin/system-design-primer#tcp'},
+  {n:'DNS resolution + how a CDN uses DNS/anycast to route to nearest edge',d:'M',link:'https://github.com/donnemartin/system-design-primer#domain-name-system'},
+  {n:'Latency numbers every engineer should know (L1 cache → cross-region RTT)',d:'M',link:'https://gist.github.com/jboner/2841832'},
+]},
+{id:'hb02',s:'hld',w:4,h:3,t:'🏛 HLD Foundation 2 — Storage basics: SQL vs NoSQL, indexing intuition',qs:[
+  {n:'When to pick SQL vs NoSQL — decision framework with real examples',d:'M',link:'https://github.com/donnemartin/system-design-primer#sql-or-nosql'},
+  {n:'How does a B-tree index make queries fast? Why can too many indexes hurt writes?',d:'M',link:'https://use-the-index-luke.com/'},
+  {n:'ACID vs BASE — what guarantees does each give and when is each acceptable?',d:'M',link:'https://github.com/donnemartin/system-design-primer#acid'},
+  {n:'Primary key, partition key, clustering key — design intuition for access patterns',d:'M',link:'https://github.com/donnemartin/system-design-primer#nosql'},
+]},
+{id:'hb03',s:'hld',w:6,h:3,t:'🏛 HLD Foundation 3 — Scalability: vertical/horizontal, stateless, LB intuition',qs:[
+  {n:'Vertical vs horizontal scaling — cost, limits, and failure-domain trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer#scalability'},
+  {n:'Why stateless services scale better — where does the state go instead?',d:'M',link:'https://github.com/donnemartin/system-design-primer#application-layer'},
+  {n:'Load balancer basics: round-robin, least-connections, sticky sessions',d:'M',link:'https://github.com/donnemartin/system-design-primer#load-balancer'},
+  {n:'Single point of failure: identify and eliminate them in a basic 3-tier app',d:'M',link:'https://github.com/donnemartin/system-design-primer#availability-patterns'},
+]},
+{id:'hb04',s:'hld',w:8,h:3,t:'🏛 HLD Foundation 4 — Caching, queues & the back-of-envelope estimation',qs:[
+  {n:'Where to cache (browser, CDN, app, DB) and the cost of cache invalidation',d:'M',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'Why add a message queue? Decoupling, buffering, and async processing intuition',d:'M',link:'https://github.com/donnemartin/system-design-primer#asynchronism'},
+  {n:'Back-of-envelope: estimate QPS, storage, and bandwidth for a 10M-user app',d:'H',link:'https://github.com/donnemartin/system-design-primer#back-of-the-envelope-calculations'},
+  {n:'Read-heavy vs write-heavy systems — how the design fundamentally changes',d:'M',link:'https://github.com/donnemartin/system-design-primer#performance-vs-scalability'},
+]},
+
 // ══ BLENDED: Mini-Project checkpoints woven into FAANG weeks ════════════════
 {id:'bp01',s:'proj',w:3,h:5,t:'🛠 Project Checkpoint 1 — Set up your portfolio REST API (auth + DB)',qs:[
   {n:'Init a Git repo, README, and folder structure for your interview portfolio project',d:'E'},
