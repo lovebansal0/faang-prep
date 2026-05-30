@@ -185,6 +185,15 @@ a.prob-name:hover{color:#60a5fa}
 .prob-lc{font-size:10px;color:var(--muted)}
 .prob-co{display:flex;gap:2px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:72px}
 .co-tag{font-size:8px;font-weight:800;padding:1px 3px;border-radius:3px;cursor:default;line-height:1.5}
+/* per-problem status */
+.prob-row.pdone{opacity:.5}
+.prob-row.pdone .prob-name{text-decoration:line-through;text-decoration-color:var(--done)}
+.prob-row.previsit{background:rgba(251,146,60,.07);border-radius:5px;margin:0 -2px;padding-left:4px;padding-right:4px}
+.pq-btns{display:flex;gap:3px;flex-shrink:0;margin-left:4px}
+.pq-btn{width:19px;height:19px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pq-btn:hover{border-color:var(--border2);color:var(--text)}
+.pq-btn.done.on{background:rgba(52,211,153,.18);border-color:var(--done);color:var(--done)}
+.pq-btn.rev.on{background:rgba(251,146,60,.18);border-color:var(--revisit);color:var(--revisit)}
 /* Misc */
 .empty{text-align:center;padding:60px 20px;color:var(--muted2)}
 .empty h3{font-size:15px;margin-bottom:6px;color:var(--text)}
@@ -1921,8 +1930,10 @@ function filtered(){
 function card(t){
   const sec=S[t.s],st=status(t.id),qCount=t.qs?t.qs.length:0;
   const recentCount=t.qs?t.qs.filter(q=>q.recent).length:0;
-  const label=`${qCount} ${['dsa','mcr','query'].includes(t.s)?'problems':'questions'}`;
+  const qdone=topicQDone(t);
+  const label=`${qCount} ${['dsa','mcr','query'].includes(t.s)?'problems':'questions'}${qdone?` · ${qdone}/${qCount} ✓`:''}`;
   const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
+  const pqBtns=(k,ps)=>`<span class="pq-btns"><button class="pq-btn done ${ps==='done'?'on':''}" title="Mark done" onclick="event.stopPropagation();togglePQ('${k}','done')">✓</button><button class="pq-btn rev ${ps==='revisit'?'on':''}" title="Mark revisit" onclick="event.stopPropagation();togglePQ('${k}','revisit')">↻</button></span>`;
   const probsHtml=qCount?`
     <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">
       ▸ ${label}
@@ -1933,12 +1944,18 @@ function card(t){
         ?`<a class="prob-name" href="${href}" target="_blank" rel="noopener">${q.n}${q.lc?` <span class="prob-lc">#${q.lc}</span>`:' <span class="prob-lc">↗</span>'}</a>`
         :`<span class="prob-name">${q.n}</span>`;
       const _co=q.co&&q.co.length?`<span class="prob-co">${q.co.map(c=>{const d=_ci[c]||[c,'#888'];return`<span class="co-tag" title="${d[0]}" style="background:${d[1]}22;color:${d[1]}">${c}</span>`;}).join('')}</span>`:'';
-      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}</div>`;
+      const k=pkey(t.id,q),ps=pstatus(k);
+      const rowCls=ps==='done'?'pdone':ps==='revisit'?'previsit':'';
+      return`<div class="prob-row ${rowCls}"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}${pqBtns(k,ps)}</div>`;
     }).join('')}</div>`:''
   ;
   // custom questions
   const myQs=customQs[t.id]||[];
-  const myQsHtml=myQs.map(q=>`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span><span class="prob-name">${q.n}</span><span class="cq-badge">My Q</span><button class="del-q-btn" title="Remove" onclick="delCustomQ('${t.id}',${q.id})">✕</button></div>`).join('');
+  const myQsHtml=myQs.map(q=>{
+    const k=pkey(t.id,q),ps=pstatus(k);
+    const rowCls=ps==='done'?'pdone':ps==='revisit'?'previsit':'';
+    return`<div class="prob-row ${rowCls}"><span class="diff ${q.d}">${q.d}</span><span class="prob-name">${q.n}</span><span class="cq-badge">My Q</span>${pqBtns(k,ps)}<button class="del-q-btn" title="Remove" onclick="delCustomQ('${t.id}',${q.id})">✕</button></div>`;
+  }).join('');
   const addQHtml=`<button class="add-q-toggle-btn" onclick="toggleAddQ('${t.id}')">＋ Add your own question</button><div class="add-q-form" id="aqf-${t.id}" style="display:none"><input class="add-q-text" id="aqt-${t.id}" placeholder="Question or problem to track…" onkeydown="if(event.key==='Enter')addCustomQ('${t.id}')"><select class="add-q-diff" id="aqd-${t.id}"><option>E</option><option selected>M</option><option>H</option></select><button class="add-q-submit" onclick="addCustomQ('${t.id}')">Add</button></div>`;
   const barColor=st==='done'?'var(--done)':st==='revisit'?'var(--revisit)':'transparent';
   return`<div class="topic-card ${st}" style="border-left-color:${sec.color}33">
@@ -2166,6 +2183,24 @@ function toggleNotes(w){
   if(!open)document.getElementById('wnta-'+w)?.focus();
 }
 
+// ── PER-PROBLEM STATUS ────────────────────────────────────────────────────────
+const PSK='faang_pstate'; let pstate={};
+try{pstate=JSON.parse(localStorage.getItem(PSK)||'{}');}catch{}
+function savePS(){localStorage.setItem(PSK,JSON.stringify(pstate));}
+function pkey(tid,q){ return tid+'::'+(q.id?('cq'+q.id):(q.lc?('lc'+q.lc):lcSlug(q.n))); }
+function pstatus(k){return pstate[k]||'pending';}
+function togglePQ(k,val){
+  pstate[k]=pstate[k]===val?'pending':val;
+  savePS();
+  renderContent();
+}
+function topicQDone(t){
+  if(!t.qs)return 0;
+  let n=t.qs.filter(q=>pstate[pkey(t.id,q)]==='done').length;
+  (customQs[t.id]||[]).forEach(q=>{if(pstate[pkey(t.id,q)]==='done')n++;});
+  return n;
+}
+
 // ── CUSTOM QUESTIONS ──────────────────────────────────────────────────────────
 const CQK='faang_cq'; let customQs={};
 try{customQs=JSON.parse(localStorage.getItem(CQK)||'{}');}catch{}
@@ -2214,21 +2249,23 @@ function delCustomTopic(id){
 }
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
-function encodeState(s){
-  // only store non-pending entries to keep payload tiny
-  const slim={};
-  Object.entries(s).forEach(([k,v])=>{if(v&&v!=='pending')slim[k]=v;});
-  return btoa(unescape(encodeURIComponent(JSON.stringify(slim))));
+function encodeBundle(){
+  // bundle topic state + per-problem state; only non-pending entries
+  const slimT={}; Object.entries(state).forEach(([k,v])=>{if(v&&v!=='pending')slimT[k]=v;});
+  const slimP={}; Object.entries(pstate).forEach(([k,v])=>{if(v&&v!=='pending')slimP[k]=v;});
+  return btoa(unescape(encodeURIComponent(JSON.stringify({t:slimT,p:slimP}))));
 }
 
-function decodeState(raw){
-  // accept full URL or bare hash code
+function decodeBundle(raw){
   const code = raw.includes('#') ? raw.split('#').pop() : raw.trim();
-  return JSON.parse(decodeURIComponent(escape(atob(code))));
+  const obj = JSON.parse(decodeURIComponent(escape(atob(code))));
+  // new format {t,p}; old format was a flat topic-state map
+  if(obj && (obj.t || obj.p)) return {t:obj.t||{}, p:obj.p||{}};
+  return {t:obj||{}, p:{}};
 }
 
 function copySyncLink(){
-  const code = encodeState(state);
+  const code = encodeBundle();
   const url  = 'https://lovebansal0.github.io/faang-prep/#' + code;
   if(navigator.clipboard){
     navigator.clipboard.writeText(url).then(()=>showToast('📤 Sync link copied! Open it on any device.'));
@@ -2251,13 +2288,14 @@ function applyImport(){
   const raw = document.getElementById('import-input').value.trim();
   if(!raw){showToast('Paste a sync link first.');return;}
   try{
-    const imported = decodeState(raw);
-    const count = Object.keys(imported).length;
-    state = imported;
-    save();
+    const b = decodeBundle(raw);
+    const count = Object.keys(b.t).length;
+    const pcount = Object.keys(b.p).length;
+    state = b.t; pstate = b.p;
+    save(); savePS();
     closeImport();
     render();
-    showToast(`✅ Synced! ${count} topic${count!==1?'s':''} restored.`);
+    showToast(`✅ Synced! ${count} topics + ${pcount} problems restored.`);
   }catch(e){
     showToast('❌ Invalid sync code. Copy the full link.');
   }
@@ -2268,9 +2306,9 @@ function applyImport(){
   const hash = location.hash.slice(1);
   if(!hash)return;
   try{
-    const imported = decodeState(hash);
-    state = imported;
-    save();
+    const b = decodeBundle(hash);
+    state = b.t; pstate = b.p;
+    save(); savePS();
     history.replaceState(null,'',location.pathname); // clean URL
     showToast('✅ Progress synced from link!');
   }catch(e){}
