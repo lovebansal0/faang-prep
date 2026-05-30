@@ -37,6 +37,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:va
 .ring-bg{fill:none;stroke:var(--border2);stroke-width:4}
 .ring-fill{fill:none;stroke:url(#grad);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
 .pct-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.heatmap-wrap{background:var(--surface);border-bottom:1px solid var(--border);overflow:hidden;max-height:0;transition:max-height .3s ease,padding .3s ease;padding:0 24px}
+.heatmap-wrap.open{max-height:260px;padding:14px 24px}
+.hm-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+.hm-sub{font-size:11px;color:var(--muted2);margin-bottom:10px}
+.heatmap{display:flex;gap:3px;overflow-x:auto;padding-bottom:6px}
+.hm-col{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.hm-cell{width:12px;height:12px;border-radius:3px;background:var(--surface2);border:1px solid var(--border)}
+.hm-cell.l1{background:rgba(56,189,248,.30);border-color:transparent}
+.hm-cell.l2{background:rgba(56,189,248,.55);border-color:transparent}
+.hm-cell.l3{background:rgba(52,211,153,.70);border-color:transparent}
+.hm-cell.l4{background:#34d399;border-color:transparent}
+.hm-legend{font-size:10px;color:var(--muted2);margin-top:8px;display:flex;align-items:center;gap:5px}
 .disc-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 24px}
 .disc-nav-label{font-size:11px;color:var(--muted2);font-weight:600;margin-right:2px}
 .disc-link{font-size:12px;color:var(--muted2);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);transition:all .15s;white-space:nowrap}
@@ -305,6 +317,7 @@ a.prob-name:hover{color:#60a5fa}
       <button class="sync-btn import" onclick="openImport()" title="Paste a sync link or code to restore progress">📥 Import</button>
       <button class="sync-btn" onclick="backupAll()" title="Download a full backup file (includes code + design images)">💾 Backup</button>
       <button class="sync-btn" onclick="document.getElementById('restore-file').click()" title="Restore everything from a backup file">♻️ Restore</button>
+      <button class="sync-btn" onclick="toggleHeatmap()" title="Show your activity heatmap">📅 Activity</button>
       <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
@@ -317,6 +330,12 @@ a.prob-name:hover{color:#60a5fa}
   <a class="disc-link" href="system-design.html">🏛 System Design</a>
   <a class="disc-link" href="behavioral.html">💬 Behavioral &amp; Leadership</a>
   <a class="disc-link" href="craft.html">🛠 Engineering Craft</a>
+</div>
+<div class="heatmap-wrap" id="heatmap-wrap">
+  <div class="hm-title">📅 Activity heatmap</div>
+  <div class="hm-sub" id="hm-sub"></div>
+  <div class="heatmap" id="heatmap"></div>
+  <div class="hm-legend">Less <span class="hm-cell"></span><span class="hm-cell l1"></span><span class="hm-cell l2"></span><span class="hm-cell l3"></span><span class="hm-cell l4"></span> More &nbsp;·&nbsp; each square = one day</div>
 </div>
 <div class="global-bar-wrap">
   <div class="global-bar"><div class="global-bar-fill" id="gbar" style="width:0%"></div></div>
@@ -1888,7 +1907,7 @@ let doneTs={}; try{doneTs=JSON.parse(localStorage.getItem('faang_done_ts')||'{}'
 function saveTs(){localStorage.setItem('faang_done_ts',JSON.stringify(doneTs));}
 // ── study streak: distinct active days ──
 let activity={}; try{activity=JSON.parse(localStorage.getItem('faang_activity')||'{}');}catch{}
-function recordActivity(){const d=new Date().toISOString().slice(0,10);if(!activity[d]){activity[d]=1;localStorage.setItem('faang_activity',JSON.stringify(activity));}}
+function recordActivity(){const d=new Date().toISOString().slice(0,10);activity[d]=(activity[d]||0)+1;localStorage.setItem('faang_activity',JSON.stringify(activity));}
 function currentStreak(){
   let s=0;const day=86400000;let cur=new Date();cur.setHours(0,0,0,0);
   const has=d=>activity[new Date(d).toISOString().slice(0,10)];
@@ -1896,6 +1915,35 @@ function currentStreak(){
   if(!has(cur)){cur=new Date(cur-day);if(!has(cur))return 0;}
   while(has(cur)){s++;cur=new Date(cur-day);}
   return s;
+}
+function toggleHeatmap(){
+  const w=document.getElementById('heatmap-wrap');
+  const open=w.classList.toggle('open');
+  if(open)renderHeatmap();
+}
+function renderHeatmap(){
+  const wrap=document.getElementById('heatmap');if(!wrap)return;
+  const weeks=18,day=86400000;
+  const today=new Date();today.setHours(0,0,0,0);
+  let start=new Date(today-(weeks*7-1)*day);
+  start.setDate(start.getDate()-start.getDay()); // align to Sunday
+  let cols='',cur=new Date(start),active=0,actions=0;
+  for(let w=0;w<weeks+1;w++){
+    let col='';
+    for(let dow=0;dow<7;dow++){
+      const ds=cur.toISOString().slice(0,10);
+      const cnt=activity[ds]||0;
+      const future=cur>today;
+      const lvl=cnt===0?'':cnt<=2?'l1':cnt<=5?'l2':cnt<=9?'l3':'l4';
+      if(cnt>0){active++;actions+=cnt;}
+      col+=`<div class="hm-cell ${future?'':lvl}" title="${ds}: ${cnt} action${cnt!==1?'s':''}"${future?' style="opacity:.2"':''}></div>`;
+      cur=new Date(cur.getTime()+day);
+    }
+    cols+=`<div class="hm-col">${col}</div>`;
+  }
+  wrap.innerHTML=cols;
+  const sub=document.getElementById('hm-sub');
+  if(sub)sub.textContent=`${active} active days · ${actions} total actions · ${currentStreak()}-day streak (last 18 weeks)`;
 }
 const REVIEW_DAYS=7;
 function daysSinceDone(id){const t=doneTs[id];if(!t)return null;return Math.floor((Date.now()-t)/86400000);}
@@ -2246,7 +2294,7 @@ function goToWeek(w){
   renderContent();
   setTimeout(()=>document.getElementById('wg-'+w)?.scrollIntoView({behavior:'smooth',block:'start'}),60);
 }
-function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();renderThisWeek();}
+function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();renderThisWeek();if(document.getElementById('heatmap-wrap')?.classList.contains('open'))renderHeatmap();}
 // scroll-to-top visibility
 window.addEventListener('scroll',()=>{
   const b=document.getElementById('scroll-top');
