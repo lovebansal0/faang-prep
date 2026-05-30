@@ -86,6 +86,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .prob-new{font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(249,115,22,.18);color:#fb923c;flex-shrink:0;vertical-align:middle}
 /* stats highlight */
 .stat .n{transition:color .3s}
+/* ── NOTES PER WEEK ── */
+.notes-toggle-btn{padding:3px 9px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:10px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.notes-toggle-btn:hover{border-color:var(--border2);color:var(--text)}
+.notes-toggle-btn.has-note{border-color:#818cf855;color:#818cf8;background:#818cf810}
+.week-notes-area{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+.week-notes-ta{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:10px 12px;font-size:12px;resize:vertical;min-height:72px;outline:none;font-family:inherit;line-height:1.65;transition:border-color .2s}
+.week-notes-ta:focus{border-color:#818cf8}
+.week-notes-ta::placeholder{color:var(--muted)}
+/* ── ADD CUSTOM QUESTION ── */
+.add-q-toggle-btn{width:100%;margin-top:8px;padding:5px;background:transparent;border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-size:10px;cursor:pointer;transition:all .15s}
+.add-q-toggle-btn:hover{border-color:#818cf855;color:#818cf8;background:#818cf808}
+.add-q-form{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.add-q-text{flex:1;min-width:150px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 8px;font-size:11px;outline:none}
+.add-q-text:focus{border-color:#818cf8}
+.add-q-diff{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 6px;font-size:11px;outline:none;cursor:pointer;width:54px}
+.add-q-submit{padding:5px 10px;background:#818cf820;border:1px solid #818cf855;border-radius:6px;color:#818cf8;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.add-q-submit:hover{background:#818cf830}
+.cq-badge{font-size:8px;padding:1px 4px;border-radius:3px;background:#818cf820;color:#818cf8;flex-shrink:0;margin-top:1px}
+.del-q-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;flex-shrink:0;opacity:.5;transition:opacity .15s}
+.del-q-btn:hover{opacity:1;color:#f87171}
+/* ── MY TOPICS PAGE ── */
+.my-topics-wrap{padding:0 4px}
+.my-topics-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.my-topics-hdr h2{font-size:16px;font-weight:700}
+.add-topic-cta{padding:8px 18px;background:linear-gradient(135deg,#818cf8,#60a5fa);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:5px}
+.add-topic-cta:hover{opacity:.85}
+.add-topic-form-box{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:20px;margin-bottom:20px}
+.add-topic-form-box h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);margin-bottom:14px}
+.atf-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.atf-input{flex:2;min-width:200px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:8px 12px;font-size:12px;outline:none}
+.atf-input:focus{border-color:#818cf8}
+.atf-select{flex:1;min-width:110px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:8px 10px;font-size:12px;outline:none;cursor:pointer}
+.atf-select option{background:var(--surface2)}
+.atf-save{padding:8px 18px;background:linear-gradient(135deg,#818cf8,#60a5fa);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.atf-cancel{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer}
+.custom-topic-card{position:relative}
+.ct-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;opacity:.4;transition:opacity .15s}
+.ct-del:hover{opacity:1;color:#f87171}
+.ct-badge{font-size:9px;padding:1px 5px;border-radius:3px;background:#818cf820;color:#818cf8;margin-left:4px}
+.my-topics-empty{text-align:center;padding:60px 20px;color:var(--muted2);border:1px dashed var(--border2);border-radius:12px}
+.my-topics-empty h3{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.my-topics-empty p{font-size:12px;max-width:380px;margin:0 auto;line-height:1.7}
 /* plan toggle */
 .plan-bar{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border)}
 .plan-bar-label{font-size:11px;color:var(--muted2);font-weight:600;white-space:nowrap}
@@ -176,7 +218,7 @@ a.prob-name:hover{color:#60a5fa}
     <div class="logo-icon">🎯</div>
     <div>
       <h1>FAANG+ Interview Prep</h1>
-      <p>Senior SWE · 10 YOE · 5h/day · 16-Week Blended Plan</p>
+      <p>Senior SWE · 10 YOE · 6h/day · 16-Week Blended Plan</p>
     </div>
   </div>
   <div class="stats-row">
@@ -230,6 +272,36 @@ a.prob-name:hover{color:#60a5fa}
 </div>
 <div class="content" id="content"></div>
 <div class="toast" id="toast"></div>
+<!-- Add Topic Modal -->
+<div class="modal-overlay" id="add-topic-modal" style="display:none" onclick="if(event.target===this)closeAddTopic()">
+  <div class="modal" style="max-width:560px">
+    <h3>📌 Add a Topic to My Topics</h3>
+    <p>Track anything extra you discover while studying — side-reads, new patterns, company-specific concepts.</p>
+    <div class="atf-row">
+      <input class="atf-input" id="at-title" placeholder="Topic title (e.g. 'Monotonic Deque patterns in Google interviews')">
+    </div>
+    <div class="atf-row">
+      <select class="atf-select" id="at-sec">
+        <option value="dsa">DSA</option><option value="mt">Multithreading</option>
+        <option value="lld">LLD</option><option value="hld">HLD</option>
+        <option value="proj">Projects</option><option value="beh">Behavioral</option>
+        <option value="prac">Practical Code</option><option value="fs">Full-Stack</option>
+        <option value="devops">DevOps/Cloud</option><option value="prod">Product Eng</option>
+        <option value="mcr">Machine Coding</option><option value="query">Adv Queries</option>
+        <option value="ai">AI/ML for SWE</option>
+      </select>
+      <input class="atf-input" id="at-hours" placeholder="Est. hours (e.g. 3)" type="number" min="1" max="40" style="max-width:120px">
+      <select class="atf-select" id="at-week" style="max-width:140px">
+        <option value="99">No week</option>
+        <script>for(let i=1;i<=28;i++)document.write(`<option value="${i}">Week ${i}</option>`);</script>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeAddTopic()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveAddTopic()">Add Topic</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="import-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h3>📥 Import Progress</h3>
@@ -564,6 +636,8 @@ const T=[
   {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
   {n:'Uncrossed Lines',lc:1035,d:'M',co:['G'],recent:true},
   {n:'Maximum Alternating Subsequence Sum',lc:1911,d:'M',co:['A'],recent:true},
+  {n:'Number of Ways to Stay in the Same Place After Some Steps',lc:1269,d:'H',co:['G'],recent:true},
+  {n:'Minimum Cost to Change the Final Value of Expression',lc:1896,d:'H',co:['G'],recent:true},
 ]},
 {id:'l04',s:'lld',w:8,h:7,t:'Behavioral Patterns — Observer, Strategy, Command, State, Template Method',qs:[
   {n:'Observer: type-safe event bus / pub-sub with listener registry',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
@@ -700,6 +774,15 @@ const T=[
   {n:'Reconstruct Itinerary',lc:332,d:'H',co:['G'],recent:true},
   {n:'Find in Mountain Array',lc:1095,d:'H',co:['G'],recent:true},
   {n:'Minimum Window Subsequence',lc:727,d:'H',co:['G'],recent:true},
+  // 2026 early reports
+  {n:'Count of Interesting Subarrays',lc:2845,d:'M',co:['G'],recent:true},
+  {n:'Maximum Score After Applying Operations',lc:2818,d:'H',co:['G'],recent:true},
+  {n:'Minimum Moves to Equal Array Elements II',lc:462,d:'M',co:['A'],recent:true},
+  {n:'Design a Food Rating System',lc:2353,d:'M',co:['A'],recent:true},
+  {n:'Shortest Path in a Grid with Obstacles Elimination',lc:1293,d:'H',co:['M'],recent:true},
+  {n:'Find K-th Smallest Pair Distance',lc:719,d:'H',co:['G'],recent:true},
+  {n:'Minimum Add to Make Parentheses Valid',lc:921,d:'M',co:['M'],recent:true},
+  {n:'Diagonal Traverse II',lc:1424,d:'M',co:['M'],recent:true},
 ]},
 {id:'d27',s:'dsa',w:12,h:12,t:'DSA Mock Interviews ×4 — timed 45-min sessions',qs:[
   {n:'Mock 1 (Google): 2 medium problems cold in 45 min',d:'M'},
@@ -898,6 +981,18 @@ const T=[
   {n:'Re-whiteboard every system design marked Revisit — from scratch',d:'H'},
   {n:'Polish and sharpen every behavioral story marked Revisit',d:'M'},
 ]},
+
+// ══ OFFICE PLANNING: 2h/week × weeks 1-10 ═══════════════════════════════════
+{id:'op01',s:'prod',w:1, h:2,t:'🗺️ Office Planning (2h) — Define sprint goals + week study plan',qs:[{n:'Write this week\'s OKR: 1 office goal + 1 study goal you will hit',d:'E'}]},
+{id:'op02',s:'prod',w:2, h:2,t:'🗺️ Office Planning (2h) — Sprint review + project risk scan',qs:[{n:'Update your project board: what slipped, what\'s on track, any blockers?',d:'E'}]},
+{id:'op03',s:'prod',w:3, h:2,t:'🗺️ Office Planning (2h) — Write RFC draft for your current project',qs:[{n:'Write a 1-page RFC: problem, proposed solution, 2 alternatives, open questions',d:'M',link:'https://www.ietf.org/standards/rfcs/'}]},
+{id:'op04',s:'prod',w:4, h:2,t:'🗺️ Office Planning (2h) — Architecture Decision Record (ADR)',qs:[{n:'Write an ADR for a key design decision you recently made or are about to make',d:'M',link:'https://adr.github.io/'}]},
+{id:'op05',s:'prod',w:5, h:2,t:'🗺️ Office Planning (2h) — Technical debt register',qs:[{n:'Identify 3 tech debt items in your codebase: rate each by effort × impact',d:'M',link:'https://martinfowler.com/bliki/TechnicalDebt.html'}]},
+{id:'op06',s:'prod',w:6, h:2,t:'🗺️ Office Planning (2h) — Risk assessment matrix',qs:[{n:'List 5 project risks: rate likelihood × impact, assign owner and mitigation',d:'M'}]},
+{id:'op07',s:'prod',w:7, h:2,t:'🗺️ Office Planning (2h) — Mid-point review + strategy adjust',qs:[{n:'Are you on track for your Q goal? If not, what 1 thing changes this week?',d:'E'}]},
+{id:'op08',s:'prod',w:8, h:2,t:'🗺️ Office Planning (2h) — Stakeholder update',qs:[{n:'Write a 5-bullet status update for your manager or team: status, risks, asks',d:'E'}]},
+{id:'op09',s:'prod',w:9, h:2,t:'🗺️ Office Planning (2h) — Code review + documentation sprint',qs:[{n:'Review 2 open PRs thoroughly. Add missing docstrings to 1 module.',d:'M'}]},
+{id:'op10',s:'prod',w:10,h:2,t:'🗺️ Office Planning (2h) — Quarter planning + interview schedule',qs:[{n:'Define next quarter goals. Book warm-up interviews for weeks 14-16.',d:'M'}]},
 
 // ══ BLENDED: Mini-Project checkpoints woven into FAANG weeks ════════════════
 {id:'bp01',s:'proj',w:3,h:5,t:'🛠 Project Checkpoint 1 — Set up your portfolio REST API (auth + DB)',qs:[
@@ -1324,9 +1419,14 @@ function renderStats(){
   document.getElementById('ring').style.strokeDashoffset=2*Math.PI*22*(1-pct/100);
 }
 function renderPills(){
-  const tabs=[{key:'all',label:'All Topics',color:'#818cf8'},...Object.entries(S).map(([k,v])=>({key:k,label:v.label,color:v.color})),{key:'revisit',label:'↻ Revisit',color:'#fb923c'}];
+  const tabs=[
+    {key:'all',label:'All Topics',color:'#818cf8'},
+    ...Object.entries(S).map(([k,v])=>({key:k,label:v.label,color:v.color})),
+    {key:'revisit',label:'↻ Revisit',color:'#fb923c'},
+    {key:'mytopics',label:'📌 My Topics',color:'#a78bfa'},
+  ];
   document.getElementById('pills').innerHTML=tabs.map(tab=>{
-    const cnt=tab.key==='all'?T.length:tab.key==='revisit'?T.filter(t=>state[t.id]==='revisit').length:secTopics(tab.key).length;
+    const cnt=tab.key==='all'?T.length:tab.key==='revisit'?T.filter(t=>state[t.id]==='revisit').length:tab.key==='mytopics'?customTopics.length:secTopics(tab.key).length;
     const on=activeTab===tab.key;
     const st=on?`background:${tab.color}22;border-color:${tab.color}55;color:${tab.color}`:'';
     return`<button class="sec-pill ${on?'active':''}" style="${st}" onclick="setTab('${tab.key}')">${tab.label}<span class="pill-cnt">${cnt}</span></button>`;
@@ -1392,54 +1492,108 @@ function card(t){
       return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${newBadge}${_co}</div>`;
     }).join('')}</div>`:''
   ;
+  // custom questions
+  const myQs=customQs[t.id]||[];
+  const myQsHtml=myQs.map(q=>`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span><span class="prob-name">${q.n}</span><span class="cq-badge">My Q</span><button class="del-q-btn" title="Remove" onclick="delCustomQ('${t.id}',${q.id})">✕</button></div>`).join('');
+  const addQHtml=`<button class="add-q-toggle-btn" onclick="toggleAddQ('${t.id}')">＋ Add your own question</button><div class="add-q-form" id="aqf-${t.id}" style="display:none"><input class="add-q-text" id="aqt-${t.id}" placeholder="Question or problem to track…" onkeydown="if(event.key==='Enter')addCustomQ('${t.id}')"><select class="add-q-diff" id="aqd-${t.id}"><option>E</option><option selected>M</option><option>H</option></select><button class="add-q-submit" onclick="addCustomQ('${t.id}')">Add</button></div>`;
   const barColor=st==='done'?'var(--done)':st==='revisit'?'var(--revisit)':'transparent';
   return`<div class="topic-card ${st}" style="border-left-color:${sec.color}33">
     <div class="card-top">
       <div class="sec-dot" style="background:${sec.color};box-shadow:0 0 6px ${sec.color}77"></div>
-      <div class="card-title">${t.t}</div>
+      <div class="card-title">${t.t}${t.custom?`<span class="ct-badge">My Topic</span>`:''}</div>
     </div>
     <div class="card-meta">
       <span class="mtag" style="color:${sec.color};border-color:${sec.color}44;background:${sec.color}11">${sec.label}</span>
       <span class="mtag">~${t.h}h</span>
-      <span class="mtag">Wk ${t.w}</span>
+      <span class="mtag">Wk ${t.w<=28?t.w:'—'}</span>
       ${recentCount?`<span class="mtag" style="color:#fb923c;border-color:#fb923c44;background:#fb923c11">🔥 ${recentCount} new</span>`:''}
     </div>
     <div class="card-btns">
       <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
       <button class="cbtn rev-btn ${st==='revisit'?'on':''}" onclick="toggle('${t.id}','revisit')">↻ Revisit</button>
-    </div>${probsHtml}
+    </div>${probsHtml}${myQsHtml?`<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">${myQsHtml}</div>`:''}
+    ${addQHtml}
     <div class="card-status-bar" style="background:${barColor};opacity:.6"></div>
   </div>`;
 }
 function renderContent(){
-  const list=filtered();
   const el=document.getElementById('content');
-  // update search count
+
+  // ── MY TOPICS special view ────────────────────────────────────────────────
+  if(activeTab==='mytopics'){
+    const showForm=el.dataset.atform==='1';
+    el.innerHTML=`<div class="my-topics-wrap">
+      <div class="my-topics-hdr">
+        <h2>📌 My Topics <span style="font-size:12px;color:var(--muted2);font-weight:400">${customTopics.length} custom topic${customTopics.length!==1?'s':''}</span></h2>
+        <button class="add-topic-cta" onclick="openAddTopic()">＋ Add Topic</button>
+      </div>
+      ${customTopics.length===0?`<div class="my-topics-empty"><h3>Nothing here yet</h3><p>Add topics you discover while studying — a tricky pattern, a company-specific concept, a side-read you want to track.</p></div>`
+      :`<div class="topic-grid">${customTopics.map(t=>`
+        <div class="topic-card custom-topic-card ${status(t.id)}">
+          <button class="ct-del" onclick="delCustomTopic('${t.id}')" title="Remove">✕</button>
+          <div class="card-top"><div class="sec-dot" style="background:${S[t.s]?.color||'#888'};box-shadow:0 0 6px ${S[t.s]?.color||'#888'}77"></div><div class="card-title">${t.t}</div></div>
+          <div class="card-meta">
+            <span class="mtag" style="color:${S[t.s]?.color||'#888'};border-color:${S[t.s]?.color||'#888'}44;background:${S[t.s]?.color||'#888'}11">${S[t.s]?.label||t.s}</span>
+            <span class="mtag">~${t.h}h</span>
+            <span class="ct-badge">My Topic</span>
+          </div>
+          <div class="card-btns">
+            <button class="cbtn done-btn ${status(t.id)==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
+            <button class="cbtn rev-btn ${status(t.id)==='revisit'?'on':''}" onclick="toggle('${t.id}','revisit')">↻ Revisit</button>
+          </div>
+          <button class="add-q-toggle-btn" onclick="toggleAddQ('${t.id}')">＋ Add a question</button>
+          <div class="add-q-form" id="aqf-${t.id}" style="display:none">
+            <input class="add-q-text" id="aqt-${t.id}" placeholder="Question to track…" onkeydown="if(event.key==='Enter')addCustomQ('${t.id}')">
+            <select class="add-q-diff" id="aqd-${t.id}"><option>E</option><option selected>M</option><option>H</option></select>
+            <button class="add-q-submit" onclick="addCustomQ('${t.id}')">Add</button>
+          </div>
+          ${(customQs[t.id]||[]).length?`<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px">${(customQs[t.id]||[]).map(q=>`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span><span class="prob-name">${q.n}</span><span class="cq-badge">My Q</span><button class="del-q-btn" onclick="delCustomQ('${t.id}',${q.id})">✕</button></div>`).join('')}</div>`:''}
+        </div>`).join('')}</div>`}
+    </div>`;
+    return;
+  }
+
+  // ── NORMAL week-by-week view ───────────────────────────────────────────────
+  const list=filtered();
+  // also include custom topics if tab is 'all' and no search/filter conflicts
+  const allList = (activeTab==='all'&&activeFilter==='all'&&activeWeek==='all'&&!searchQuery)
+    ? [...list, ...customTopics] : list;
+
   const sc=document.getElementById('search-count');
   if(searchQuery&&sc){sc.style.display='block';sc.textContent=`${list.length} topic${list.length!==1?'s':''} match "${searchQuery}"`;}
   else if(sc){sc.style.display='none';}
-  if(!list.length){el.innerHTML=`<div class="empty"><h3>${searchQuery?'No matches':'Nothing here'}</h3><p>${searchQuery?'Try a different keyword — search works on topic titles, problem names and company names.':'No topics match the current filters.'}</p></div>`;return;}
+  if(!allList.length){el.innerHTML=`<div class="empty"><h3>${searchQuery?'No matches':'Nothing here'}</h3><p>${searchQuery?'Try a different keyword — works on topic titles, problem names and company names.':'No topics match the current filters.'}</p></div>`;return;}
+
   const byWeek={};
-  list.forEach(t=>(byWeek[t.w]=byWeek[t.w]||[]).push(t));
+  allList.forEach(t=>(byWeek[t.w]=byWeek[t.w]||[]).push(t));
   el.innerHTML=Object.entries(byWeek).sort(([a],[b])=>+a-+b).map(([w,ts])=>{
     const doneW=ts.filter(t=>state[t.id]==='done').length;
     const pct=Math.round(doneW/ts.length*100);
     const totalHrs=ts.reduce((s,t)=>s+t.h,0);
     const collapsed=collapsedWeeks.has(+w);
-    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:` M5·W${+w-24}`;
+    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'Extra';
+    const note=getNote(w);
     const progressBar=`<div style="position:absolute;bottom:0;left:0;height:2px;width:${pct}%;background:linear-gradient(90deg,#818cf8,#34d399);border-radius:2px;transition:width .4s"></div>`;
     return`<div class="week-group" id="wg-${w}">
       <div class="week-hdr ${collapsed?'week-collapsed':''}" id="wh-${w}" onclick="toggleWeek(${w})" style="position:relative;padding-bottom:8px">
         <span class="wk-badge">${wLabel}</span>
         <span class="wk-month">${MONTH(+w)}</span>
-        <span class="wk-label">${WK[w]||''}</span>
+        <span class="wk-label">${WK[w]||'Custom week'}</span>
         <span class="wk-hours">~${totalHrs}h</span>
         <span class="wk-prog" style="color:${pct===100?'var(--done)':pct>50?'var(--muted2)':'var(--muted)'}">${doneW}/${ts.length}</span>
+        <button class="notes-toggle-btn ${note?'has-note':''}" id="ntb-${w}" onclick="event.stopPropagation();toggleNotes(${w})" title="${note?'Notes saved':'Add notes'}">${note?'📝':'📝'} Notes</button>
         <span class="wk-toggle">${collapsed?'▶':'▼'}</span>
         ${progressBar}
       </div>
       <div class="week-body ${collapsed?'closed':'open'}" id="wb-${w}">
-        <div><div class="topic-grid" style="padding-top:2px">${ts.map(card).join('')}</div></div>
+        <div>
+          <div class="topic-grid" style="padding-top:2px">${ts.map(card).join('')}</div>
+          <div class="week-notes-area" id="wna-${w}" style="display:none">
+            <textarea class="week-notes-ta" id="wnta-${w}"
+              placeholder="Week ${w} notes — patterns noticed, interview experiences, things to revisit, resources found…"
+              oninput="setNote(${w},this.value)">${note}</textarea>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1498,6 +1652,70 @@ document.querySelectorAll('.plan-btn').forEach(b=>b.addEventListener('click',()=
   document.getElementById('plan-hint').textContent=PLAN_HINTS[activePlan]||'';
   renderPills(); render();
 }));
+
+// ── NOTES ─────────────────────────────────────────────────────────────────────
+const NK='faang_notes'; let notesState={};
+try{notesState=JSON.parse(localStorage.getItem(NK)||'{}');}catch{}
+function saveNotes(){localStorage.setItem(NK,JSON.stringify(notesState));}
+function setNote(w,v){notesState[String(w)]=v;saveNotes();
+  const btn=document.getElementById('ntb-'+w);
+  if(btn)btn.className='notes-toggle-btn'+(v.trim()?' has-note':'');
+}
+function getNote(w){return notesState[String(w)]||'';}
+function toggleNotes(w){
+  const area=document.getElementById('wna-'+w);
+  if(!area)return;
+  const open=area.style.display!=='none';
+  area.style.display=open?'none':'block';
+  if(!open)document.getElementById('wnta-'+w)?.focus();
+}
+
+// ── CUSTOM QUESTIONS ──────────────────────────────────────────────────────────
+const CQK='faang_cq'; let customQs={};
+try{customQs=JSON.parse(localStorage.getItem(CQK)||'{}');}catch{}
+function saveCQ(){localStorage.setItem(CQK,JSON.stringify(customQs));}
+function toggleAddQ(id){
+  const f=document.getElementById('aqf-'+id);
+  if(f)f.style.display=f.style.display==='flex'?'none':'flex';
+}
+function addCustomQ(id){
+  const txt=document.getElementById('aqt-'+id)?.value?.trim();
+  const d=document.getElementById('aqd-'+id)?.value||'M';
+  if(!txt){showToast('Enter a question first.');return;}
+  if(!customQs[id])customQs[id]=[];
+  customQs[id].push({n:txt,d,id:Date.now()});
+  saveCQ();
+  document.getElementById('aqt-'+id).value='';
+  renderContent();
+  showToast('Question added ✓');
+}
+function delCustomQ(topicId,qid){
+  if(!customQs[topicId])return;
+  customQs[topicId]=customQs[topicId].filter(q=>q.id!==qid);
+  saveCQ();renderContent();
+}
+
+// ── CUSTOM TOPICS (My Topics) ─────────────────────────────────────────────────
+const CTK='faang_ct'; let customTopics=[];
+try{customTopics=JSON.parse(localStorage.getItem(CTK)||'[]');}catch{}
+function saveCT(){localStorage.setItem(CTK,JSON.stringify(customTopics));}
+function openAddTopic(){document.getElementById('add-topic-modal').style.display='flex';}
+function closeAddTopic(){document.getElementById('add-topic-modal').style.display='none';}
+function saveAddTopic(){
+  const title=document.getElementById('at-title').value.trim();
+  if(!title){showToast('Enter a title first.');return;}
+  const sec=document.getElementById('at-sec').value;
+  const h=parseInt(document.getElementById('at-hours').value)||2;
+  const w=parseInt(document.getElementById('at-week').value)||99;
+  customTopics.push({id:'ct_'+Date.now(),s:sec,w,h,t:title,qs:[],custom:true});
+  saveCT();closeAddTopic();
+  document.getElementById('at-title').value='';
+  render();showToast('Topic added to My Topics ✓');
+}
+function delCustomTopic(id){
+  customTopics=customTopics.filter(t=>t.id!==id);
+  saveCT();render();showToast('Topic removed.');
+}
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
 function encodeState(s){
