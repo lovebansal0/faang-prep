@@ -223,10 +223,14 @@ const S = {
   fs:    {label:'Full-Stack',     color:'#06b6d4', startup:true},
   devops:{label:'DevOps/Cloud',   color:'#84cc16', startup:true},
   prod:  {label:'Product Eng',    color:'#e879f9', startup:true},
+  // ── Month 5 additions ──
+  mcr:   {label:'Machine Coding', color:'#f43f5e'},
+  query: {label:'Adv Queries',    color:'#0ea5e9'},
+  ai:    {label:'AI/ML for SWE',  color:'#a855f7'},
 };
 
 const WK={1:'Arrays · Two Pointers · Sliding Window  ⊕  Thread Lifecycle',2:'Binary Search · Stack · Monotonic Stack  ⊕  SOLID Principles',3:'Linked Lists · Binary Trees  ⊕  Synchronization & Locks',4:'BST · Heaps · Tries  ⊕  Creational Patterns',5:'Graphs BFS/DFS · Union Find  ⊕  JMM & Atomics',6:'Topological Sort · Shortest Path  ⊕  Structural Patterns',7:'Backtracking · Greedy  ⊕  wait/notify & ThreadPool',8:'DP: 1D & 2D Grid  ⊕  Behavioral Patterns',9:'DP: Knapsack · Sequences  ⊕  Classic Concurrency Problems',10:'DP Advanced · Bit Manipulation  ⊕  HLD Fundamentals',11:'Segment Tree · Adv Graphs · Math  ⊕  HLD: Databases & CAP',12:'DSA Hard Marathon  ⊕  HLD: Queues & APIs  ·  LLD Anti-patterns',13:'LLD Problems I  ⊕  HLD: URL Shortener · Rate Limiter · Twitter',14:'LLD Problems II  ⊕  HLD: WhatsApp · YouTube · Uber',15:'HLD: Advanced Systems + Mocks  ⊕  Projects',16:'Projects · Behavioral · Full Loop Mocks'};
-const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup Wk 1-4':w<=24?'🚀 Startup Wk 5-8':'';
+const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup 1-4':w<=24?'🚀 Startup 5-8':w<=28?'Month 5 (Advanced)':'';
 
 // append startup week labels to WK
 Object.assign(WK,{
@@ -238,6 +242,11 @@ Object.assign(WK,{
   22:'🚀 S6 · Kubernetes · Observability · Production Ops',
   23:'🚀 S7 · Startup System Design · Build vs Buy · Tech Debt',
   24:'🚀 S8 · Take-Home Prep · Startup Behavioral · Offer Negotiation',
+  // Month 5
+  25:'⚡ Machine Coding Round · In-Memory Systems · Live Coding',
+  26:'🔍 Advanced Queries · SQL · NoSQL · Redis · Kafka · API Design',
+  27:'🤖 AI/ML for Senior SWE · GenAI · RAG · Vector DBs · ML Design',
+  28:'🗺️ Office Project Planning · RFC · ADR · Estimation · Review',
 });
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
@@ -982,6 +991,143 @@ const T=[
   {n:'What questions must you ask before signing: liquidation preference, pro-rata, 409A valuation',d:'H',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
   {n:'How to negotiate: counter-offer, competing offers, base vs equity vs title vs remote',d:'M',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
 ]},
+
+// ══ MONTH 5 — WEEK 25: Machine Coding Round ══════════════════════════════════
+{id:'mc01',s:'mcr',w:25,h:5,t:'MCR Strategy — approach, time-boxing, README-first, what evaluators look for',qs:[
+  {n:'60-90 min breakdown: 15m design → 35m core code → 10m tests → polish',d:'M',link:'https://github.com/kumaransg/LLD'},
+  {n:'README-first: write class diagram + key decisions before typing code',d:'M',link:'https://github.com/kumaransg/LLD'},
+  {n:'Evaluation checklist: working demo, OOP, extensibility, edge cases, tests',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'How to handle MCR under pressure: what to skip, what to fake, how to narrate',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc02',s:'mcr',w:25,h:8,t:'In-Memory Systems — LRU/LFU Cache, Rate Limiter, Task Scheduler (live code)',qs:[
+  {n:'LRU Cache in 45 min — O(1) get/put with HashMap + DoublyLinkedList',lc:146,d:'M',co:['G','M','A','Ms']},
+  {n:'LFU Cache — frequency map + doubly linked list per frequency bucket',lc:460,d:'H',co:['G','M']},
+  {n:'Thread-safe Rate Limiter: token bucket, in-memory, no external deps',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Task Scheduler: schedule tasks with delay + cron expressions, thread-safe',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'In-memory Key-Value store with TTL, background expiry, pub/sub (Mini Redis)',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc03',s:'mcr',w:25,h:7,t:'Event & Messaging Systems — Pub-Sub, Notification, Message Queue',qs:[
+  {n:'Type-safe event bus: multiple subscribers, async dispatch, error isolation',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Multi-channel notification system: email/SMS/push, priority, dedup, retry',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'In-memory message queue: producer, consumer, DLQ for failed messages',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc04',s:'mcr',w:25,h:8,t:'Real Business Problems — Splitwise, Booking, Order Management (timed)',qs:[
+  {n:'Expense Splitter (Splitwise): track expenses, simplify debts, group management',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Parking Lot live coding — 60 min hard time-box, working + clean',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Food ordering system: restaurant → menu → cart → order → delivery (working)',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Order management: place, pay, cancel, refund — full state machine in code',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Mini URL shortener: encode/decode, collision handling, in-memory persistence',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc05',s:'mcr',w:25,h:7,t:'MCR Mock Sessions — timed full rounds with feedback',qs:[
+  {n:'MCR Mock 1: Design + implement Splitwise in 90 min (peer/solo)',d:'H'},
+  {n:'MCR Mock 2: Design + implement a thread-safe in-memory cache in 60 min',d:'H'},
+  {n:'MCR Mock 3: Design + implement a notification system in 90 min',d:'H'},
+  {n:'Self-review: record and review your code quality, naming, test coverage',d:'M'},
+]},
+
+// ══ WEEK 26: Advanced Queries ═════════════════════════════════════════════════
+{id:'q01',s:'query',w:26,h:6,t:'SQL Advanced — Window Functions, CTEs, Recursive Queries, EXPLAIN',qs:[
+  {n:'RANK vs DENSE_RANK vs ROW_NUMBER: salary leaderboard with ties',d:'M',link:'https://www.postgresqltutorial.com/postgresql-window-function/'},
+  {n:'LAG/LEAD: calculate day-over-day revenue change per product',d:'M',link:'https://www.postgresqltutorial.com/postgresql-lag-function/'},
+  {n:'Recursive CTE: find all managers in an org hierarchy up to the root',d:'H',link:'https://www.postgresqltutorial.com/postgresql-recursive-query/'},
+  {n:'EXPLAIN ANALYZE: identify sequential scan vs index scan, fix with composite index',d:'H',link:'https://www.postgresql.org/docs/current/using-explain.html'},
+  {n:'Materialized view: cache a slow aggregation query, refresh strategy',d:'M',link:'https://www.postgresql.org/docs/current/rules-materializedviews.html'},
+  {n:'Partitioned tables: partition a 1B-row events table by month, query pruning',d:'H',link:'https://www.postgresql.org/docs/current/ddl-partitioning.html'},
+]},
+{id:'q02',s:'query',w:26,h:6,t:'NoSQL Design — MongoDB Aggregation, Cassandra Partition Keys, DynamoDB Single-Table',qs:[
+  {n:'MongoDB $lookup + $unwind + $group: build a social feed aggregation pipeline',d:'H',link:'https://www.mongodb.com/docs/manual/core/aggregation-pipeline/'},
+  {n:'MongoDB: when to embed vs reference — comments in a blog post',d:'M',link:'https://www.mongodb.com/docs/manual/data-modeling/'},
+  {n:'Cassandra partition key design: time-series IoT data, avoid hot partitions',d:'H',link:'https://cassandra.apache.org/doc/stable/cassandra/data_modeling/data_modeling_rdbms.html'},
+  {n:'DynamoDB single-table design: User + Orders + Products in one table with GSI',d:'H',link:'https://www.alexdebrie.com/posts/dynamodb-single-table/'},
+  {n:'DynamoDB sparse GSI: index only items that have a specific attribute (pending orders)',d:'M',link:'https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html'},
+]},
+{id:'q03',s:'query',w:26,h:5,t:'Time Series & Analytics — InfluxDB, TimescaleDB, Retention, Downsampling',qs:[
+  {n:'Design a time-series schema: raw events + hourly + daily rollups — storage trade-offs',d:'H',link:'https://docs.timescale.com/timescaledb/latest/overview/core-concepts/'},
+  {n:'TimescaleDB continuous aggregate: automatically maintain hourly CPU avg',d:'M',link:'https://docs.timescale.com/timescaledb/latest/how-to-guides/continuous-aggregates/'},
+  {n:'Retention policy: auto-drop raw data after 7 days, keep hourly for 90 days',d:'M',link:'https://docs.influxdata.com/influxdb/v2/process-data/task-options/'},
+  {n:'Querying overlapping time windows: find sessions that span midnight',d:'H',link:'https://www.postgresql.org/docs/current/functions-datetime.html'},
+]},
+{id:'q04',s:'query',w:26,h:6,t:'Redis Advanced — Streams, Cluster, Lua, Complex Patterns for Senior SWE',qs:[
+  {n:'Redis Streams: XADD, XREAD, XGROUP, consumer groups, message acknowledgment',d:'H',link:'https://redis.io/docs/data-types/streams/'},
+  {n:'Redis Cluster: hash slots, key tags {user}.session for co-location',d:'H',link:'https://redis.io/docs/management/scaling/'},
+  {n:'Lua scripting: atomic check-and-set across multiple keys without MULTI/EXEC',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Distributed lock (Redlock): acquire, heartbeat, safe release pattern',d:'H',link:'https://redis.io/docs/manual/patterns/distributed-locks/'},
+  {n:'Redis BITFIELD / HyperLogLog / Bloom filter — when to use each',d:'M',link:'https://redis.io/docs/data-types/'},
+]},
+{id:'q05',s:'query',w:26,h:6,t:'Kafka Advanced — Streams, Consumer Groups, Exactly-Once, Schema Registry',qs:[
+  {n:'Kafka Streams: stateful aggregation with windowing (count events per minute)',d:'H',link:'https://kafka.apache.org/documentation/streams/'},
+  {n:'Consumer group rebalancing: eager vs cooperative, rebalance storms at scale',d:'H',link:'https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/'},
+  {n:'Exactly-once: idempotent producer + transactional consumer — implement end-to-end',d:'H',link:'https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-kafka-does-it/'},
+  {n:'Schema Registry + Avro: forward/backward compatibility, schema evolution rules',d:'M',link:'https://docs.confluent.io/platform/current/schema-registry/index.html'},
+  {n:'Kafka vs Redis Streams vs RabbitMQ: choose for given workload (latency, ordering, scale)',d:'M',link:'https://www.confluent.io/blog/kafka-fastest-messaging-system/'},
+]},
+{id:'q06',s:'query',w:26,h:5,t:'API Design (Senior) — GraphQL N+1, Pagination, Gateway, Webhooks',qs:[
+  {n:'GraphQL N+1: implement DataLoader for batching + caching DB calls per request',d:'H',link:'https://www.baeldung.com/java-n-plus-1-problem-graphql'},
+  {n:'Cursor-based pagination vs offset vs keyset — implement and compare at 10M rows',d:'H',link:'https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/'},
+  {n:'API gateway: rate limiting, auth, request routing, circuit breaker, logging in one layer',d:'H',link:'https://microservices.io/patterns/apigateway.html'},
+  {n:'Webhook design: delivery guarantee, retries, signatures, replay protection',d:'H',link:'https://webhooks.fyi/'},
+  {n:'BFF pattern (Backend for Frontend): mobile vs web vs CLI clients need different APIs',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+
+// ══ WEEK 27: AI/ML for Senior SWE ═════════════════════════════════════════════
+{id:'ai01',s:'ai',w:27,h:6,t:'LLMs & GenAI Fundamentals — tokens, context, hallucination, fine-tuning vs RAG',qs:[
+  {n:'How do LLMs work? Transformer architecture, attention, tokens — for SWE interviews',d:'M',link:'https://www.anthropic.com/research'},
+  {n:'Hallucination: why does it happen? How do you detect and mitigate it in production?',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Fine-tuning vs RAG vs few-shot prompting — choose the right approach for your use case',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Context window limits: chunking strategies, sliding window, hierarchical summarization',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'LLM cost/latency trade-offs: GPT-4o vs Claude vs Gemini vs local models',d:'M',link:'https://artificialanalysis.ai/'},
+]},
+{id:'ai02',s:'ai',w:27,h:6,t:'RAG Systems & Vector Databases — embeddings, chunking, reranking, pgvector',qs:[
+  {n:'Build a RAG pipeline: chunk → embed → store → retrieve → augment → generate',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Chunking strategies: fixed-size vs sentence vs paragraph vs semantic — trade-offs',d:'M',link:'https://www.pinecone.io/learn/chunking-strategies/'},
+  {n:'Embedding models: OpenAI text-embedding-3 vs open-source (BGE, E5) — benchmark',d:'M',link:'https://huggingface.co/blog/mteb'},
+  {n:'pgvector: add vector search to PostgreSQL — cosine vs L2 vs dot product similarity',d:'M',link:'https://github.com/pgvector/pgvector'},
+  {n:'Reranking: why top-k retrieval is not enough — cross-encoder reranker pattern',d:'H',link:'https://www.sbert.net/examples/applications/retrieve_rerank/'},
+  {n:'Evaluate RAG quality: faithfulness, answer relevance, context precision (RAGAS)',d:'H',link:'https://docs.ragas.io/'},
+]},
+{id:'ai03',s:'ai',w:27,h:6,t:'ML System Design — Recommendation, Semantic Search, Fraud Detection',qs:[
+  {n:'Design a recommendation system: collaborative filtering + content-based + two-tower model',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Semantic search: embed queries + docs, ANN index (HNSW/FAISS), latency budget',d:'H',link:'https://www.pinecone.io/learn/vector-search-basics/'},
+  {n:'Fraud detection pipeline: feature engineering, real-time scoring, model refresh cadence',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'A/B testing an ML model: traffic splitting, metric selection, statistical significance',d:'H',link:'https://netflixtechblog.com/its-all-a-bout-testing-the-netflix-experimentation-platform-4e1ca458c15b'},
+  {n:'Feature store: offline vs online features, point-in-time correctness, backfill',d:'H',link:'https://www.tecton.ai/blog/what-is-a-feature-store/'},
+]},
+{id:'ai04',s:'ai',w:27,h:5,t:'MLOps & Model Serving — deployment, monitoring, drift, CI/CD for ML',qs:[
+  {n:'Model serving: REST vs gRPC vs batch inference — latency/throughput trade-offs',d:'M',link:'https://docs.bentoml.com/'},
+  {n:'Model monitoring: data drift vs concept drift — detect and respond in production',d:'H',link:'https://evidentlyai.com/'},
+  {n:'Shadow mode deployment: run new model in parallel, compare outputs before switching',d:'M',link:'https://www.databricks.com/glossary/mlops'},
+  {n:'ML CI/CD: trigger retraining on data drift, automated evaluation gate before promote',d:'H',link:'https://mlflow.org/'},
+]},
+{id:'ai05',s:'ai',w:27,h:5,t:'Prompt Engineering & AI APIs — Claude, GPT, Gemini, tool use, structured output',qs:[
+  {n:'System prompt design: constrain model behavior, define persona, set output format',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview'},
+  {n:'Chain-of-thought prompting: when does it help? Measure reasoning quality',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought'},
+  {n:'Tool use / function calling: build an AI agent that can query your DB and send emails',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Structured output: force JSON schema output reliably from any LLM',d:'M',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency'},
+  {n:'AI safety for SWE: prompt injection, jailbreaks, PII leakage — how to defend',d:'H',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
+]},
+
+// ══ WEEK 28: Office Project Planning ══════════════════════════════════════════
+{id:'pl01',s:'prod',w:28,h:20,t:'🗺️ Office Project Planning Block — 20h dedicated to your current work project',qs:[
+  {n:'Write a Technical RFC: problem, proposed solution, alternatives, open questions',d:'M',link:'https://www.ietf.org/standards/rfcs/'},
+  {n:'Write an Architecture Decision Record (ADR) for a key decision in your project',d:'M',link:'https://adr.github.io/'},
+  {n:'Break project into milestones: prioritize with MoSCoW, estimate with T-shirt sizes',d:'M',link:'https://www.productplan.com/glossary/moscow-prioritization/'},
+  {n:'Identify technical risks: likelihood × impact matrix, mitigation plan per risk',d:'M'},
+  {n:'Cross-team alignment doc: who is impacted, what they need, timeline, dependencies',d:'M'},
+  {n:'Define success metrics: how do you know when this project is done and successful?',d:'M'},
+]},
+{id:'pl02',s:'prod',w:28,h:5,t:'Sprint Planning & Engineering Estimation — size, risk, velocity',qs:[
+  {n:'Planning poker: why story points ≠ hours, and how to calibrate a new team',d:'M',link:'https://www.mountaingoatsoftware.com/agile/planning-poker'},
+  {n:'Break a large feature into < 1-week tickets — decomposition techniques',d:'M'},
+  {n:'Estimation with uncertainty: use ranges (best/expected/worst) not single numbers',d:'M'},
+  {n:'Detect hidden dependencies before sprint start: pre-sprint checklist',d:'M'},
+]},
+{id:'pl03',s:'prod',w:28,h:5,t:'Final Review — assess weak areas, set Month 6+ plan',qs:[
+  {n:'Review all ↻ Revisit-tagged topics: schedule re-attempt sessions',d:'H'},
+  {n:'DSA self-assessment: solve 5 random problems, measure first-attempt success rate',d:'H'},
+  {n:'SD self-assessment: whiteboard 2 problems you have not done from scratch before',d:'H'},
+  {n:'Schedule first real interviews: warm-up companies first, target companies last',d:'M'},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1139,16 +1285,16 @@ document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
 const wkSel=document.getElementById('wk-sel');
 [...new Set(T.map(t=>t.w))].sort((a,b)=>a-b).forEach(w=>{
   const o=document.createElement('option');
-  const label=w<=16?`Week ${w} — ${MONTH(w)}`:`S${w-16} — ${MONTH(w)}`;
+  const label=w<=16?`Week ${w} — ${MONTH(w)}`:w<=24?`S${w-16} — ${MONTH(w)}`:`M5·W${w-24} — ${MONTH(w)}`;
   o.value=w;o.textContent=label;wkSel.appendChild(o);
 });
 wkSel.addEventListener('change',e=>{activeWeek=e.target.value;render();});
 
 // plan toggle
 const PLAN_HINTS={
-  all:`All ${T.length} topics — FAANG+ 16-week plan + Startup 8-week track`,
+  all:`All ${T.length} topics — FAANG+ (16wk) + Startup (8wk) + Month 5: MCR · Queries · AI/ML · Planning`,
   faang:`FAANG+ track — 16 weeks, deep DSA/MT/LLD/HLD for big tech`,
-  startup:`Startup track — 8 weeks, practical code/full-stack/DevOps/product`,
+  startup:`Startup track — practical code, full-stack, DevOps, product eng`,
 };
 document.querySelectorAll('.plan-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.plan-btn').forEach(x=>x.classList.remove('active'));
