@@ -53,6 +53,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .week-sel{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;outline:none;margin-left:auto}
 .week-sel option{background:var(--surface2)}
 .co-legend{font-size:10px;color:var(--muted);margin-left:4px}
+/* search */
+.search-wrap{padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+.search-row{position:relative;max-width:600px;margin:0 auto}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);padding:8px 36px 8px 34px;font-size:13px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:#818cf8;box-shadow:0 0 0 2px #818cf820}
+.search-input::placeholder{color:var(--muted)}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:4px}
+.search-clear:hover{color:var(--text)}
+.search-match-count{font-size:11px;color:var(--muted2);text-align:center;margin-top:4px}
+/* week collapse */
+.week-hdr{cursor:pointer;user-select:none;border-radius:8px;padding:6px 8px;margin:-6px -8px 10px;transition:background .15s}
+.week-hdr:hover{background:var(--surface2)}
+.wk-toggle{font-size:11px;color:var(--muted);margin-left:4px;transition:transform .2s}
+.week-collapsed .wk-toggle{transform:rotate(-90deg)}
+.week-body{display:grid;transition:grid-template-rows .25s ease}
+.week-body.open{grid-template-rows:1fr}
+.week-body.closed{grid-template-rows:0fr}
+.week-body>div{overflow:hidden}
+.wk-hours{font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted2);white-space:nowrap}
+/* jump button */
+.jump-btn{padding:5px 12px;border-radius:8px;border:1px solid #818cf855;background:#818cf815;color:#818cf8;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.jump-btn:hover{background:#818cf830}
+/* improved cards */
+.topic-card{border-left:3px solid transparent}
+.topic-card:hover{border-color:var(--border2);border-left-color:var(--border2)}
+.topic-card.done{border-left-color:var(--done) !important}
+.topic-card.revisit{border-left-color:var(--revisit) !important}
+.card-status-bar{height:2px;border-radius:0 0 8px 8px;margin:-1px -13px -13px;margin-top:10px;transition:background .3s}
+/* recent badge */
+.prob-new{font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(249,115,22,.18);color:#fb923c;flex-shrink:0;vertical-align:middle}
+/* stats highlight */
+.stat .n{transition:color .3s}
 /* plan toggle */
 .plan-bar{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border)}
 .plan-bar-label{font-size:11px;color:var(--muted2);font-weight:600;white-space:nowrap}
@@ -166,6 +199,14 @@ a.prob-name:hover{color:#60a5fa}
 <div class="global-bar-wrap">
   <div class="global-bar"><div class="global-bar-fill" id="gbar" style="width:0%"></div></div>
 </div>
+<div class="search-wrap">
+  <div class="search-row">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search" placeholder="Search topics, problems, companies (e.g. 'Google DP', 'Kafka', 'LRU')…">
+    <button class="search-clear" id="search-clear" style="display:none">✕</button>
+  </div>
+  <div class="search-match-count" id="search-count" style="display:none"></div>
+</div>
 <div class="section-pills" id="pills"></div>
 <div class="section-cards" id="sec-cards"></div>
 <div class="plan-bar">
@@ -184,6 +225,7 @@ a.prob-name:hover{color:#60a5fa}
   <button class="f-btn" data-f="done">✓ Done</button>
   <button class="f-btn" data-f="revisit">↻ Revisit</button>
   <select class="week-sel" id="wk-sel"><option value="all">All Weeks</option></select>
+  <button class="jump-btn" onclick="jumpToNext()" title="Scroll to first incomplete topic">▶ Next incomplete</button>
   <span class="co-legend">Company tags: <b style="color:#4285f4">G</b>oogle · <b style="color:#1877f2">M</b>eta · <b style="color:#ff9900">A</b>mazon · <b style="color:#00a4ef">Ms</b> · <b style="color:#9b9b9b">Ub</b>er · verified 2024-25</span>
 </div>
 <div class="content" id="content"></div>
@@ -263,6 +305,9 @@ const T=[
   {n:'Longest Consecutive Sequence',lc:128,d:'M',co:['G','A']},
   {n:'Subarray Sum Equals K',lc:560,d:'M',co:['M','G','A']},
   {n:'Minimum Size Subarray Sum',lc:209,d:'M',co:['A','G']},
+  {n:'Count Number of Nice Subarrays',lc:1248,d:'M',co:['M'],recent:true},
+  {n:'Contiguous Array',lc:525,d:'M',co:['M','A'],recent:true},
+  {n:'Maximum Sum Circular Subarray',lc:918,d:'M',co:['A'],recent:true},
 ]},
 {id:'d02',s:'dsa',w:1,h:5,t:'Two Pointers — 10 problems',qs:[
   {n:'Valid Palindrome',lc:125,d:'E',co:['M','A']},
@@ -271,6 +316,8 @@ const T=[
   {n:'Container With Most Water',lc:11,d:'M',co:['M','A','G']},
   {n:'Trapping Rain Water',lc:42,d:'H',co:['G','A','M']},
   {n:'Move Zeroes',lc:283,d:'E',co:['M','A']},
+  {n:'Number of Subsequences That Satisfy the Given Sum Condition',lc:1498,d:'M',co:['G'],recent:true},
+  {n:'Find K Closest Elements',lc:658,d:'M',co:['G','Ms'],recent:true},
 ]},
 {id:'d03',s:'dsa',w:1,h:5,t:'Sliding Window — 10 problems',qs:[
   {n:'Best Time to Buy and Sell Stock',lc:121,d:'E',co:['A','G','M']},
@@ -280,6 +327,8 @@ const T=[
   {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
   {n:'Sliding Window Maximum',lc:239,d:'H',co:['G','A']},
   {n:'Maximum Points You Can Obtain from Cards',lc:1423,d:'M',co:['G','A']},
+  {n:'Frequency of the Most Frequent Element',lc:1838,d:'M',co:['G'],recent:true},
+  {n:'Minimum Consecutive Cards to Pick Up',lc:2260,d:'M',co:['A'],recent:true},
 ]},
 {id:'m01',s:'mt',w:1,h:4,t:'Thread Lifecycle & Creation — Thread, Runnable, Callable, daemon',qs:[
   {n:'Thread vs Runnable vs Callable — when to use each',d:'E',link:'https://www.baeldung.com/java-runnable-callable'},
@@ -308,6 +357,9 @@ const T=[
   {n:'Car Fleet',lc:853,d:'M',co:['G']},
   {n:'Largest Rectangle in Histogram',lc:84,d:'H',co:['G','A']},
   {n:'Minimum Remove to Make Valid Parentheses',lc:1249,d:'M',co:['M']},
+  {n:'Number of Visible People in a Queue',lc:1944,d:'H',co:['M'],recent:true},
+  {n:'Sum of Subarray Minimums',lc:907,d:'M',co:['A'],recent:true},
+  {n:'Remove Duplicate Letters',lc:316,d:'M',co:['G'],recent:true},
 ]},
 {id:'l01',s:'lld',w:2,h:4,t:'SOLID Principles — examples, violations, refactors',qs:[
   {n:'SRP: split a 200-line UserManager into focused single-responsibility services',d:'M',link:'https://www.baeldung.com/solid-principles'},
@@ -342,6 +394,9 @@ const T=[
   {n:'Binary Tree Maximum Path Sum',lc:124,d:'H',co:['G','M','A']},
   {n:'Serialize and Deserialize Binary Tree',lc:297,d:'H',co:['G','M','A']},
   {n:'Vertical Order Traversal of a Binary Tree',lc:987,d:'H',co:['M']},
+  {n:'Maximum Width of Binary Tree',lc:662,d:'M',co:['M'],recent:true},
+  {n:'Find Duplicate Subtrees',lc:652,d:'M',co:['A'],recent:true},
+  {n:'Flip Equivalent Binary Trees',lc:951,d:'M',co:['G'],recent:true},
 ]},
 {id:'m02',s:'mt',w:3,h:5,t:'Synchronization — synchronized, ReentrantLock, ReadWriteLock',qs:[
   {n:'Thread-safe counter: synchronized vs AtomicInteger — benchmark both',d:'M',link:'https://www.baeldung.com/java-synchronized'},
@@ -368,6 +423,9 @@ const T=[
   {n:'Design Twitter',lc:355,d:'M',co:['M']},
   {n:'Find Median from Data Stream',lc:295,d:'H',co:['G','M','A']},
   {n:'Minimum Cost to Connect Sticks',lc:1167,d:'M',co:['A']},
+  {n:'Maximum Subsequence Score',lc:2542,d:'M',co:['G'],recent:true},
+  {n:'Single-Threaded CPU',lc:1834,d:'M',co:['A'],recent:true},
+  {n:'IPO',lc:502,d:'H',co:['G'],recent:true},
 ]},
 {id:'d10',s:'dsa',w:4,h:5,t:'Tries — implement, prefix search, autocomplete, word search II',qs:[
   {n:'Implement Trie Prefix Tree',lc:208,d:'M',co:['G','M','A']},
@@ -395,6 +453,9 @@ const T=[
   {n:'Number of Connected Components',lc:323,d:'M',co:['G','M']},
   {n:'Word Ladder',lc:127,d:'H',co:['G','A']},
   {n:'Buildings With an Ocean View',lc:1762,d:'M',co:['M']},
+  {n:'Find Closest Node to Given Two Nodes',lc:2359,d:'M',co:['G'],recent:true},
+  {n:'Count Unreachable Pairs of Nodes in an Undirected Graph',lc:2316,d:'M',co:['M'],recent:true},
+  {n:'Reachable Nodes With Restrictions',lc:2368,d:'M',co:['G'],recent:true},
 ]},
 {id:'d12',s:'dsa',w:5,h:5,t:'Union Find (DSU) — path compression, union by rank',qs:[
   {n:'Redundant Connection',lc:684,d:'M',co:['G']},
@@ -487,6 +548,10 @@ const T=[
   {n:'Longest Increasing Subsequence',lc:300,d:'M',co:['G','Ms']},
   {n:'Partition Equal Subset Sum',lc:416,d:'M',co:['G','A']},
   {n:'Delete and Earn',lc:740,d:'M',co:['G']},
+  {n:'Count Ways to Build Good Strings',lc:2466,d:'M',co:['M'],recent:true},
+  {n:'Domino and Tromino Tiling',lc:790,d:'M',co:['G'],recent:true},
+  {n:'Solving Questions With Brainpower',lc:2140,d:'M',co:['A'],recent:true},
+  {n:'Minimum Cost For Tickets',lc:983,d:'M',co:['G','A'],recent:true},
 ]},
 {id:'d18',s:'dsa',w:8,h:7,t:'DP: 2D Grid — 8 problems (LCS, edit distance, unique paths)',qs:[
   {n:'Unique Paths',lc:62,d:'M',co:['G','A']},
@@ -497,6 +562,8 @@ const T=[
   {n:'Interleaving String',lc:97,d:'H',co:['G']},
   {n:'Edit Distance',lc:72,d:'H',co:['G','Ms']},
   {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
+  {n:'Uncrossed Lines',lc:1035,d:'M',co:['G'],recent:true},
+  {n:'Maximum Alternating Subsequence Sum',lc:1911,d:'M',co:['A'],recent:true},
 ]},
 {id:'l04',s:'lld',w:8,h:7,t:'Behavioral Patterns — Observer, Strategy, Command, State, Template Method',qs:[
   {n:'Observer: type-safe event bus / pub-sub with listener registry',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
@@ -628,6 +695,11 @@ const T=[
   {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
   {n:'Burst Balloons',lc:312,d:'H',co:['G']},
   {n:'Minimum Cost to Hire K Workers',lc:857,d:'H',co:['G']},
+  {n:'Maximum Frequency Stack',lc:895,d:'H',co:['G','Ub'],recent:true},
+  {n:'Minimum Number of Refueling Stops',lc:871,d:'H',co:['G'],recent:true},
+  {n:'Reconstruct Itinerary',lc:332,d:'H',co:['G'],recent:true},
+  {n:'Find in Mountain Array',lc:1095,d:'H',co:['G'],recent:true},
+  {n:'Minimum Window Subsequence',lc:727,d:'H',co:['G'],recent:true},
 ]},
 {id:'d27',s:'dsa',w:12,h:12,t:'DSA Mock Interviews ×4 — timed 45-min sessions',qs:[
   {n:'Mock 1 (Google): 2 medium problems cold in 45 min',d:'M'},
@@ -825,6 +897,43 @@ const T=[
   {n:'Re-attempt every DSA problem marked Revisit — cold, no notes',d:'H'},
   {n:'Re-whiteboard every system design marked Revisit — from scratch',d:'H'},
   {n:'Polish and sharpen every behavioral story marked Revisit',d:'M'},
+]},
+
+// ══ BLENDED: Mini-Project checkpoints woven into FAANG weeks ════════════════
+{id:'bp01',s:'proj',w:3,h:5,t:'🛠 Project Checkpoint 1 — Set up your portfolio REST API (auth + DB)',qs:[
+  {n:'Init a Git repo, README, and folder structure for your interview portfolio project',d:'E'},
+  {n:'Build a basic CRUD REST API (Express/FastAPI/Spring Boot) with JWT auth',d:'M',link:'https://www.baeldung.com/spring-boot-start'},
+  {n:'Set up PostgreSQL with a real schema (users, posts, or any domain you choose)',d:'M',link:'https://www.baeldung.com/spring-data-jpa-guide'},
+  {n:'Write 5 unit + 3 integration tests for your API endpoints',d:'M',link:'https://www.baeldung.com/integration-testing-in-spring'},
+]},
+{id:'bp02',s:'proj',w:7,h:5,t:'🛠 Project Checkpoint 2 — Add Redis caching + CI/CD pipeline',qs:[
+  {n:'Add Redis cache-aside for your most-read endpoint (user profile, feed)',d:'M',link:'https://www.baeldung.com/spring-cache-tutorial'},
+  {n:'GitHub Actions: run tests on every PR, fail the build if coverage drops below 80%',d:'M',link:'https://docs.github.com/en/actions'},
+  {n:'Add rate limiting middleware using Redis INCR + EXPIRE',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Performance test: use k6 or artillery to load test your API at 100 req/sec',d:'M'},
+]},
+{id:'bp03',s:'proj',w:11,h:5,t:'🛠 Project Checkpoint 3 — Dockerize + deploy + add observability',qs:[
+  {n:'Write a multi-stage Dockerfile for your API and run it locally',d:'M',link:'https://docs.docker.com/develop/develop-images/multistage-build/'},
+  {n:'Deploy to a free cloud tier (Render/Railway/Fly.io) with environment secrets',d:'M'},
+  {n:'Add structured JSON logging (request_id, user_id, latency, status code)',d:'M',link:'https://www.baeldung.com/java-log-json-output'},
+  {n:'Add /healthz and /metrics endpoints — document your API with OpenAPI/Swagger',d:'M'},
+]},
+
+// ══ BLENDED: AI integration checkpoints woven into FAANG weeks ═══════════════
+{id:'ba01',s:'ai',w:4,h:4,t:'🤖 AI Blend 1 — Build your first LLM-powered feature using an API',qs:[
+  {n:'Call the Claude or OpenAI API from your language — understand tokens and pricing',d:'E',link:'https://docs.anthropic.com/en/api/getting-started'},
+  {n:'Build a simple Q&A chatbot over a small dataset (10-20 docs)',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Add a "summarize this" feature to your portfolio project using an LLM API',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+]},
+{id:'ba02',s:'ai',w:8,h:4,t:'🤖 AI Blend 2 — Add semantic search (RAG) to your portfolio project',qs:[
+  {n:'Add pgvector to your PostgreSQL DB, store embeddings for your content',d:'M',link:'https://github.com/pgvector/pgvector'},
+  {n:'Build a basic RAG pipeline: chunk documents → embed → retrieve top-3 → generate answer',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Measure retrieval quality: does the right chunk get retrieved for 10 test queries?',d:'M',link:'https://docs.ragas.io/'},
+]},
+{id:'ba03',s:'ai',w:12,h:4,t:'🤖 AI Blend 3 — Add an AI agent with tool use to your project',qs:[
+  {n:'Define 2-3 tools (e.g. search_db, send_email, get_weather) and wire to Claude tool_use',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Build an agent that can answer "what was the revenue last week?" by querying your DB',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Add guardrails: max turns, fallback to human, log all LLM calls for audit',d:'M',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
 ]},
 
 // ══ STARTUP TRACK: S1–S8 (Weeks 17–24) ═══════════════════════════════════════
@@ -1186,7 +1295,22 @@ const FAANG_ONLY=new Set([
 const STARTUP_ONLY=new Set(T.filter(t=>t.w>=17).map(t=>t.id));
 function getPlan(t){if(STARTUP_ONLY.has(t.id))return'startup';if(FAANG_ONLY.has(t.id))return'faang';return'both';}
 
-let activeTab='all',activeFilter='all',activeWeek='all',activePlan='all';
+let activeTab='all',activeFilter='all',activeWeek='all',activePlan='all',searchQuery='';
+const collapsedWeeks=new Set();
+function toggleWeek(w){
+  collapsedWeeks.has(+w)?collapsedWeeks.delete(+w):collapsedWeeks.add(+w);
+  const body=document.getElementById('wb-'+w);
+  const hdr=document.getElementById('wh-'+w);
+  if(body){body.className='week-body '+(collapsedWeeks.has(+w)?'closed':'open');}
+  if(hdr){hdr.classList.toggle('week-collapsed',collapsedWeeks.has(+w));}
+}
+function jumpToNext(){
+  const next=filtered().find(t=>!state[t.id]||state[t.id]==='pending');
+  if(!next){showToast('🎉 All complete in this view!');return;}
+  collapsedWeeks.delete(next.w);
+  renderContent();
+  setTimeout(()=>document.getElementById('wg-'+next.w)?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
 
 // ── RENDER ─────────────────────────────────────────────────────────────────────
@@ -1228,51 +1352,96 @@ function renderSecCards(){
 }
 function filtered(){
   let list=planList();
-  // section tab
   if(activeTab==='revisit')list=list.filter(t=>state[t.id]==='revisit');
   else if(activeTab!=='all')list=list.filter(t=>t.s===activeTab);
-  // status
   if(activeFilter==='done')list=list.filter(t=>state[t.id]==='done');
   if(activeFilter==='revisit')list=list.filter(t=>state[t.id]==='revisit');
   if(activeFilter==='pending')list=list.filter(t=>!state[t.id]||state[t.id]==='pending');
-  // week
   if(activeWeek!=='all')list=list.filter(t=>t.w===+activeWeek);
+  if(searchQuery){
+    // split into words so "google dp" matches DP topics with Google problems
+    const words=searchQuery.split(/\s+/).filter(Boolean);
+    const coMap={G:'google',M:'meta',A:'amazon',Ms:'microsoft',Ub:'uber'};
+    list=list.filter(t=>words.every(w=>
+      t.t.toLowerCase().includes(w)||
+      S[t.s]?.label.toLowerCase().includes(w)||
+      (t.qs&&t.qs.some(p=>
+        p.n.toLowerCase().includes(w)||
+        (p.co&&p.co.some(c=>coMap[c]?.startsWith(w)))
+      ))
+    ));
+  }
   return list;
 }
-// co-tag rendering is inlined in card()
 function card(t){
   const sec=S[t.s],st=status(t.id),qCount=t.qs?t.qs.length:0;
-  const label=`${qCount} ${t.s==='dsa'?'problems':'questions'}`;
+  const recentCount=t.qs?t.qs.filter(q=>q.recent).length:0;
+  const label=`${qCount} ${['dsa','mcr','query'].includes(t.s)?'problems':'questions'}`;
+  const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
   const probsHtml=qCount?`
-    <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">▸ ${label}</button>
+    <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">
+      ▸ ${label}${recentCount?` <span class="prob-new">🔥 ${recentCount} new</span>`:''}
+    </button>
     <div class="probs-panel" id="pp-${t.id}">${t.qs.map(q=>{
       const href=q.lc?`https://leetcode.com/problems/${lcSlug(q.n)}/`:q.link||null;
+      const newBadge=q.recent?`<span class="prob-new">2025</span>`:'';
       const nameEl=href
         ?`<a class="prob-name" href="${href}" target="_blank" rel="noopener">${q.n}${q.lc?` <span class="prob-lc">#${q.lc}</span>`:' <span class="prob-lc">↗</span>'}</a>`
         :`<span class="prob-name">${q.n}</span>`;
-      const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
       const _co=q.co&&q.co.length?`<span class="prob-co">${q.co.map(c=>{const d=_ci[c]||[c,'#888'];return`<span class="co-tag" title="${d[0]}" style="background:${d[1]}22;color:${d[1]}">${c}</span>`;}).join('')}</span>`:'';
-      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}</div>`;
+      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${newBadge}${_co}</div>`;
     }).join('')}</div>`:''
   ;
-  return`<div class="topic-card ${st}">
-    <div class="card-top"><div class="sec-dot" style="background:${sec.color};box-shadow:0 0 5px ${sec.color}66"></div><div class="card-title">${t.t}</div></div>
-    <div class="card-meta"><span class="mtag" style="color:${sec.color};border-color:${sec.color}33">${sec.label}</span><span class="mtag">~${t.h}h</span><span class="mtag">Wk ${t.w}</span></div>
+  const barColor=st==='done'?'var(--done)':st==='revisit'?'var(--revisit)':'transparent';
+  return`<div class="topic-card ${st}" style="border-left-color:${sec.color}33">
+    <div class="card-top">
+      <div class="sec-dot" style="background:${sec.color};box-shadow:0 0 6px ${sec.color}77"></div>
+      <div class="card-title">${t.t}</div>
+    </div>
+    <div class="card-meta">
+      <span class="mtag" style="color:${sec.color};border-color:${sec.color}44;background:${sec.color}11">${sec.label}</span>
+      <span class="mtag">~${t.h}h</span>
+      <span class="mtag">Wk ${t.w}</span>
+      ${recentCount?`<span class="mtag" style="color:#fb923c;border-color:#fb923c44;background:#fb923c11">🔥 ${recentCount} new</span>`:''}
+    </div>
     <div class="card-btns">
       <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
       <button class="cbtn rev-btn ${st==='revisit'?'on':''}" onclick="toggle('${t.id}','revisit')">↻ Revisit</button>
     </div>${probsHtml}
+    <div class="card-status-bar" style="background:${barColor};opacity:.6"></div>
   </div>`;
 }
 function renderContent(){
   const list=filtered();
   const el=document.getElementById('content');
-  if(!list.length){el.innerHTML=`<div class="empty"><h3>Nothing here</h3><p>No topics match these filters.</p></div>`;return;}
+  // update search count
+  const sc=document.getElementById('search-count');
+  if(searchQuery&&sc){sc.style.display='block';sc.textContent=`${list.length} topic${list.length!==1?'s':''} match "${searchQuery}"`;}
+  else if(sc){sc.style.display='none';}
+  if(!list.length){el.innerHTML=`<div class="empty"><h3>${searchQuery?'No matches':'Nothing here'}</h3><p>${searchQuery?'Try a different keyword — search works on topic titles, problem names and company names.':'No topics match the current filters.'}</p></div>`;return;}
   const byWeek={};
   list.forEach(t=>(byWeek[t.w]=byWeek[t.w]||[]).push(t));
   el.innerHTML=Object.entries(byWeek).sort(([a],[b])=>+a-+b).map(([w,ts])=>{
     const doneW=ts.filter(t=>state[t.id]==='done').length;
-    return`<div class="week-group"><div class="week-hdr"><span class="wk-badge">Week ${w}</span><span class="wk-month">${MONTH(+w)}</span><span class="wk-label">${WK[w]||''}</span><span class="wk-prog">${doneW}/${ts.length}</span></div><div class="topic-grid">${ts.map(card).join('')}</div></div>`;
+    const pct=Math.round(doneW/ts.length*100);
+    const totalHrs=ts.reduce((s,t)=>s+t.h,0);
+    const collapsed=collapsedWeeks.has(+w);
+    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:` M5·W${+w-24}`;
+    const progressBar=`<div style="position:absolute;bottom:0;left:0;height:2px;width:${pct}%;background:linear-gradient(90deg,#818cf8,#34d399);border-radius:2px;transition:width .4s"></div>`;
+    return`<div class="week-group" id="wg-${w}">
+      <div class="week-hdr ${collapsed?'week-collapsed':''}" id="wh-${w}" onclick="toggleWeek(${w})" style="position:relative;padding-bottom:8px">
+        <span class="wk-badge">${wLabel}</span>
+        <span class="wk-month">${MONTH(+w)}</span>
+        <span class="wk-label">${WK[w]||''}</span>
+        <span class="wk-hours">~${totalHrs}h</span>
+        <span class="wk-prog" style="color:${pct===100?'var(--done)':pct>50?'var(--muted2)':'var(--muted)'}">${doneW}/${ts.length}</span>
+        <span class="wk-toggle">${collapsed?'▶':'▼'}</span>
+        ${progressBar}
+      </div>
+      <div class="week-body ${collapsed?'closed':'open'}" id="wb-${w}">
+        <div><div class="topic-grid" style="padding-top:2px">${ts.map(card).join('')}</div></div>
+      </div>
+    </div>`;
   }).join('');
 }
 function setTab(k){activeTab=k;render();}
@@ -1289,6 +1458,27 @@ const wkSel=document.getElementById('wk-sel');
   o.value=w;o.textContent=label;wkSel.appendChild(o);
 });
 wkSel.addEventListener('change',e=>{activeWeek=e.target.value;render();});
+
+// search
+const searchEl=document.getElementById('search');
+const clearEl=document.getElementById('search-clear');
+searchEl.addEventListener('input',e=>{
+  searchQuery=e.target.value.toLowerCase().trim();
+  clearEl.style.display=searchQuery?'block':'none';
+  render();
+});
+clearEl.addEventListener('click',()=>{
+  searchEl.value='';searchQuery='';clearEl.style.display='none';render();searchEl.focus();
+});
+// keyboard shortcut: / to focus search, Escape to clear
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==searchEl&&document.activeElement.tagName!=='INPUT'){
+    e.preventDefault();searchEl.focus();
+  }
+  if(e.key==='Escape'&&searchQuery){
+    searchEl.value='';searchQuery='';clearEl.style.display='none';render();
+  }
+});
 
 // plan toggle
 const PLAN_HINTS={
