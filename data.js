@@ -1384,6 +1384,61 @@ const T=[
   {n:'Post-interview: send thank-you, log every question asked while fresh, update story bank',d:'E'},
 ]},
 
+// ══ ADDED PATTERNS — foundational coverage gaps ══════════════════════════════
+{id:'pat01',s:'dsa',w:1,h:5,t:'Prefix Sum & Difference Array — range queries, 2D prefix, range updates',qs:[
+  {n:'Range Sum Query - Immutable',lc:303,d:'E',co:['M','A']},
+  {n:'Range Sum Query 2D - Immutable',lc:304,d:'M',co:['G','A']},
+  {n:'Subarray Sum Equals K',lc:560,d:'M',co:['M','G','A']},
+  {n:'Find Pivot Index',lc:724,d:'E',co:['A']},
+  {n:'Product of Array Except Self',lc:238,d:'M',co:['G','M','A']},
+  {n:'Corporate Flight Bookings (difference array)',lc:1109,d:'M',co:['A']},
+  {n:'Range Addition (difference array)',lc:370,d:'M',co:['G']},
+  {n:'Matrix Block Sum (2D prefix)',lc:1314,d:'M',co:['A']},
+]},
+{id:'pat02',s:'dsa',w:1,h:4,t:'Cyclic Sort — missing/duplicate numbers in range 1..n (O(1) space)',qs:[
+  {n:'Missing Number',lc:268,d:'E',co:['A','M']},
+  {n:'Find All Numbers Disappeared in an Array',lc:448,d:'E',co:['G','A']},
+  {n:'Find the Duplicate Number',lc:287,d:'M',co:['G','M','A']},
+  {n:'Set Mismatch',lc:645,d:'E',co:['A']},
+  {n:'First Missing Positive',lc:41,d:'H',co:['G','M','A']},
+]},
+{id:'pat03',s:'dsa',w:4,h:6,t:'Design Data Structures (coding) — O(1) structures asked live',qs:[
+  {n:'Insert Delete GetRandom O(1)',lc:380,d:'M',co:['G','M','A']},
+  {n:'Design HashMap',lc:706,d:'E',co:['A']},
+  {n:'Design Browser History',lc:1472,d:'M',co:['M']},
+  {n:'Snapshot Array',lc:1146,d:'M',co:['G']},
+  {n:'Design Underground System',lc:1396,d:'M',co:['A']},
+  {n:'Time Based Key-Value Store',lc:981,d:'M',co:['G','Ub']},
+  {n:'Design Twitter',lc:355,d:'M',co:['M','A']},
+]},
+{id:'pat04',s:'dsa',w:6,h:5,t:'Intervals — merge, insert, overlap, scheduling',qs:[
+  {n:'Merge Intervals',lc:56,d:'M',co:['G','M','A']},
+  {n:'Insert Interval',lc:57,d:'M',co:['G','A']},
+  {n:'Non-overlapping Intervals',lc:435,d:'M',co:['G','M']},
+  {n:'Meeting Rooms',lc:252,d:'E',co:['G','M','A']},
+  {n:'Meeting Rooms II',lc:253,d:'M',co:['G','M','A']},
+  {n:'Interval List Intersections',lc:986,d:'M',co:['G','M']},
+  {n:'Employee Free Time',lc:759,d:'H',co:['G','A']},
+]},
+{id:'pat05',s:'dsa',w:7,h:5,t:'String Matching — KMP, Rabin-Karp, Z-algorithm',qs:[
+  {n:'Find the Index of First Occurrence (strStr / KMP)',lc:28,d:'E',co:['M','A']},
+  {n:'Repeated Substring Pattern',lc:459,d:'E',co:['G']},
+  {n:'Longest Happy Prefix (KMP failure function)',lc:1392,d:'H',co:['G']},
+  {n:'Shortest Palindrome',lc:214,d:'H',co:['G']},
+  {n:'Find All Anagrams in a String',lc:438,d:'M',co:['M','A']},
+]},
+{id:'pat06',s:'dsa',w:10,h:4,t:'Bitwise Trie — Maximum XOR queries',qs:[
+  {n:'Maximum XOR of Two Numbers in an Array',lc:421,d:'M',co:['G','A']},
+  {n:'Maximum XOR With an Element From Array',lc:1707,d:'H',co:['G']},
+  {n:'Count Pairs With XOR in a Range',lc:1803,d:'H',co:['G']},
+]},
+{id:'pat07',s:'dsa',w:11,h:4,t:'Reservoir Sampling & Randomized Algorithms',qs:[
+  {n:'Linked List Random Node (reservoir sampling)',lc:382,d:'M',co:['G','M']},
+  {n:'Random Pick Index',lc:398,d:'M',co:['G','M']},
+  {n:'Random Pick with Weight',lc:528,d:'M',co:['G','A']},
+  {n:'Shuffle an Array (Fisher-Yates)',lc:384,d:'M',co:['G','A']},
+]},
+
 ]; // end T
 
 const FAANG_ONLY=new Set([

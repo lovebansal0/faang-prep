@@ -298,6 +298,9 @@ a.prob-name:hover{color:#60a5fa}
     <div class="sync-btns">
       <button class="sync-btn" onclick="copySyncLink()" title="Copy a link that restores your progress on any device">📤 Sync Link</button>
       <button class="sync-btn import" onclick="openImport()" title="Paste a sync link or code to restore progress">📥 Import</button>
+      <button class="sync-btn" onclick="backupAll()" title="Download a full backup file (includes code + design images)">💾 Backup</button>
+      <button class="sync-btn" onclick="document.getElementById('restore-file').click()" title="Restore everything from a backup file">♻️ Restore</button>
+      <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
   </div>
@@ -340,6 +343,7 @@ a.prob-name:hover{color:#60a5fa}
   <button class="f-btn" data-f="pending">Pending</button>
   <button class="f-btn" data-f="done">✓ Done</button>
   <button class="f-btn" data-f="revisit">↻ Revisit</button>
+  <button class="f-btn" data-f="duereview" title="Topics you marked done ≥7 days ago — time to re-test cold">🔁 Due review</button>
   <select class="week-sel" id="wk-sel"><option value="all">All Weeks</option></select>
   <button class="jump-btn" onclick="jumpToNext()" title="Scroll to first incomplete topic">▶ Next incomplete</button>
   <button class="ce-btn" onclick="collapseAll()" title="Collapse all weeks">⊟ Collapse all</button>
@@ -1806,6 +1810,61 @@ const T=[
   {n:'Post-interview: send thank-you, log every question asked while fresh, update story bank',d:'E'},
 ]},
 
+// ══ ADDED PATTERNS — foundational coverage gaps ══════════════════════════════
+{id:'pat01',s:'dsa',w:1,h:5,t:'Prefix Sum & Difference Array — range queries, 2D prefix, range updates',qs:[
+  {n:'Range Sum Query - Immutable',lc:303,d:'E',co:['M','A']},
+  {n:'Range Sum Query 2D - Immutable',lc:304,d:'M',co:['G','A']},
+  {n:'Subarray Sum Equals K',lc:560,d:'M',co:['M','G','A']},
+  {n:'Find Pivot Index',lc:724,d:'E',co:['A']},
+  {n:'Product of Array Except Self',lc:238,d:'M',co:['G','M','A']},
+  {n:'Corporate Flight Bookings (difference array)',lc:1109,d:'M',co:['A']},
+  {n:'Range Addition (difference array)',lc:370,d:'M',co:['G']},
+  {n:'Matrix Block Sum (2D prefix)',lc:1314,d:'M',co:['A']},
+]},
+{id:'pat02',s:'dsa',w:1,h:4,t:'Cyclic Sort — missing/duplicate numbers in range 1..n (O(1) space)',qs:[
+  {n:'Missing Number',lc:268,d:'E',co:['A','M']},
+  {n:'Find All Numbers Disappeared in an Array',lc:448,d:'E',co:['G','A']},
+  {n:'Find the Duplicate Number',lc:287,d:'M',co:['G','M','A']},
+  {n:'Set Mismatch',lc:645,d:'E',co:['A']},
+  {n:'First Missing Positive',lc:41,d:'H',co:['G','M','A']},
+]},
+{id:'pat03',s:'dsa',w:4,h:6,t:'Design Data Structures (coding) — O(1) structures asked live',qs:[
+  {n:'Insert Delete GetRandom O(1)',lc:380,d:'M',co:['G','M','A']},
+  {n:'Design HashMap',lc:706,d:'E',co:['A']},
+  {n:'Design Browser History',lc:1472,d:'M',co:['M']},
+  {n:'Snapshot Array',lc:1146,d:'M',co:['G']},
+  {n:'Design Underground System',lc:1396,d:'M',co:['A']},
+  {n:'Time Based Key-Value Store',lc:981,d:'M',co:['G','Ub']},
+  {n:'Design Twitter',lc:355,d:'M',co:['M','A']},
+]},
+{id:'pat04',s:'dsa',w:6,h:5,t:'Intervals — merge, insert, overlap, scheduling',qs:[
+  {n:'Merge Intervals',lc:56,d:'M',co:['G','M','A']},
+  {n:'Insert Interval',lc:57,d:'M',co:['G','A']},
+  {n:'Non-overlapping Intervals',lc:435,d:'M',co:['G','M']},
+  {n:'Meeting Rooms',lc:252,d:'E',co:['G','M','A']},
+  {n:'Meeting Rooms II',lc:253,d:'M',co:['G','M','A']},
+  {n:'Interval List Intersections',lc:986,d:'M',co:['G','M']},
+  {n:'Employee Free Time',lc:759,d:'H',co:['G','A']},
+]},
+{id:'pat05',s:'dsa',w:7,h:5,t:'String Matching — KMP, Rabin-Karp, Z-algorithm',qs:[
+  {n:'Find the Index of First Occurrence (strStr / KMP)',lc:28,d:'E',co:['M','A']},
+  {n:'Repeated Substring Pattern',lc:459,d:'E',co:['G']},
+  {n:'Longest Happy Prefix (KMP failure function)',lc:1392,d:'H',co:['G']},
+  {n:'Shortest Palindrome',lc:214,d:'H',co:['G']},
+  {n:'Find All Anagrams in a String',lc:438,d:'M',co:['M','A']},
+]},
+{id:'pat06',s:'dsa',w:10,h:4,t:'Bitwise Trie — Maximum XOR queries',qs:[
+  {n:'Maximum XOR of Two Numbers in an Array',lc:421,d:'M',co:['G','A']},
+  {n:'Maximum XOR With an Element From Array',lc:1707,d:'H',co:['G']},
+  {n:'Count Pairs With XOR in a Range',lc:1803,d:'H',co:['G']},
+]},
+{id:'pat07',s:'dsa',w:11,h:4,t:'Reservoir Sampling & Randomized Algorithms',qs:[
+  {n:'Linked List Random Node (reservoir sampling)',lc:382,d:'M',co:['G','M']},
+  {n:'Random Pick Index',lc:398,d:'M',co:['G','M']},
+  {n:'Random Pick with Weight',lc:528,d:'M',co:['G','A']},
+  {n:'Shuffle an Array (Fisher-Yates)',lc:384,d:'M',co:['G','A']},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1814,8 +1873,16 @@ let state={};
 try{state=JSON.parse(localStorage.getItem(KEY)||'{}');}catch{}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 function status(id){return state[id]||'pending';}
+// spaced-repetition: remember when something was marked done
+let doneTs={}; try{doneTs=JSON.parse(localStorage.getItem('faang_done_ts')||'{}');}catch{}
+function saveTs(){localStorage.setItem('faang_done_ts',JSON.stringify(doneTs));}
+const REVIEW_DAYS=7;
+function daysSinceDone(id){const t=doneTs[id];if(!t)return null;return Math.floor((Date.now()-t)/86400000);}
+function isDueReview(id){const d=daysSinceDone(id);return state[id]==='done'&&d!==null&&d>=REVIEW_DAYS;}
 function toggle(id,val){
   state[id]=state[id]===val?'pending':val;
+  if(state[id]==='done'){doneTs[id]=Date.now();saveTs();}
+  else if(doneTs[id]){delete doneTs[id];saveTs();}
   save();
   if(val==='done'&&state[id]==='done'){
     const done=T.filter(t=>state[t.id]==='done').length;
@@ -1957,6 +2024,7 @@ function filtered(){
   if(activeFilter==='done')list=list.filter(t=>state[t.id]==='done');
   if(activeFilter==='revisit')list=list.filter(t=>state[t.id]==='revisit');
   if(activeFilter==='pending')list=list.filter(t=>!state[t.id]||state[t.id]==='pending');
+  if(activeFilter==='duereview')list=list.filter(t=>isDueReview(t.id));
   if(activeWeek!=='all')list=list.filter(t=>t.w===+activeWeek);
   if(searchQuery){
     // split into words so "google dp" matches DP topics with Google problems
@@ -2356,6 +2424,43 @@ function decodeBundle(raw){
   // new format {t,p}; old format was a flat topic-state map
   if(obj && (obj.t || obj.p)) return {t:obj.t||{}, p:obj.p||{}};
   return {t:obj||{}, p:{}};
+}
+
+// ── FULL FILE BACKUP / RESTORE (covers everything, incl. images) ──────────────
+const BACKUP_KEYS=['faang_v3','faang_pstate','faang_annot','faang_notes','faang_cq','faang_ct','faang_theme','faang_done_ts'];
+function backupAll(){
+  const dump={_app:'faang-prep',_version:3,_exported:new Date().toISOString()};
+  BACKUP_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)dump[k]=v;});
+  const blob=new Blob([JSON.stringify(dump,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`faang-prep-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  showToast('💾 Backup downloaded — keep it safe!');
+}
+function restoreAll(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const dump=JSON.parse(e.target.result);
+      if(dump._app!=='faang-prep')throw new Error('not a backup');
+      let n=0;
+      BACKUP_KEYS.forEach(k=>{if(dump[k]!==undefined){localStorage.setItem(k,dump[k]);n++;}});
+      // reload in-memory state from restored localStorage
+      try{state=JSON.parse(localStorage.getItem('faang_v3')||'{}');}catch{state={};}
+      try{pstate=JSON.parse(localStorage.getItem('faang_pstate')||'{}');}catch{pstate={};}
+      try{annot=JSON.parse(localStorage.getItem('faang_annot')||'{}');}catch{annot={};}
+      try{notesState=JSON.parse(localStorage.getItem('faang_notes')||'{}');}catch{notesState={};}
+      try{customQs=JSON.parse(localStorage.getItem('faang_cq')||'{}');}catch{customQs={};}
+      try{customTopics=JSON.parse(localStorage.getItem('faang_ct')||'[]');}catch{customTopics=[];}
+      applyTheme(localStorage.getItem('faang_theme')||'dark');
+      render();
+      showToast(`♻️ Restored ${n} data sets from backup.`);
+    }catch(err){showToast('❌ Not a valid faang-prep backup file.');}
+    input.value='';
+  };
+  reader.readAsText(f);
 }
 
 function copySyncLink(){
