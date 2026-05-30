@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA & Concurrency · FAANG Prep</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav class="nav">
+  <span class="nav-logo"><span class="dot">🎯</span> Prep</span>
+  <a class="home" href="index.html">🏠 Full Tracker</a>
+  <a class="active" href="dsa.html">🧮 DSA & Concurrency</a>
+  <a href="system-design.html">🏛 System Design</a>
+  <a href="behavioral.html">💬 Behavioral & Leadership</a>
+  <a href="craft.html">🛠 Engineering Craft</a>
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+</nav>
+<div class="page-hd">
+  <h1>🧮 DSA & Concurrency</h1>
+  <p>Data structures, algorithms, patterns, hard problems, mocks — plus multithreading &amp; concurrency. Progress here syncs with the main tracker.</p>
+  <div class="summary" id="summary"></div>
+  <div class="sum-bar"><div class="sum-bar-fill" id="sum-bar-fill" style="width:0%"></div></div>
+</div>
+<div class="content" id="content"></div>
+<div class="toast" id="toast"></div>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>DISCIPLINE=['dsa','mt'];renderAll();</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design · FAANG Prep</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav class="nav">
+  <span class="nav-logo"><span class="dot">🎯</span> Prep</span>
+  <a class="home" href="index.html">🏠 Full Tracker</a>
+  <a href="dsa.html">🧮 DSA & Concurrency</a>
+  <a class="active" href="system-design.html">🏛 System Design</a>
+  <a href="behavioral.html">💬 Behavioral & Leadership</a>
+  <a href="craft.html">🛠 Engineering Craft</a>
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+</nav>
+<div class="page-hd">
+  <h1>🏛 System Design (HLD + LLD)</h1>
+  <p>High-level design (scalability, databases, queues, real systems) and low-level / object design (patterns, DDD, machine-coding builds). Progress syncs with the main tracker.</p>
+  <div class="summary" id="summary"></div>
+  <div class="sum-bar"><div class="sum-bar-fill" id="sum-bar-fill" style="width:0%"></div></div>
+</div>
+<div class="content" id="content"></div>
+<div class="toast" id="toast"></div>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>DISCIPLINE=['hld','lld','mcr'];renderAll();</script>
+</body>
+</html>

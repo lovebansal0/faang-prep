@@ -1,0 +1,1403 @@
+// data.js - shared curriculum data for discipline pages (and the main tracker).
+// Loaded as a classic script: these become globals shared across scripts.
+const S = {
+  dsa:   {label:'DSA',            color:'#818cf8'},
+  mt:    {label:'Multithreading', color:'#fbbf24'},
+  lld:   {label:'LLD',            color:'#34d399'},
+  hld:   {label:'HLD',            color:'#60a5fa'},
+  proj:  {label:'Projects',       color:'#f472b6'},
+  beh:   {label:'Behavioral',     color:'#a78bfa'},
+  // ── Startup-specific sections ──
+  prac:  {label:'Practical Code', color:'#f97316', startup:true},
+  fs:    {label:'Full-Stack',     color:'#06b6d4', startup:true},
+  devops:{label:'DevOps/Cloud',   color:'#84cc16', startup:true},
+  prod:  {label:'Product Eng',    color:'#e879f9', startup:true},
+  // ── Month 5 additions ──
+  mcr:   {label:'Machine Coding', color:'#f43f5e'},
+  query: {label:'Adv Queries',    color:'#0ea5e9'},
+  ai:    {label:'AI/ML for SWE',  color:'#a855f7'},
+  cto:   {label:'CTO / Exec',     color:'#fbbf24'},
+};
+
+const WK={1:'Arrays · Two Pointers · Sliding Window  ⊕  Thread Lifecycle',2:'Binary Search · Stack · Monotonic Stack  ⊕  SOLID Principles',3:'Linked Lists · Binary Trees  ⊕  Synchronization & Locks',4:'BST · Heaps · Tries  ⊕  Creational Patterns',5:'Graphs BFS/DFS · Union Find  ⊕  JMM & Atomics',6:'Topological Sort · Shortest Path  ⊕  Structural Patterns',7:'Backtracking · Greedy  ⊕  wait/notify & ThreadPool',8:'DP: 1D & 2D Grid  ⊕  Behavioral Patterns',9:'DP: Knapsack · Sequences  ⊕  Classic Concurrency Problems',10:'DP Advanced · Bit Manipulation  ⊕  HLD Fundamentals',11:'Segment Tree · Adv Graphs · Math  ⊕  HLD: Databases & CAP',12:'DSA Hard Marathon  ⊕  HLD: Queues & APIs  ·  LLD Anti-patterns',13:'LLD Problems I  ⊕  HLD: URL Shortener · Rate Limiter · Twitter',14:'LLD Problems II  ⊕  HLD: WhatsApp · YouTube · Uber',15:'HLD: Advanced Systems + Mocks  ⊕  Projects',16:'Projects · Behavioral · Full Loop Mocks'};
+const MONTH=w=>w<=4?'Month 1':w<=8?'Month 2':w<=12?'Month 3':w<=16?'Month 4':w<=20?'🚀 Startup 1-4':w<=24?'🚀 Startup 5-8':w<=28?'Month 5 (Advanced)':'👔 CTO / Exec Track';
+
+// append startup week labels to WK
+Object.assign(WK,{
+  17:'🚀 S1 · Clean Code · TDD · Code Review',
+  18:'🚀 S2 · REST APIs · SQL Deep Dive · Authentication',
+  19:'🚀 S3 · Data Layer · Redis · ORM patterns',
+  20:'🚀 S4 · HTTP internals · React basics · API Integration',
+  21:'🚀 S5 · Docker · CI/CD · AWS Essentials',
+  22:'🚀 S6 · Kubernetes · Observability · Production Ops',
+  23:'🚀 S7 · Startup System Design · Build vs Buy · Tech Debt',
+  24:'🚀 S8 · Take-Home Prep · Startup Behavioral · Offer Negotiation',
+  // Month 5
+  25:'⚡ Machine Coding Round · In-Memory Systems · Live Coding',
+  26:'🔍 Advanced Queries · SQL · NoSQL · Redis · Kafka · API Design',
+  27:'🤖 AI/ML for Senior SWE · GenAI · RAG · Vector DBs · ML Design',
+  28:'🗺️ Office Project Planning · RFC · ADR · Estimation · Review',
+});
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+// q fields: n=name, lc=LC#, d=difficulty, co=[companies], link=override URL
+const T=[
+// ══ WEEK 1 ══════════════════════════════════════════════════════════════════
+{id:'d01',s:'dsa',w:1,h:7,t:'Arrays & Hashing — 15 medium/hard problems',qs:[
+  {n:'Two Sum',lc:1,d:'E',co:['G','M','A','Ms']},
+  {n:'Group Anagrams',lc:49,d:'M',co:['M','G','A']},
+  {n:'Top K Frequent Elements',lc:347,d:'M',co:['G','M','A']},
+  {n:'Product of Array Except Self',lc:238,d:'M',co:['G','M','A']},
+  {n:'Valid Sudoku',lc:36,d:'M',co:['Ms','G']},
+  {n:'Encode and Decode Strings',lc:271,d:'M',co:['G','M']},
+  {n:'Longest Consecutive Sequence',lc:128,d:'M',co:['G','A']},
+  {n:'Subarray Sum Equals K',lc:560,d:'M',co:['M','G','A']},
+  {n:'Minimum Size Subarray Sum',lc:209,d:'M',co:['A','G']},
+  {n:'Count Number of Nice Subarrays',lc:1248,d:'M',co:['M'],recent:true},
+  {n:'Contiguous Array',lc:525,d:'M',co:['M','A'],recent:true},
+  {n:'Maximum Sum Circular Subarray',lc:918,d:'M',co:['A'],recent:true},
+  // verified 2025-26
+  {n:'Continuous Subarrays',lc:2762,d:'M',co:['M']},
+  {n:'Count Subarrays Where Max Element Appears at Least K Times',lc:2962,d:'M',co:['G']},
+  {n:'Length of Longest Subarray With at Most K Frequency',lc:2958,d:'M',co:['A']},
+]},
+{id:'d02',s:'dsa',w:1,h:5,t:'Two Pointers — 10 problems',qs:[
+  {n:'Valid Palindrome',lc:125,d:'E',co:['M','A']},
+  {n:'Two Sum II Input Array Is Sorted',lc:167,d:'M',co:['A','M']},
+  {n:'3Sum',lc:15,d:'M',co:['M','G','A']},
+  {n:'Container With Most Water',lc:11,d:'M',co:['M','A','G']},
+  {n:'Trapping Rain Water',lc:42,d:'H',co:['G','A','M']},
+  {n:'Move Zeroes',lc:283,d:'E',co:['M','A']},
+  {n:'Number of Subsequences That Satisfy the Given Sum Condition',lc:1498,d:'M',co:['G'],recent:true},
+  {n:'Find K Closest Elements',lc:658,d:'M',co:['G','Ms'],recent:true},
+]},
+{id:'d03',s:'dsa',w:1,h:5,t:'Sliding Window — 10 problems',qs:[
+  {n:'Best Time to Buy and Sell Stock',lc:121,d:'E',co:['A','G','M']},
+  {n:'Longest Substring Without Repeating Characters',lc:3,d:'M',co:['A','G','M']},
+  {n:'Longest Repeating Character Replacement',lc:424,d:'M',co:['G']},
+  {n:'Permutation in String',lc:567,d:'M',co:['M','A']},
+  {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
+  {n:'Sliding Window Maximum',lc:239,d:'H',co:['G','A']},
+  {n:'Maximum Points You Can Obtain from Cards',lc:1423,d:'M',co:['G','A']},
+  {n:'Frequency of the Most Frequent Element',lc:1838,d:'M',co:['G'],recent:true},
+  {n:'Minimum Consecutive Cards to Pick Up',lc:2260,d:'M',co:['A'],recent:true},
+]},
+{id:'m01',s:'mt',w:1,h:4,t:'Thread Lifecycle & Creation — Thread, Runnable, Callable, daemon',qs:[
+  {n:'Thread vs Runnable vs Callable — when to use each',d:'E',link:'https://www.baeldung.com/java-runnable-callable'},
+  {n:'Thread.start() vs Thread.run() — explain the difference with code',d:'E',link:'https://www.baeldung.com/java-start-thread'},
+  {n:'5 threads each print their ID in sequence using join()',d:'M',link:'https://www.baeldung.com/java-thread-join'},
+  {n:'Daemon vs non-daemon: when does the JVM exit?',d:'M',link:'https://www.baeldung.com/java-daemon-thread'},
+]},
+
+// ══ WEEK 2 ══════════════════════════════════════════════════════════════════
+{id:'d04',s:'dsa',w:2,h:7,t:'Binary Search — 12 problems (rotated array, search range, median)',qs:[
+  {n:'Binary Search',lc:704,d:'E',co:['A']},
+  {n:'Search a 2D Matrix',lc:74,d:'M',co:['G','M']},
+  {n:'Koko Eating Bananas',lc:875,d:'M',co:['G']},
+  {n:'Find Minimum in Rotated Sorted Array',lc:153,d:'M',co:['M','G','A']},
+  {n:'Search in Rotated Sorted Array',lc:33,d:'M',co:['M','G','A']},
+  {n:'Time Based Key Value Store',lc:981,d:'M',co:['G','Ub']},
+  {n:'Median of Two Sorted Arrays',lc:4,d:'H',co:['G','A','M']},
+  {n:'Capacity To Ship Packages Within D Days',lc:1011,d:'M',co:['A','G']},
+  // verified 2025-26
+  {n:'Find the Smallest Divisor Given a Threshold',lc:1283,d:'M',co:['A']},
+  {n:'Minimized Maximum of Products Distributed to Any Store',lc:2064,d:'M',co:['G']},
+  {n:'Maximum Number of Removable Characters',lc:1898,d:'M',co:['M']},
+  {n:'Split Array Largest Sum',lc:410,d:'H',co:['G','A']},
+]},
+{id:'d05',s:'dsa',w:2,h:7,t:'Stack & Monotonic Stack — 12 problems',qs:[
+  {n:'Valid Parentheses',lc:20,d:'E',co:['A','G','M','Ms']},
+  {n:'Min Stack',lc:155,d:'M',co:['A','G','Ms']},
+  {n:'Evaluate Reverse Polish Notation',lc:150,d:'M',co:['A']},
+  {n:'Generate Parentheses',lc:22,d:'M',co:['G','M']},
+  {n:'Daily Temperatures',lc:739,d:'M',co:['A','G']},
+  {n:'Car Fleet',lc:853,d:'M',co:['G']},
+  {n:'Largest Rectangle in Histogram',lc:84,d:'H',co:['G','A']},
+  {n:'Minimum Remove to Make Valid Parentheses',lc:1249,d:'M',co:['M']},
+  {n:'Number of Visible People in a Queue',lc:1944,d:'H',co:['M'],recent:true},
+  {n:'Sum of Subarray Minimums',lc:907,d:'M',co:['A'],recent:true},
+  {n:'Remove Duplicate Letters',lc:316,d:'M',co:['G'],recent:true},
+  // verified 2025-26
+  {n:'Remove K Digits',lc:402,d:'M',co:['G','A']},
+  {n:'Online Stock Span',lc:901,d:'M',co:['A','M']},
+  {n:'Maximum Width Ramp',lc:962,d:'M',co:['G']},
+  {n:'Robot Collisions',lc:2751,d:'H',co:['M']},
+]},
+{id:'l01',s:'lld',w:2,h:4,t:'SOLID Principles — examples, violations, refactors',qs:[
+  {n:'SRP: split a 200-line UserManager into focused single-responsibility services',d:'M',link:'https://www.baeldung.com/solid-principles'},
+  {n:'OCP: add a new Shape to an area calculator without modifying existing code',d:'M',link:'https://refactoring.guru/didactics/solid'},
+  {n:'LSP: why does Square extends Rectangle break LSP? Fix it.',d:'M',link:'https://www.baeldung.com/solid-principles'},
+  {n:'ISP: split a fat IWorker interface into role-specific interfaces',d:'E',link:'https://www.baeldung.com/solid-principles'},
+  {n:'DIP: decouple OrderService from MySQLOrderRepo using an interface',d:'M',link:'https://www.baeldung.com/solid-principles'},
+]},
+
+// ══ WEEK 3 ══════════════════════════════════════════════════════════════════
+{id:'d06',s:'dsa',w:3,h:7,t:'Linked Lists — 10 problems (reverse, cycle, merge)',qs:[
+  {n:'Reverse Linked List',lc:206,d:'E',co:['M','A','Ms']},
+  {n:'Merge Two Sorted Lists',lc:21,d:'E',co:['A','G']},
+  {n:'Linked List Cycle',lc:141,d:'E',co:['A','G','M']},
+  {n:'Reorder List',lc:143,d:'M',co:['M']},
+  {n:'Remove Nth Node From End of List',lc:19,d:'M',co:['G','A']},
+  {n:'Copy List With Random Pointer',lc:138,d:'M',co:['M','A']},
+  {n:'Add Two Numbers',lc:2,d:'M',co:['G','M']},
+  {n:'LRU Cache',lc:146,d:'M',co:['G','M','A','Ms']},
+  {n:'Merge K Sorted Lists',lc:23,d:'H',co:['G','A']},
+  {n:'Reverse Nodes in K Group',lc:25,d:'H',co:['M','A']},
+  // verified 2025-26
+  {n:'Swapping Nodes in a Linked List',lc:1721,d:'M',co:['M','A']},
+  {n:'Remove Nodes From Linked List',lc:2487,d:'M',co:['G']},
+  {n:'Merge Nodes in Between Zeros',lc:2181,d:'M',co:['A']},
+]},
+{id:'d07',s:'dsa',w:3,h:8,t:'Binary Trees — LCA, Diameter, Max Path Sum — 15 problems',qs:[
+  {n:'Invert Binary Tree',lc:226,d:'E',co:['G','M']},
+  {n:'Maximum Depth of Binary Tree',lc:104,d:'E',co:['A','G']},
+  {n:'Diameter of Binary Tree',lc:543,d:'E',co:['G','M']},
+  {n:'Binary Tree Level Order Traversal',lc:102,d:'M',co:['A','G','M']},
+  {n:'Binary Tree Right Side View',lc:199,d:'M',co:['M','A']},
+  {n:'Count Good Nodes in Binary Tree',lc:1448,d:'M',co:['G']},
+  {n:'Lowest Common Ancestor of a Binary Tree',lc:236,d:'M',co:['M','G','A']},
+  {n:'Construct Binary Tree from Preorder and Inorder Traversal',lc:105,d:'M',co:['G','A']},
+  {n:'Binary Tree Maximum Path Sum',lc:124,d:'H',co:['G','M','A']},
+  {n:'Serialize and Deserialize Binary Tree',lc:297,d:'H',co:['G','M','A']},
+  {n:'Vertical Order Traversal of a Binary Tree',lc:987,d:'H',co:['M']},
+  {n:'Maximum Width of Binary Tree',lc:662,d:'M',co:['M'],recent:true},
+  {n:'Find Duplicate Subtrees',lc:652,d:'M',co:['A'],recent:true},
+  {n:'Flip Equivalent Binary Trees',lc:951,d:'M',co:['G'],recent:true},
+]},
+{id:'m02',s:'mt',w:3,h:5,t:'Synchronization — synchronized, ReentrantLock, ReadWriteLock',qs:[
+  {n:'Thread-safe counter: synchronized vs AtomicInteger — benchmark both',d:'M',link:'https://www.baeldung.com/java-synchronized'},
+  {n:'Implement a thread-safe LRU Cache using ReadWriteLock',d:'H',link:'https://www.baeldung.com/java-read-write-locks'},
+  {n:'Why is double-checked locking broken without volatile?',d:'M',link:'https://www.baeldung.com/java-double-checked-locking-with-delay-initialization'},
+  {n:'Lock striping: implement a striped HashMap with N lock buckets',d:'H',link:'https://www.baeldung.com/guava-striped'},
+]},
+
+// ══ WEEK 4 ══════════════════════════════════════════════════════════════════
+{id:'d08',s:'dsa',w:4,h:7,t:'BST — 10 problems (validate, kth smallest, iterator)',qs:[
+  {n:'Validate Binary Search Tree',lc:98,d:'M',co:['A','G']},
+  {n:'Kth Smallest Element in a BST',lc:230,d:'M',co:['G','M']},
+  {n:'Lowest Common Ancestor of a Binary Search Tree',lc:235,d:'M',co:['A','M']},
+  {n:'Construct BST from Preorder Traversal',lc:1008,d:'M',co:['G']},
+  {n:'Delete Node in a BST',lc:450,d:'M',co:['G']},
+  {n:'Binary Search Tree Iterator',lc:173,d:'M',co:['M','G']},
+  {n:'Convert BST to Greater Tree',lc:538,d:'M',co:['G']},
+  // verified 2025-26
+  {n:'Range Sum of BST',lc:938,d:'E',co:['G','A']},
+  {n:'Balance a Binary Search Tree',lc:1382,d:'M',co:['A']},
+  {n:'Closest Binary Search Tree Value',lc:270,d:'E',co:['M','G']},
+]},
+{id:'d09',s:'dsa',w:4,h:7,t:'Heaps & Priority Queue — K-th, merge K lists, scheduling',qs:[
+  {n:'Kth Largest Element in a Stream',lc:703,d:'E',co:['A']},
+  {n:'K Closest Points to Origin',lc:973,d:'M',co:['G','M','A']},
+  {n:'Kth Largest Element in an Array',lc:215,d:'M',co:['A','G']},
+  {n:'Task Scheduler',lc:621,d:'M',co:['A','G']},
+  {n:'Design Twitter',lc:355,d:'M',co:['M']},
+  {n:'Find Median from Data Stream',lc:295,d:'H',co:['G','M','A']},
+  {n:'Minimum Cost to Connect Sticks',lc:1167,d:'M',co:['A']},
+  {n:'Maximum Subsequence Score',lc:2542,d:'M',co:['G'],recent:true},
+  {n:'Single-Threaded CPU',lc:1834,d:'M',co:['A'],recent:true},
+  {n:'IPO',lc:502,d:'H',co:['G'],recent:true},
+]},
+{id:'d10',s:'dsa',w:4,h:5,t:'Tries — implement, prefix search, autocomplete, word search II',qs:[
+  {n:'Implement Trie Prefix Tree',lc:208,d:'M',co:['G','M','A']},
+  {n:'Design Add and Search Words Data Structure',lc:211,d:'M',co:['G','M']},
+  {n:'Word Search II',lc:212,d:'H',co:['G','M']},
+  {n:'Design Search Autocomplete System',lc:642,d:'H',co:['G']},
+]},
+{id:'l02',s:'lld',w:4,h:7,t:'Creational Patterns — Singleton, Factory, Builder, Abstract Factory, Prototype',qs:[
+  {n:'Thread-safe Singleton: lazy + double-check + enum — compare all three',d:'M',link:'https://refactoring.guru/design-patterns/singleton'},
+  {n:'Factory Method: LoggerFactory returning File, Console, or DB logger',d:'M',link:'https://refactoring.guru/design-patterns/factory-method'},
+  {n:'Builder Pattern: fluent SQL QueryBuilder',d:'M',link:'https://refactoring.guru/design-patterns/builder'},
+  {n:'Abstract Factory: UI component factory for Web vs Mobile platforms',d:'H',link:'https://refactoring.guru/design-patterns/abstract-factory'},
+  {n:'Prototype: deep clone a complex nested Document object',d:'M',link:'https://refactoring.guru/design-patterns/prototype'},
+]},
+
+// ══ WEEK 5 ══════════════════════════════════════════════════════════════════
+{id:'d11',s:'dsa',w:5,h:9,t:'Graphs: BFS & DFS — 15 problems (islands, components, paths)',qs:[
+  {n:'Number of Islands',lc:200,d:'M',co:['A','G','M']},
+  {n:'Clone Graph',lc:133,d:'M',co:['G','M']},
+  {n:'Max Area of Island',lc:695,d:'M',co:['G','A']},
+  {n:'Pacific Atlantic Water Flow',lc:417,d:'M',co:['G']},
+  {n:'Surrounded Regions',lc:130,d:'M',co:['G']},
+  {n:'Rotting Oranges',lc:994,d:'M',co:['A','G']},
+  {n:'Course Schedule',lc:207,d:'M',co:['Ub','A','G']},
+  {n:'Number of Connected Components',lc:323,d:'M',co:['G','M']},
+  {n:'Word Ladder',lc:127,d:'H',co:['G','A']},
+  {n:'Buildings With an Ocean View',lc:1762,d:'M',co:['M']},
+  {n:'Find Closest Node to Given Two Nodes',lc:2359,d:'M',co:['G'],recent:true},
+  {n:'Count Unreachable Pairs of Nodes in an Undirected Graph',lc:2316,d:'M',co:['M'],recent:true},
+  {n:'Reachable Nodes With Restrictions',lc:2368,d:'M',co:['G'],recent:true},
+  // verified 2025-26
+  {n:'Find if Path Exists in Graph',lc:1971,d:'E',co:['A']},
+  {n:'Maximum Employees to Be Invited to a Meeting',lc:2127,d:'H',co:['G']},
+  {n:'Minimum Obstacle Removal to Reach Corner',lc:2290,d:'H',co:['M']},
+]},
+{id:'d12',s:'dsa',w:5,h:5,t:'Union Find (DSU) — path compression, union by rank',qs:[
+  {n:'Redundant Connection',lc:684,d:'M',co:['G']},
+  {n:'Accounts Merge',lc:721,d:'M',co:['G','M']},
+  {n:'Number of Operations to Make Network Connected',lc:1319,d:'M',co:['G']},
+  {n:'Satisfiability of Equality Equations',lc:990,d:'M',co:['G']},
+]},
+{id:'m03',s:'mt',w:5,h:4,t:'Java Memory Model — volatile, happens-before, visibility',qs:[
+  {n:'Visibility problem without volatile — demonstrate and fix',d:'M',link:'https://www.baeldung.com/java-volatile'},
+  {n:'Why volatile cannot replace synchronized for compound ops like i++',d:'M',link:'https://www.baeldung.com/java-volatile'},
+  {n:'3 examples of happens-before relationships in JMM',d:'M',link:'https://www.baeldung.com/java-happens-before-synchronization'},
+  {n:'Memory barriers and their relation to volatile reads/writes',d:'H',link:'https://www.baeldung.com/java-volatile'},
+]},
+{id:'m04',s:'mt',w:5,h:4,t:'Atomic classes — AtomicInteger, AtomicReference, CAS, ABA',qs:[
+  {n:'Lock-free stack using AtomicReference and CAS',d:'H',link:'https://www.baeldung.com/java-atomic-variables'},
+  {n:'ABA problem explained — how AtomicStampedReference solves it',d:'H',link:'https://www.baeldung.com/cs/aba-concurrency'},
+  {n:'Lock-free counter — benchmark vs synchronized',d:'M',link:'https://www.baeldung.com/java-atomic-variables'},
+]},
+
+// ══ WEEK 6 ══════════════════════════════════════════════════════════════════
+{id:'d13',s:'dsa',w:6,h:5,t:"Topological Sort — Kahn's + DFS, alien dict, scheduling",qs:[
+  {n:'Course Schedule',lc:207,d:'M',co:['Ub','A','G']},
+  {n:'Course Schedule II',lc:210,d:'M',co:['G','A','Ub']},
+  {n:'Alien Dictionary',lc:269,d:'H',co:['G']},
+  {n:'Minimum Height Trees',lc:310,d:'M',co:['G']},
+  {n:'Sequence Reconstruction',lc:444,d:'M',co:['G']},
+]},
+{id:'d14',s:'dsa',w:6,h:8,t:'Shortest Path — Dijkstra, Bellman-Ford, Floyd-Warshall',qs:[
+  {n:'Network Delay Time',lc:743,d:'M',co:['G']},
+  {n:'Cheapest Flights Within K Stops',lc:787,d:'M',co:['G','A']},
+  {n:'Path With Minimum Effort',lc:1631,d:'M',co:['G']},
+  {n:'Swim in Rising Water',lc:778,d:'H',co:['G']},
+  {n:'Find the City With the Smallest Number of Neighbors',lc:1334,d:'M',co:['Ms']},
+  {n:'Minimum Cost to Reach Destination in Time',lc:1928,d:'H',co:['G']},
+]},
+{id:'l03',s:'lld',w:6,h:7,t:'Structural Patterns — Adapter, Decorator, Proxy, Facade, Composite',qs:[
+  {n:'Proxy: caching proxy for an expensive external price API',d:'M',link:'https://refactoring.guru/design-patterns/proxy'},
+  {n:'Decorator: add logging, retry, and circuit-breaker to an HTTP client',d:'H',link:'https://refactoring.guru/design-patterns/decorator'},
+  {n:'Adapter: wrap a legacy XML payment API to a JSON interface',d:'M',link:'https://refactoring.guru/design-patterns/adapter'},
+  {n:'Facade: HomeAutomationFacade controlling lights, AC, TV in one call',d:'E',link:'https://refactoring.guru/design-patterns/facade'},
+  {n:'Composite: file system getSize() recurses correctly over files and folders',d:'M',link:'https://refactoring.guru/design-patterns/composite'},
+]},
+
+// ══ WEEK 7 ══════════════════════════════════════════════════════════════════
+{id:'d15',s:'dsa',w:7,h:8,t:'Backtracking — 12 problems (subsets, permutations, N-Queens)',qs:[
+  {n:'Subsets',lc:78,d:'M',co:['G','M']},
+  {n:'Combination Sum',lc:39,d:'M',co:['G','M','A']},
+  {n:'Permutations',lc:46,d:'M',co:['G','M','A']},
+  {n:'Subsets II',lc:90,d:'M',co:['G']},
+  {n:'Combination Sum II',lc:40,d:'M',co:['G','A']},
+  {n:'Word Search',lc:79,d:'M',co:['G','M']},
+  {n:'Palindrome Partitioning',lc:131,d:'M',co:['G','M']},
+  {n:'Letter Combinations of a Phone Number',lc:17,d:'M',co:['G','M','A']},
+  {n:'N Queens',lc:51,d:'H',co:['G']},
+  // verified 2025-26
+  {n:'Combinations',lc:77,d:'M',co:['M']},
+  {n:'Restore IP Addresses',lc:93,d:'M',co:['A']},
+  {n:'Numbers With Same Consecutive Differences',lc:967,d:'M',co:['G']},
+]},
+{id:'d16',s:'dsa',w:7,h:7,t:'Greedy — intervals, scheduling, jump game — 8 problems',qs:[
+  {n:'Maximum Subarray',lc:53,d:'M',co:['G','A']},
+  {n:'Jump Game',lc:55,d:'M',co:['G','A']},
+  {n:'Jump Game II',lc:45,d:'M',co:['G','A']},
+  {n:'Gas Station',lc:134,d:'M',co:['A','G']},
+  {n:'Merge Intervals',lc:56,d:'M',co:['G','M','A']},
+  {n:'Non-overlapping Intervals',lc:435,d:'M',co:['G','M']},
+  {n:'Partition Labels',lc:763,d:'M',co:['G','M']},
+  {n:'Task Scheduler',lc:621,d:'M',co:['A','G']},
+  // verified 2025-26
+  {n:'Minimum Number of Arrows to Burst Balloons',lc:452,d:'M',co:['A','G']},
+  {n:'Car Pooling',lc:1094,d:'M',co:['G','A']},
+  {n:'Maximum Number of Events That Can Be Attended',lc:1353,d:'M',co:['G']},
+]},
+{id:'m05',s:'mt',w:7,h:5,t:'wait/notify/notifyAll — Condition Variables, spurious wakeups',qs:[
+  {n:'BoundedBlockingQueue using wait/notifyAll — no Java library',d:'H',link:'https://www.baeldung.com/java-bounded-blocking-queue'},
+  {n:'Semaphore from scratch using wait/notifyAll',d:'H',link:'https://www.baeldung.com/java-semaphore'},
+  {n:'Why must wait() always be inside a while loop, not an if?',d:'M',link:'https://www.baeldung.com/java-wait-notify'},
+  {n:'Print FooBar Alternately',lc:1115,d:'M',co:['G','M']},
+]},
+{id:'m06',s:'mt',w:7,h:5,t:'ThreadPool, ExecutorService, Future, CompletableFuture',qs:[
+  {n:'Fixed-size ThreadPool from scratch — no ExecutorService',d:'H',link:'https://www.baeldung.com/thread-pool-java-and-guava'},
+  {n:'Chain: fetch user → fetch orders → compute total via CompletableFuture',d:'M',link:'https://www.baeldung.com/java-completablefuture'},
+  {n:'Timeout + fallback: orTimeout() + exceptionally() patterns',d:'M',link:'https://www.baeldung.com/java-completablefuture'},
+  {n:'RejectedExecutionHandler policies: Abort, CallerRuns, Discard compared',d:'M',link:'https://www.baeldung.com/java-rejectedexecutionhandler'},
+  {n:'Parallel merge sort using ForkJoinPool / RecursiveTask',d:'H',link:'https://www.baeldung.com/java-fork-join'},
+]},
+
+// ══ WEEK 8 ══════════════════════════════════════════════════════════════════
+{id:'d17',s:'dsa',w:8,h:7,t:'DP: 1D — 11 problems (house robber, LIS, decode ways)',qs:[
+  {n:'Climbing Stairs',lc:70,d:'E',co:['A','G']},
+  {n:'House Robber',lc:198,d:'M',co:['A','G']},
+  {n:'House Robber II',lc:213,d:'M',co:['G']},
+  {n:'Longest Palindromic Substring',lc:5,d:'M',co:['G','A','Ms']},
+  {n:'Decode Ways',lc:91,d:'M',co:['G','A','M']},
+  {n:'Coin Change',lc:322,d:'M',co:['G','A','M']},
+  {n:'Maximum Product Subarray',lc:152,d:'M',co:['G','A']},
+  {n:'Word Break',lc:139,d:'M',co:['G','M','A']},
+  {n:'Longest Increasing Subsequence',lc:300,d:'M',co:['G','Ms']},
+  {n:'Partition Equal Subset Sum',lc:416,d:'M',co:['G','A']},
+  {n:'Delete and Earn',lc:740,d:'M',co:['G']},
+  {n:'Count Ways to Build Good Strings',lc:2466,d:'M',co:['M'],recent:true},
+  {n:'Domino and Tromino Tiling',lc:790,d:'M',co:['G'],recent:true},
+  {n:'Solving Questions With Brainpower',lc:2140,d:'M',co:['A'],recent:true},
+  {n:'Minimum Cost For Tickets',lc:983,d:'M',co:['G','A'],recent:true},
+  // verified 2025-26
+  {n:'Maximum Total Reward Using Operations I',lc:3180,d:'M',co:['G']},
+  {n:'Find the Maximum Sum of Node Values',lc:3068,d:'H',co:['A']},
+  {n:'Count the Number of Good Subarrays',lc:2537,d:'M',co:['M']},
+]},
+{id:'d18',s:'dsa',w:8,h:7,t:'DP: 2D Grid — 8 problems (LCS, edit distance, unique paths)',qs:[
+  {n:'Unique Paths',lc:62,d:'M',co:['G','A']},
+  {n:'Longest Common Subsequence',lc:1143,d:'M',co:['G','M']},
+  {n:'Best Time to Buy and Sell Stock with Cooldown',lc:309,d:'M',co:['G']},
+  {n:'Coin Change II',lc:518,d:'M',co:['G','A']},
+  {n:'Target Sum',lc:494,d:'M',co:['G']},
+  {n:'Interleaving String',lc:97,d:'H',co:['G']},
+  {n:'Edit Distance',lc:72,d:'H',co:['G','Ms']},
+  {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
+  {n:'Uncrossed Lines',lc:1035,d:'M',co:['G'],recent:true},
+  {n:'Maximum Alternating Subsequence Sum',lc:1911,d:'M',co:['A'],recent:true},
+  {n:'Number of Ways to Stay in the Same Place After Some Steps',lc:1269,d:'H',co:['G'],recent:true},
+  {n:'Minimum Cost to Change the Final Value of Expression',lc:1896,d:'H',co:['G'],recent:true},
+]},
+{id:'l04',s:'lld',w:8,h:7,t:'Behavioral Patterns — Observer, Strategy, Command, State, Template Method',qs:[
+  {n:'Observer: type-safe event bus / pub-sub with listener registry',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
+  {n:'Strategy: payment system — Credit Card, UPI, Crypto interchangeable',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+  {n:'State: vending machine — Idle → HasMoney → Dispensing → OutOfStock',d:'H',link:'https://refactoring.guru/design-patterns/state'},
+  {n:'Command: undo/redo text editor using command history stack',d:'H',link:'https://refactoring.guru/design-patterns/command'},
+  {n:'Template Method: DataProcessor with override hooks for parse, validate, save',d:'M',link:'https://refactoring.guru/design-patterns/template-method'},
+]},
+
+// ══ WEEK 9 ══════════════════════════════════════════════════════════════════
+{id:'d19',s:'dsa',w:9,h:7,t:'DP: Knapsack variants — 0/1, unbounded, bounded',qs:[
+  {n:'Partition Equal Subset Sum',lc:416,d:'M',co:['G','A']},
+  {n:'Last Stone Weight II',lc:1049,d:'M',co:['G']},
+  {n:'Ones and Zeroes',lc:474,d:'M',co:['G']},
+  {n:'Coin Change II',lc:518,d:'M',co:['G','A']},
+  {n:'Target Sum',lc:494,d:'M',co:['G']},
+  {n:'Minimum Difficulty of a Job Schedule',lc:1335,d:'H',co:['A']},
+]},
+{id:'d20',s:'dsa',w:9,h:7,t:'DP: LCS, Edit Distance, Longest Palindromic Subsequence',qs:[
+  {n:'Longest Common Subsequence',lc:1143,d:'M',co:['G','M']},
+  {n:'Edit Distance',lc:72,d:'H',co:['G','Ms']},
+  {n:'Longest Palindromic Subsequence',lc:516,d:'M',co:['G']},
+  {n:'Shortest Common Supersequence',lc:1092,d:'H',co:['G']},
+  {n:'Distinct Subsequences',lc:115,d:'H',co:['G']},
+  {n:'Regular Expression Matching',lc:10,d:'H',co:['G']},
+]},
+{id:'m07',s:'mt',w:9,h:3,t:'Concurrent Collections — ConcurrentHashMap, BlockingQueue, CopyOnWriteArrayList',qs:[
+  {n:'ConcurrentHashMap vs Hashtable — segment locking vs CAS explained',d:'M',link:'https://www.baeldung.com/java-concurrent-hashmap'},
+  {n:'Rate limiter using ConcurrentHashMap + AtomicLong (sliding window per user)',d:'H',link:'https://www.baeldung.com/java-concurrent-hashmap'},
+  {n:'When to use CopyOnWriteArrayList over synchronizedList',d:'M',link:'https://www.baeldung.com/java-copy-on-write-arraylist'},
+]},
+{id:'m08',s:'mt',w:9,h:3,t:'Deadlock, Livelock, Starvation — detection and prevention',qs:[
+  {n:'Deliberately deadlock two threads on two locks — then fix it',d:'M',link:'https://www.baeldung.com/java-deadlock'},
+  {n:'Deadlock prevention via lock ordering (resource hierarchy)',d:'M',link:'https://www.baeldung.com/java-deadlock'},
+  {n:'Dining Philosophers — solution without deadlock or starvation',d:'H',link:'https://www.baeldung.com/java-dining-philoshophers'},
+  {n:'Detect deadlock programmatically using ThreadMXBean',d:'M',link:'https://www.baeldung.com/java-detect-deadlock'},
+]},
+{id:'m09',s:'mt',w:9,h:4,t:'Classic Problems: Producer-Consumer, Readers-Writers, Dining Philosophers',qs:[
+  {n:'Producer-Consumer: BoundedBuffer with 2 producers + 3 consumers',d:'M',link:'https://www.baeldung.com/java-producer-consumer-problem'},
+  {n:'Readers-Writers with writer preference (no writer starvation)',d:'H',link:'https://www.geeksforgeeks.org/readers-writers-problem-set-1-introduction-and-readers-preference-solution/'},
+  {n:'Print FooBar Alternately',lc:1115,d:'M',co:['G','M']},
+  {n:'Print Zero Even Odd',lc:1116,d:'M',co:['G']},
+  {n:'Building H2O',lc:1117,d:'M',co:['G']},
+]},
+{id:'m10',s:'mt',w:9,h:3,t:'CountDownLatch, Semaphore, CyclicBarrier, Phaser',qs:[
+  {n:'CountDownLatch: wait for 5 services to boot before accepting requests',d:'E',link:'https://www.baeldung.com/java-countdown-latch'},
+  {n:'Semaphore: connection pool capped at 10 connections',d:'M',link:'https://www.baeldung.com/java-semaphore'},
+  {n:'CyclicBarrier: multi-phase parallel computation (map-reduce pattern)',d:'M',link:'https://www.baeldung.com/java-cyclic-barrier'},
+  {n:'Building H2O',lc:1117,d:'M',co:['G']},
+]},
+
+// ══ WEEK 10 ══════════════════════════════════════════════════════════════════
+{id:'d21',s:'dsa',w:10,h:6,t:'DP: Intervals, Trees, Bitmask — Burst Balloons, House Robber III',qs:[
+  {n:'Burst Balloons',lc:312,d:'H',co:['G']},
+  {n:'House Robber III',lc:337,d:'M',co:['G','A']},
+  {n:'Strange Printer',lc:664,d:'H',co:['G']},
+  {n:'Palindrome Partitioning II',lc:132,d:'H',co:['G']},
+  {n:'Maximum Profit in Job Scheduling',lc:1235,d:'H',co:['G','A']},
+]},
+{id:'d22',s:'dsa',w:10,h:5,t:'Bit Manipulation — XOR tricks, bitmasking, power set',qs:[
+  {n:'Single Number',lc:136,d:'E',co:['A','G']},
+  {n:'Number of 1 Bits',lc:191,d:'E',co:['A']},
+  {n:'Counting Bits',lc:338,d:'E',co:['G']},
+  {n:'Reverse Bits',lc:190,d:'E',co:['A']},
+  {n:'Missing Number',lc:268,d:'E',co:['A','M']},
+  {n:'Sum of Two Integers',lc:371,d:'M',co:['M']},
+]},
+{id:'h01',s:'hld',w:10,h:5,t:'HLD: Scalability, Load Balancing, CDN, Reverse Proxy',qs:[
+  {n:'Scalability concepts: horizontal vs vertical scaling, stateless services',d:'M',link:'https://github.com/donnemartin/system-design-primer#scalability'},
+  {n:'L4 vs L7 load balancing — when would you use each?',d:'M',link:'https://github.com/donnemartin/system-design-primer#load-balancer'},
+  {n:'Consistent hashing: how does it minimize reshuffling when adding/removing servers?',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistent-hashing'},
+  {n:'CDN design: how do you route users to the nearest Point of Presence?',d:'M',link:'https://github.com/donnemartin/system-design-primer#content-delivery-network'},
+]},
+{id:'h02',s:'hld',w:10,h:5,t:'HLD: Caching — Redis, Memcached, patterns, eviction',qs:[
+  {n:'Cache-aside vs write-through vs write-back — when to use each',d:'M',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'Redis AOF vs RDB persistence trade-offs at scale',d:'M',link:'https://github.com/donnemartin/system-design-primer#redis'},
+  {n:'Hot-key / celebrity problem in a distributed cache — mitigation strategies',d:'H',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'LRU Cache',lc:146,d:'M',co:['G','M','A','Ms']},
+]},
+
+// ══ WEEK 11 ══════════════════════════════════════════════════════════════════
+{id:'d23',s:'dsa',w:11,h:7,t:'Segment Tree & Binary Indexed Tree (Fenwick) — range queries',qs:[
+  {n:'Range Sum Query Mutable',lc:307,d:'M',co:['G']},
+  {n:'Count of Smaller Numbers After Self',lc:315,d:'H',co:['G','M']},
+  {n:'Reverse Pairs',lc:493,d:'H',co:['G']},
+  {n:'The Skyline Problem',lc:218,d:'H',co:['G']},
+]},
+{id:'d24',s:'dsa',w:11,h:5,t:'Math & Number Theory — GCD, Sieve, Modular Arithmetic, Fast Power',qs:[
+  {n:'Happy Number',lc:202,d:'E',co:['G']},
+  {n:'Pow x to the n',lc:50,d:'M',co:['G','M']},
+  {n:'Multiply Strings',lc:43,d:'M',co:['G','A']},
+  {n:'Spiral Matrix',lc:54,d:'M',co:['G','M']},
+  {n:'Rotate Image',lc:48,d:'M',co:['G','M']},
+  {n:'Text Justification',lc:68,d:'H',co:['G']},
+]},
+{id:'d25',s:'dsa',w:11,h:6,t:'Advanced Graph — Bridges, Articulation Points, SCC',qs:[
+  {n:'Critical Connections in a Network',lc:1192,d:'H',co:['G']},
+  {n:'Find Eventual Safe States',lc:802,d:'M',co:['G']},
+  {n:'Minimum Number of Vertices to Reach All Nodes',lc:1557,d:'M',co:['G']},
+  {n:'Number of Provinces',lc:547,d:'M',co:['G','M']},
+  {n:'Check if There is a Valid Path in a Grid',lc:1391,d:'M',co:['G']},
+]},
+{id:'h03',s:'hld',w:11,h:5,t:'HLD: Databases — SQL vs NoSQL, Sharding, Replication, Indexing',qs:[
+  {n:'Sharding strategy for a Users table with 1B rows — range vs hash vs directory',d:'H',link:'https://github.com/donnemartin/system-design-primer#sharding'},
+  {n:'Read replicas: routing reads and handling replication lag',d:'M',link:'https://github.com/donnemartin/system-design-primer#master-slave-replication'},
+  {n:'Cassandra vs MySQL for time-series data — trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer#nosql'},
+  {n:'Index design: (user_id, timestamp, type) for a social feed query',d:'H',link:'https://github.com/donnemartin/system-design-primer#sql-or-nosql'},
+]},
+{id:'h04',s:'hld',w:11,h:4,t:'HLD: CAP Theorem, PACELC, Consistency Patterns',qs:[
+  {n:'CAP: why can you only have 2 of 3? Real system examples (DynamoDB, Cassandra)',d:'M',link:'https://github.com/donnemartin/system-design-primer#cap-theorem'},
+  {n:'Eventual consistency: what guarantees does it actually provide?',d:'M',link:'https://github.com/donnemartin/system-design-primer#eventual-consistency'},
+  {n:'Design a system: strongly consistent writes, eventually consistent reads',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistency-patterns'},
+]},
+
+// ══ WEEK 12 ══════════════════════════════════════════════════════════════════
+{id:'d26',s:'dsa',w:12,h:20,t:'DSA Hard Marathon — 3 Leetcode Hard/day × 5 days (tagged by company)',qs:[
+  {n:'Merge K Sorted Lists',lc:23,d:'H',co:['G','A']},
+  {n:'Median of Two Sorted Arrays',lc:4,d:'H',co:['G','A','M']},
+  {n:'Serialize and Deserialize Binary Tree',lc:297,d:'H',co:['G','M','A']},
+  {n:'Word Ladder II',lc:126,d:'H',co:['G']},
+  {n:'Alien Dictionary',lc:269,d:'H',co:['G']},
+  {n:'Trapping Rain Water',lc:42,d:'H',co:['G','A','M']},
+  {n:'Largest Rectangle in Histogram',lc:84,d:'H',co:['G','A']},
+  {n:'Regular Expression Matching',lc:10,d:'H',co:['G']},
+  {n:'Russian Doll Envelopes',lc:354,d:'H',co:['G']},
+  {n:'Maximum Profit in Job Scheduling',lc:1235,d:'H',co:['G','A']},
+  {n:'Longest Increasing Path in a Matrix',lc:329,d:'H',co:['G']},
+  {n:'Count of Smaller Numbers After Self',lc:315,d:'H',co:['G','M']},
+  {n:'Minimum Window Substring',lc:76,d:'H',co:['G','M','A']},
+  {n:'Burst Balloons',lc:312,d:'H',co:['G']},
+  {n:'Minimum Cost to Hire K Workers',lc:857,d:'H',co:['G']},
+  {n:'Maximum Frequency Stack',lc:895,d:'H',co:['G','Ub'],recent:true},
+  {n:'Minimum Number of Refueling Stops',lc:871,d:'H',co:['G'],recent:true},
+  {n:'Reconstruct Itinerary',lc:332,d:'H',co:['G'],recent:true},
+  {n:'Find in Mountain Array',lc:1095,d:'H',co:['G'],recent:true},
+  {n:'Minimum Window Subsequence',lc:727,d:'H',co:['G'],recent:true},
+  // 2026 early reports
+  {n:'Count of Interesting Subarrays',lc:2845,d:'M',co:['G'],recent:true},
+  {n:'Maximum Score After Applying Operations',lc:2818,d:'H',co:['G'],recent:true},
+  {n:'Minimum Moves to Equal Array Elements II',lc:462,d:'M',co:['A'],recent:true},
+  {n:'Design a Food Rating System',lc:2353,d:'M',co:['A'],recent:true},
+  {n:'Shortest Path in a Grid with Obstacles Elimination',lc:1293,d:'H',co:['M'],recent:true},
+  {n:'Find K-th Smallest Pair Distance',lc:719,d:'H',co:['G'],recent:true},
+  {n:'Minimum Add to Make Parentheses Valid',lc:921,d:'M',co:['M'],recent:true},
+  {n:'Diagonal Traverse II',lc:1424,d:'M',co:['M'],recent:true},
+  // verified 2025-26 reports
+  {n:'Find Building Where Alice and Bob Can Meet',lc:2940,d:'H',co:['G']},
+  {n:'Maximum Number of Moves in a Grid',lc:2684,d:'M',co:['M']},
+  {n:'Minimum Number of Operations to Make Array Empty',lc:2870,d:'M',co:['A']},
+  {n:'Maximum Strength of a Group',lc:2708,d:'M',co:['A']},
+  {n:'Minimum Cost to Convert String I',lc:2976,d:'M',co:['G']},
+  {n:'Count the Number of Powerful Integers',lc:2999,d:'H',co:['G']},
+  {n:'Apple Redistribution into Boxes',lc:3074,d:'E',co:['A']},
+  {n:'Most Frequent IDs',lc:3160,d:'M',co:['M']},
+  {n:'Find the Maximum Length of Valid Subsequence II',lc:3202,d:'M',co:['G']},
+  {n:'Number of Subarrays That Match a Pattern II',lc:3036,d:'H',co:['M']},
+]},
+{id:'d27',s:'dsa',w:12,h:12,t:'DSA Mock Interviews ×4 — timed 45-min sessions',qs:[
+  {n:'Mock 1 (Google): 2 medium problems cold in 45 min',d:'M'},
+  {n:'Mock 2 (Meta): array/string + tree, optimize for space',d:'M'},
+  {n:'Mock 3 (Amazon): graph/DP + full complexity analysis',d:'H'},
+  {n:'Mock 4 (Mixed): 1 coding + 1 mini system design',d:'H'},
+]},
+{id:'l05',s:'lld',w:12,h:4,t:'Anti-patterns & Refactoring — God Object, Shotgun Surgery, Feature Envy',qs:[
+  {n:'Refactor a God Class: OrderService doing validation + pricing + notification + DB',d:'H',link:'https://refactoring.guru/smells/large-class'},
+  {n:'Feature Envy: method uses more from another class than its own',d:'M',link:'https://refactoring.guru/smells/feature-envy'},
+  {n:'Shotgun Surgery: new payment method requires changes in 8 different files',d:'M',link:'https://refactoring.guru/smells/shotgun-surgery'},
+  {n:'Break circular dependency A→B→A using dependency injection',d:'M',link:'https://www.baeldung.com/circular-dependencies-in-spring'},
+]},
+{id:'l14',s:'lld',w:12,h:5,t:'⭐ LLD Curveballs (Senior) — extensibility, concurrency, API design',qs:[
+  {n:'Design a class hierarchy that stays open to extension for requirements you cannot predict yet (OCP without speculative generality)',d:'H',link:'https://refactoring.guru/design-patterns/strategy'},
+  {n:'Design a thread-safe object pool (DB connections) — handle borrow, return, timeout, max-size, fairness',d:'H',link:'https://www.baeldung.com/java-connection-pooling'},
+  {n:'Make a library API that is hard to misuse: builder vs telescoping constructors, fail-fast validation, immutability',d:'H',link:'https://www.infoq.com/articles/API-Design-Joshua-Bloch/'},
+  {n:'When would you NOT use a design pattern? Show a case where a pattern is over-engineering',d:'M',link:'https://refactoring.guru/refactoring/smells'},
+  {n:'Design for testability: dependency injection vs service locator vs global singletons — trade-offs',d:'H',link:'https://martinfowler.com/articles/injection.html'},
+  {n:'Evolve a public API without breaking callers: versioning, deprecation, default methods, adapter shims',d:'H',link:'https://www.infoq.com/articles/API-Design-Joshua-Bloch/'},
+]},
+{id:'l15',s:'lld',w:12,h:5,t:'⭐ LLD Curveballs (Principal) — domain modeling, boundaries, judgment',qs:[
+  {n:'Model a domain with deep invariants (a Booking that can never double-book) — where do you enforce them: type system, aggregate, or DB constraint?',d:'H',link:'https://martinfowler.com/bliki/DDD_Aggregate.html'},
+  {n:'Anemic vs rich domain model — defend your choice for a real feature, not in the abstract',d:'H',link:'https://martinfowler.com/bliki/AnemicDomainModel.html'},
+  {n:'Where do you draw the module/service boundary? Show the cost of getting it wrong in both directions',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'Design a plugin architecture: 3rd parties extend your product without you redeploying — SPI, isolation, versioning',d:'H',link:'https://www.baeldung.com/java-spi'},
+  {n:'A junior PRs a clever 200-line abstraction for a 10-line problem — how do you review it and what principle do you cite?',d:'M',link:'https://refactoring.guru/refactoring/smells'},
+  {n:'Concurrency in domain logic: optimistic vs pessimistic locking for a wallet balance — pick one and justify under contention',d:'H',link:'https://www.baeldung.com/jpa-optimistic-locking'},
+]},
+{id:'h05',s:'hld',w:12,h:5,t:'HLD: Message Queues — Kafka, RabbitMQ, SQS, exactly-once',qs:[
+  {n:'Kafka pipeline for real-time order processing at 1M events/sec',d:'H',link:'https://github.com/donnemartin/system-design-primer#message-queues'},
+  {n:'Kafka ordering: guaranteed within partition, not across — design implications',d:'M',link:'https://github.com/donnemartin/system-design-primer#kafka'},
+  {n:'Exactly-once semantics: producer idempotence + transactional consumers',d:'H',link:'https://github.com/donnemartin/system-design-primer#kafka'},
+  {n:'RabbitMQ vs Kafka: when to prefer push-based over pull-based messaging',d:'M',link:'https://github.com/donnemartin/system-design-primer#message-queues'},
+]},
+{id:'h06',s:'hld',w:12,h:4,t:'HLD: API Design — REST vs GraphQL vs gRPC, versioning, idempotency',qs:[
+  {n:'Idempotent payment API: prevent duplicate charges on retry',d:'H',link:'https://github.com/donnemartin/system-design-primer#representational-state-transfer-rest'},
+  {n:'REST vs GraphQL: when is GraphQL wrong? (caching, complexity, over-fetching)',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'API versioning strategy supporting v1 and v2 simultaneously',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'gRPC vs REST for internal microservices — latency, schema, trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+
+// ══ WEEK 13 ══════════════════════════════════════════════════════════════════
+{id:'l06',s:'lld',w:13,h:4,t:'LLD Design: Parking Lot — multi-level, vehicle types, pricing',qs:[
+  {n:'Full class diagram: multi-level lot with Bike, Car, Truck spot types',d:'M',link:'https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/'},
+  {n:'Strategy pattern for pricing: flat vs hourly vs peak-hour multiplier',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+  {n:'Entry/exit ticket system with real-time spot availability counter',d:'H',link:'https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/'},
+]},
+{id:'l07',s:'lld',w:13,h:4,t:'LLD Design: Elevator System — multiple cars, LOOK/SCAN scheduling',qs:[
+  {n:'State machine: IDLE → MOVING_UP → MOVING_DOWN → MAINTENANCE',d:'M',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+  {n:'LOOK algorithm: serve all pending floors in one direction before reversing',d:'H',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+  {n:'Multi-elevator dispatch: minimize average wait time across 4 elevators',d:'H',link:'https://www.geeksforgeeks.org/design-an-elevator-system/'},
+]},
+{id:'l08',s:'lld',w:13,h:4,t:'LLD Design: ATM Machine — auth, transactions, cash dispensing',qs:[
+  {n:'State machine: Idle → CardInserted → PINVerified → TransactionComplete',d:'M',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+  {n:'Cash dispensing with greedy denomination selection + availability constraints',d:'M',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+  {n:'Thread safety: two users withdraw from same account simultaneously — prevent overdraft',d:'H',link:'https://www.geeksforgeeks.org/design-atm-machine-using-object-oriented-design/'},
+]},
+{id:'h07',s:'hld',w:13,h:3,t:'HLD: URL Shortener — hashing, redirect, analytics',qs:[
+  {n:'Full design: short URL generation, collision resolution, 301 vs 302 redirect',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'100M URLs/day with < 50ms redirect latency — storage and caching strategy',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'Analytics: click count, geo, device — without impacting redirect latency',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+]},
+{id:'h08',s:'hld',w:13,h:3,t:'HLD: Rate Limiter — token bucket, sliding window, distributed',qs:[
+  {n:'Token bucket in Redis using Lua script — atomic INCR + EXPIRE',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+  {n:'Sliding window log vs sliding window counter at 10K req/sec',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+  {n:'Distributed rate limiter across 10 servers without single-point bottleneck',d:'H',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+]},
+{id:'h09',s:'hld',w:13,h:4,t:'HLD: Twitter/X — news feed, fanout, celebrity problem',qs:[
+  {n:'Home timeline: push (fanout-on-write) vs pull (fanout-on-read)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md'},
+  {n:'Celebrity problem: user with 10M followers — avoid O(10M) writes per tweet',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md'},
+  {n:'Trending topics: distributed leaderboard with time-decay scoring',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+
+// ══ WEEK 14 ══════════════════════════════════════════════════════════════════
+{id:'l09',s:'lld',w:14,h:4,t:'LLD Design: Hotel Booking — rooms, reservations, pricing rules',qs:[
+  {n:'Room hierarchy with Decorator for amenities (breakfast, wifi, sea view)',d:'M',link:'https://refactoring.guru/design-patterns/decorator'},
+  {n:'Availability calendar: find all free rooms for [check-in, check-out] range',d:'H',link:'https://www.geeksforgeeks.org/hotel-management-system-design/'},
+  {n:'Pricing engine with Strategy: seasonal + discount + loyalty tier stacking',d:'H',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'l10',s:'lld',w:14,h:4,t:'LLD Design: Library Management — books, members, borrow/return, fines',qs:[
+  {n:'Catalog search by title/author/ISBN with Observer for reservation waitlist',d:'M',link:'https://www.geeksforgeeks.org/library-management-system-design/'},
+  {n:'Waitlist queue: when a book is returned, notify next in queue automatically',d:'M',link:'https://refactoring.guru/design-patterns/observer'},
+  {n:'Fine calculation via Strategy: flat vs per-day vs tiered structure',d:'M',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'l11',s:'lld',w:14,h:4,t:'LLD Design: Chess — pieces, move validation, check/checkmate',qs:[
+  {n:'Piece hierarchy: King, Queen, Rook, Bishop, Knight, Pawn + Strategy for moves',d:'M',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+  {n:'isValidMove() for each piece including castling and en passant',d:'H',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+  {n:'Detect check and checkmate — incremental attack tracking, not brute-force',d:'H',link:'https://www.geeksforgeeks.org/design-a-chess-game/'},
+]},
+{id:'l12',s:'lld',w:14,h:5,t:'LLD Design: Food Delivery (Swiggy/DoorDash) — order lifecycle, notifications',qs:[
+  {n:'Order state machine: PLACED → ACCEPTED → PREPARING → OUT_FOR_DELIVERY → DELIVERED',d:'M',link:'https://www.geeksforgeeks.org/design-food-ordering-system/'},
+  {n:'Search/filter by cuisine, rating, ETA — designed for extensibility',d:'M',link:'https://www.geeksforgeeks.org/design-food-ordering-system/'},
+  {n:'Observer: notify customer, restaurant, and driver at each state change',d:'H',link:'https://refactoring.guru/design-patterns/observer'},
+]},
+{id:'l13',s:'lld',w:14,h:5,t:'LLD Design: Ride Sharing (Uber/Lyft) — driver matching, trip state machine',qs:[
+  {n:'Trip state machine: BOOKING → DRIVER_ASSIGNED → RIDE_STARTED → COMPLETED',d:'M',link:'https://www.geeksforgeeks.org/design-a-ride-sharing-app-like-ola-uber/'},
+  {n:'Driver matching: nearest available driver using geohash grid',d:'H',link:'https://www.geeksforgeeks.org/design-a-ride-sharing-app-like-ola-uber/'},
+  {n:'Surge pricing: Strategy — multiplier computed from demand/supply ratio',d:'H',link:'https://refactoring.guru/design-patterns/strategy'},
+]},
+{id:'h10',s:'hld',w:14,h:4,t:'HLD: WhatsApp — messaging, delivery receipts, group chat',qs:[
+  {n:'Message delivery pipeline: WebSocket → message store → push notification',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Group chat with 512 members: fan-out strategy at scale',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Message ordering guarantee: causal consistency with vector clocks',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h11',s:'hld',w:14,h:4,t:'HLD: YouTube/Netflix — upload, transcoding, CDN, adaptive streaming',qs:[
+  {n:'Video upload pipeline: chunked upload → object store → transcoding queue',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+  {n:'Adaptive bitrate streaming (HLS/DASH): how player decides segment quality',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+  {n:'Netflix CDN: pre-position content to ISP caches (Open Connect model)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/youtube/README.md'},
+]},
+{id:'h12',s:'hld',w:14,h:4,t:'HLD: Uber — real-time location, driver matching, surge pricing',qs:[
+  {n:'Driver location updates at scale: geohash vs Uber\'s H3 hexagonal grid',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Matching algorithm: nearest driver with fairness constraint',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Surge pricing: demand/supply ratio per geo-cell in real time',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+]},
+
+// ══ WEEK 15 ══════════════════════════════════════════════════════════════════
+{id:'h13',s:'hld',w:15,h:5,t:'HLD: Distributed Consensus — Raft, Paxos, Leader Election',qs:[
+  {n:'Raft leader election: split vote, term numbers, log replication walkthrough',d:'H',link:'https://raft.github.io/'},
+  {n:'ZooKeeper distributed locks using ephemeral znodes + sequential ordering',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Snowflake ID generator: globally unique IDs across 100 nodes without coordination',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h14',s:'hld',w:15,h:4,t:'HLD: Distributed Transactions — 2PC, Saga, idempotency',qs:[
+  {n:'2PC vs Saga: when does 2PC fail? Design Saga for Order + Payment + Inventory',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Idempotency keys for payment API: safe to retry without double charge',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Compensating transactions: rollback design for a partial Saga failure',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h15',s:'hld',w:15,h:3,t:'HLD: Google Search — crawling, indexing, ranking, typeahead',qs:[
+  {n:'Web crawler: politeness, dedup (Bloom filter), priority queue, distributed frontier',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md'},
+  {n:'Inverted index construction at web scale using MapReduce',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md'},
+  {n:'Typeahead < 10ms: trie + ML ranking + distributed caching strategy',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md'},
+]},
+{id:'h16',s:'hld',w:15,h:3,t:'HLD: Notification System — fan-out, priority, dedup, exactly-once',qs:[
+  {n:'Fan-out for 500M users with priority queues (transactional > promotional)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Exactly-once delivery for critical notifications across push/email/SMS',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Per-user per-channel rate limiting to avoid spamming',d:'M',link:'https://www.geeksforgeeks.org/rate-limiting-in-system-design/'},
+]},
+{id:'h17',s:'hld',w:15,h:3,t:'HLD: Payment System — ledger, idempotency, reconciliation',qs:[
+  {n:'Double-entry ledger: guarantee no money created or lost during transfers',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Idempotent payment API: safe to retry without double charge',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Async reconciliation: detect discrepancies between internal ledger and bank',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h18',s:'hld',w:15,h:9,t:'HLD Mock Sessions ×3 — full whiteboard 45 min each',qs:[
+  {n:'Mock 1: Design a ride-sharing service end-to-end (Uber)',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/uber/README.md'},
+  {n:'Mock 2: Design a real-time collaborative document editor (Google Docs)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Mock 3: Design a distributed job scheduler (like AWS Batch or Airflow)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'h19',s:'hld',w:15,h:6,t:'⭐ HLD Curveballs (Senior) — failure modes, latency, deployment',qs:[
+  {n:'p99 latency spiked 10× but p50 is flat — walk through your debugging methodology',d:'H',link:'https://github.com/donnemartin/system-design-primer#latency-numbers-every-programmer-should-know'},
+  {n:'Cache stampede / thundering herd on a hot key — 3 mitigation strategies (lock, stale-while-revalidate, request coalescing)',d:'H',link:'https://en.wikipedia.org/wiki/Cache_stampede'},
+  {n:'Backpressure: a slow downstream consumer threatens to OOM your producers — how do you shed load gracefully?',d:'H',link:'https://www.reactivemanifesto.org/glossary#Back-Pressure'},
+  {n:'Zero-downtime migration of a 1B-row table to a new schema — dual-write, backfill, cutover plan',d:'H',link:'https://github.com/donnemartin/system-design-primer#sharding'},
+  {n:'Multi-region active-active: two regions accept a conflicting write to the same key — how do you resolve? (LWW vs CRDT vs vector clocks)',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistency-patterns'},
+  {n:'Blue-green deploy of a STATEFUL service — how do you handle in-flight connections and schema drift?',d:'H',link:'https://martinfowler.com/bliki/BlueGreenDeployment.html'},
+  {n:'"5 nines" costs 10× more than "4 nines" — justify the SLA target to a VP using error budget math',d:'H',link:'https://sre.google/sre-book/availability-table/'},
+]},
+{id:'h20',s:'hld',w:15,h:6,t:'⭐ HLD Curveballs (Principal) — org-scale, blast radius, trade-off judgment',qs:[
+  {n:'Bound the blast radius of a bad config push across 10K servers — cell-based architecture + staged rollout',d:'H',link:'https://aws.amazon.com/builders-library/reducing-the-scope-of-impact-with-cell-based-architecture/'},
+  {n:'You inherit a system at 70% of its scaling ceiling with a 6-month runway — rearchitect vs buy time? Defend the call.',d:'H'},
+  {n:'A team wants microservices; you think the monolith is fine. Argue both sides and make the org-level decision.',d:'H',link:'https://martinfowler.com/bliki/MonolithFirst.html'},
+  {n:'Design a system that degrades gracefully: rank which features to shed first under 50% capacity loss',d:'H',link:'https://sre.google/sre-book/handling-overload/'},
+  {n:'Exactly-once is impossible end-to-end — explain why, then design effectively-once with idempotency + dedup',d:'H',link:'https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-kafka-does-it/'},
+  {n:'Justify a build-vs-buy for your observability stack to finance: TCO, vendor lock-in, opportunity cost',d:'H',link:'https://martinfowler.com/articles/build-vs-buy.html'},
+  {n:'A noisy-neighbor tenant degrades a shared cluster — design fair isolation (quotas, rate limits, bulkheads)',d:'H',link:'https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead'},
+]},
+{id:'h21',s:'hld',w:14,h:6,t:'🗂 HLD Problem Set (systemdesign.io) — proximity, calendar, docs, tracing',qs:[
+  {n:'Design Yelp / Nearby Places — geospatial index (geohash / QuadTree / S2) for proximity search',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design Google Calendar — recurring events, timezones, free/busy, invite fan-out',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design Notion / Google Docs — collaborative editing, OT vs CRDT, block model storage',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design a Distributed Tracing system (Jaeger/Zipkin) — span propagation, sampling, storage at scale',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design Top-K / Hot Articles — count-min sketch, heavy hitters, time-window decay',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design Live Comments / Like Counter — fan-out, eventual count convergence, hot-post handling',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design ETA / Location Sharing — real-time geo updates, map-matching, push vs poll',d:'H',link:'https://systemdesign.io/'},
+  {n:'Design an A/B Testing platform — bucketing, sticky assignment, metric pipeline, guardrail stats',d:'H',link:'https://systemdesign.io/'},
+]},
+{id:'h22',s:'hld',w:14,h:6,t:'🧠 Tricky Conceptual Q&A (vault-style) — DB, caching, consistency gotchas',qs:[
+  {n:'Why can adding an index make a write-heavy table SLOWER overall? Quantify the trade-off',d:'H',link:'https://use-the-index-luke.com/'},
+  {n:'A read replica returns stale data right after a write — name 3 fixes and their costs (read-your-writes, sticky, quorum)',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistency-patterns'},
+  {n:'Cache and DB disagree after a failed write — is it safe to cache-then-write or write-then-cache? Walk the race',d:'H',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'You sharded by user_id but one user has 90% of the data — how do you detect and fix the hot shard?',d:'H',link:'https://github.com/donnemartin/system-design-primer#sharding'},
+  {n:'Two services both "own" the same data after a merge — how do you decide the source of truth?',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'A queue consumer is idempotent but the producer retries — can you still double-process? When and why?',d:'H',link:'https://microservices.io/patterns/communication-style/idempotent-consumer.html'},
+  {n:'Your UUID primary keys are killing B-tree insert performance — why, and what do you switch to (ULID/snowflake)?',d:'H',link:'https://use-the-index-luke.com/'},
+  {n:'Optimistic locking keeps failing under high contention — when is pessimistic actually faster?',d:'H',link:'https://www.baeldung.com/jpa-optimistic-locking'},
+]},
+{id:'p01',s:'proj',w:15,h:20,t:'Project: Distributed Key-Value Store — WAL, LSM-tree, consistent hashing',qs:[
+  {n:'Write-Ahead Log (WAL) for crash recovery before MemTable flush',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'LSM-tree: MemTable + SSTable + compaction (leveled vs tiered)',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Consistent hashing ring with virtual nodes — add/remove gracefully',d:'H',link:'https://github.com/donnemartin/system-design-primer#consistent-hashing'},
+  {n:'Raft leader election between 3 nodes',d:'H',link:'https://raft.github.io/'},
+]},
+
+// ══ WEEK 16 ══════════════════════════════════════════════════════════════════
+{id:'p02',s:'proj',w:16,h:12,t:'Project: Real-time Chat App — WebSocket, Redis pub/sub, message ordering',qs:[
+  {n:'WebSocket server handling 10K concurrent connections — connection lifecycle',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Message ordering using Lamport timestamps or per-room sequence numbers',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Presence system: online/offline/typing indicators without polling',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'p03',s:'proj',w:16,h:3,t:'Polish GitHub — architecture diagrams, READMEs, contribution graph',qs:[
+  {n:'README: architecture diagram, tech decisions, and explicit trade-offs section',d:'E'},
+  {n:'Add CONTRIBUTING.md, issue templates, and CI badge',d:'E'},
+]},
+{id:'b01',s:'beh',w:16,h:5,t:'STAR Method — build a story bank of 10+ unique experiences',qs:[
+  {n:'Tell me about the most complex system you\'ve architected end-to-end',d:'M'},
+  {n:'Describe a time you disagreed with a major technical decision',d:'M'},
+  {n:'Give an example of influencing a team without direct authority',d:'M'},
+  {n:'Tell me about a project that failed — root cause and what you changed',d:'M'},
+]},
+{id:'b02',s:'beh',w:16,h:4,t:'Amazon Leadership Principles — map all 16 LPs to personal stories',qs:[
+  {n:'Customer Obsession: went beyond requirements to serve the customer',d:'M'},
+  {n:'Ownership: took responsibility for a failure partly caused by others',d:'M'},
+  {n:'Invent and Simplify: creative solution that significantly reduced complexity',d:'M'},
+  {n:'Dive Deep: caught a critical problem others missed by going into details',d:'M'},
+]},
+{id:'b03',s:'beh',w:16,h:3,t:'Conflict & Difficult Stakeholder stories ×3',qs:[
+  {n:'Conflict with a peer engineer over technical approach — resolution outcome',d:'M'},
+  {n:'Disagreement with manager on product priority — what did you do?',d:'M'},
+  {n:'Difficult external stakeholder — how did you manage expectations?',d:'M'},
+]},
+{id:'b04',s:'beh',w:16,h:3,t:'Leadership & Ownership stories — driving impact without authority',qs:[
+  {n:'Led a cross-team project with no direct reports — how did you align everyone?',d:'M'},
+  {n:'Proactively identified and fixed a critical issue before it became a P0',d:'M'},
+  {n:'Mentored a junior engineer — specific measurable growth you enabled',d:'M'},
+]},
+{id:'b05',s:'beh',w:16,h:2,t:'Failure & Learning stories ×2 — honest and growth-oriented',qs:[
+  {n:'Production incident you caused — what happened and what changed afterward',d:'M'},
+  {n:'Technical decision that turned out to be wrong 6 months later',d:'M'},
+]},
+{id:'b06',s:'beh',w:16,h:2,t:'Innovation & Ambiguity — first-principles, data-driven decisions',qs:[
+  {n:'Built something from scratch with no clear requirements — how did you navigate?',d:'M'},
+  {n:'Novel technical solution that improved system performance by 10x+',d:'M'},
+]},
+{id:'b07',s:'beh',w:16,h:4,t:'Company Research — eng blogs, recent launches, culture fit angle',qs:[
+  {n:'Why this company? Must be technical + cultural, never generic',d:'M'},
+  {n:'Read their engineering blog: what hard problem have they solved publicly?',d:'E'},
+  {n:'What would you change about their product from an engineering perspective?',d:'M'},
+]},
+{id:'b08',s:'beh',w:16,h:9,t:'Behavioral Mock Sessions ×3 — record, review, sharpen',qs:[
+  {n:'Mock 1: Amazon Leadership Principles deep dive (45 min)',d:'M'},
+  {n:'Mock 2: Meta/Google general behavioral — STAR answers under 2 min',d:'M'},
+  {n:'Mock 3: Self-record — identify weak stories and filler words',d:'M'},
+]},
+{id:'b09',s:'beh',w:16,h:12,t:'Full Loop Simulations ×3 — DSA + System Design + Behavioral',qs:[
+  {n:'Loop 1: Coding (2×45min) + System Design (60min) + Behavioral (30min)',d:'H'},
+  {n:'Loop 2: Same format, different company template',d:'H'},
+  {n:'Loop 3: With a coach or senior engineer — calibrate, get brutal feedback',d:'H'},
+]},
+{id:'b10',s:'beh',w:16,h:6,t:'Weak Area Sprint — revisit all ↻ tagged topics, timed re-attempts',qs:[
+  {n:'Re-attempt every DSA problem marked Revisit — cold, no notes',d:'H'},
+  {n:'Re-whiteboard every system design marked Revisit — from scratch',d:'H'},
+  {n:'Polish and sharpen every behavioral story marked Revisit',d:'M'},
+]},
+
+// ══ OFFICE PLANNING: 2h/week × weeks 1-10 ═══════════════════════════════════
+{id:'op01',s:'prod',w:1, h:2,t:'🗺️ Office Planning (2h) — Define sprint goals + week study plan',qs:[{n:'Write this week\'s OKR: 1 office goal + 1 study goal you will hit',d:'E'}]},
+{id:'op02',s:'prod',w:2, h:2,t:'🗺️ Office Planning (2h) — Sprint review + project risk scan',qs:[{n:'Update your project board: what slipped, what\'s on track, any blockers?',d:'E'}]},
+{id:'op03',s:'prod',w:3, h:2,t:'🗺️ Office Planning (2h) — Write RFC draft for your current project',qs:[{n:'Write a 1-page RFC: problem, proposed solution, 2 alternatives, open questions',d:'M',link:'https://www.ietf.org/standards/rfcs/'}]},
+{id:'op04',s:'prod',w:4, h:2,t:'🗺️ Office Planning (2h) — Architecture Decision Record (ADR)',qs:[{n:'Write an ADR for a key design decision you recently made or are about to make',d:'M',link:'https://adr.github.io/'}]},
+{id:'op05',s:'prod',w:5, h:2,t:'🗺️ Office Planning (2h) — Technical debt register',qs:[{n:'Identify 3 tech debt items in your codebase: rate each by effort × impact',d:'M',link:'https://martinfowler.com/bliki/TechnicalDebt.html'}]},
+{id:'op06',s:'prod',w:6, h:2,t:'🗺️ Office Planning (2h) — Risk assessment matrix',qs:[{n:'List 5 project risks: rate likelihood × impact, assign owner and mitigation',d:'M'}]},
+{id:'op07',s:'prod',w:7, h:2,t:'🗺️ Office Planning (2h) — Mid-point review + strategy adjust',qs:[{n:'Are you on track for your Q goal? If not, what 1 thing changes this week?',d:'E'}]},
+{id:'op08',s:'prod',w:8, h:2,t:'🗺️ Office Planning (2h) — Stakeholder update',qs:[{n:'Write a 5-bullet status update for your manager or team: status, risks, asks',d:'E'}]},
+{id:'op09',s:'prod',w:9, h:2,t:'🗺️ Office Planning (2h) — Code review + documentation sprint',qs:[{n:'Review 2 open PRs thoroughly. Add missing docstrings to 1 module.',d:'M'}]},
+{id:'op10',s:'prod',w:10,h:2,t:'🗺️ Office Planning (2h) — Quarter planning + interview schedule',qs:[{n:'Define next quarter goals. Book warm-up interviews for weeks 14-16.',d:'M'}]},
+
+// ══ PUNEET PATWARI VAULT — 2h/week, 93 Q&A across 16 weeks ═══════════════════
+{id:'pv01',s:'hld',w:1, h:2,t:'📖 Puneet Vault (2h) — Q1–6',qs:[{n:'Work through questions 1–6 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv02',s:'hld',w:2, h:2,t:'📖 Puneet Vault (2h) — Q7–12',qs:[{n:'Work through questions 7–12 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv03',s:'hld',w:3, h:2,t:'📖 Puneet Vault (2h) — Q13–18',qs:[{n:'Work through questions 13–18 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv04',s:'hld',w:4, h:2,t:'📖 Puneet Vault (2h) — Q19–24',qs:[{n:'Work through questions 19–24 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv05',s:'hld',w:5, h:2,t:'📖 Puneet Vault (2h) — Q25–30',qs:[{n:'Work through questions 25–30 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv06',s:'hld',w:6, h:2,t:'📖 Puneet Vault (2h) — Q31–36',qs:[{n:'Work through questions 31–36 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv07',s:'hld',w:7, h:2,t:'📖 Puneet Vault (2h) — Q37–42',qs:[{n:'Work through questions 37–42 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv08',s:'hld',w:8, h:2,t:'📖 Puneet Vault (2h) — Q43–48',qs:[{n:'Work through questions 43–48 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv09',s:'hld',w:9, h:2,t:'📖 Puneet Vault (2h) — Q49–54',qs:[{n:'Work through questions 49–54 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv10',s:'hld',w:10,h:2,t:'📖 Puneet Vault (2h) — Q55–60',qs:[{n:'Work through questions 55–60 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv11',s:'hld',w:11,h:2,t:'📖 Puneet Vault (2h) — Q61–66',qs:[{n:'Work through questions 61–66 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv12',s:'hld',w:12,h:2,t:'📖 Puneet Vault (2h) — Q67–72',qs:[{n:'Work through questions 67–72 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv13',s:'hld',w:13,h:2,t:'📖 Puneet Vault (2h) — Q73–78',qs:[{n:'Work through questions 73–78 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv14',s:'hld',w:14,h:2,t:'📖 Puneet Vault (2h) — Q79–84',qs:[{n:'Work through questions 79–84 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv15',s:'hld',w:15,h:2,t:'📖 Puneet Vault (2h) — Q85–90',qs:[{n:'Work through questions 85–90 of the 93-question System Design Q&A vault',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+{id:'pv16',s:'hld',w:16,h:2,t:'📖 Puneet Vault (2h) — Q91–93 + review',qs:[{n:'Finish questions 91–93 and revisit any vault answers you marked weak',d:'M',link:'https://www.puneetpatwari.in/vault'}]},
+
+// ══ BLENDED: HLD foundations woven into early FAANG weeks ═══════════════════
+{id:'hb01',s:'hld',w:2,h:3,t:'🏛 HLD Foundation 1 — Networking, HTTP, DNS, Client-Server basics',qs:[
+  {n:'What happens when you type a URL and press enter? (DNS → TCP → TLS → HTTP → render)',d:'M',link:'https://github.com/alex/what-happens-when'},
+  {n:'TCP vs UDP — when does each matter in system design?',d:'E',link:'https://github.com/donnemartin/system-design-primer#tcp'},
+  {n:'DNS resolution + how a CDN uses DNS/anycast to route to nearest edge',d:'M',link:'https://github.com/donnemartin/system-design-primer#domain-name-system'},
+  {n:'Latency numbers every engineer should know (L1 cache → cross-region RTT)',d:'M',link:'https://gist.github.com/jboner/2841832'},
+]},
+{id:'hb02',s:'hld',w:4,h:3,t:'🏛 HLD Foundation 2 — Storage basics: SQL vs NoSQL, indexing intuition',qs:[
+  {n:'When to pick SQL vs NoSQL — decision framework with real examples',d:'M',link:'https://github.com/donnemartin/system-design-primer#sql-or-nosql'},
+  {n:'How does a B-tree index make queries fast? Why can too many indexes hurt writes?',d:'M',link:'https://use-the-index-luke.com/'},
+  {n:'ACID vs BASE — what guarantees does each give and when is each acceptable?',d:'M',link:'https://github.com/donnemartin/system-design-primer#acid'},
+  {n:'Primary key, partition key, clustering key — design intuition for access patterns',d:'M',link:'https://github.com/donnemartin/system-design-primer#nosql'},
+]},
+{id:'hb03',s:'hld',w:6,h:3,t:'🏛 HLD Foundation 3 — Scalability: vertical/horizontal, stateless, LB intuition',qs:[
+  {n:'Vertical vs horizontal scaling — cost, limits, and failure-domain trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer#scalability'},
+  {n:'Why stateless services scale better — where does the state go instead?',d:'M',link:'https://github.com/donnemartin/system-design-primer#application-layer'},
+  {n:'Load balancer basics: round-robin, least-connections, sticky sessions',d:'M',link:'https://github.com/donnemartin/system-design-primer#load-balancer'},
+  {n:'Single point of failure: identify and eliminate them in a basic 3-tier app',d:'M',link:'https://github.com/donnemartin/system-design-primer#availability-patterns'},
+]},
+{id:'hb04',s:'hld',w:8,h:3,t:'🏛 HLD Foundation 4 — Caching, queues & the back-of-envelope estimation',qs:[
+  {n:'Where to cache (browser, CDN, app, DB) and the cost of cache invalidation',d:'M',link:'https://github.com/donnemartin/system-design-primer#cache'},
+  {n:'Why add a message queue? Decoupling, buffering, and async processing intuition',d:'M',link:'https://github.com/donnemartin/system-design-primer#asynchronism'},
+  {n:'Back-of-envelope: estimate QPS, storage, and bandwidth for a 10M-user app',d:'H',link:'https://github.com/donnemartin/system-design-primer#back-of-the-envelope-calculations'},
+  {n:'Read-heavy vs write-heavy systems — how the design fundamentally changes',d:'M',link:'https://github.com/donnemartin/system-design-primer#performance-vs-scalability'},
+]},
+
+// ══ BLENDED: Mini-Project checkpoints woven into FAANG weeks ════════════════
+{id:'bp01',s:'proj',w:3,h:5,t:'🛠 Project Checkpoint 1 — Set up your portfolio REST API (auth + DB)',qs:[
+  {n:'Init a Git repo, README, and folder structure for your interview portfolio project',d:'E'},
+  {n:'Build a basic CRUD REST API (Express/FastAPI/Spring Boot) with JWT auth',d:'M',link:'https://www.baeldung.com/spring-boot-start'},
+  {n:'Set up PostgreSQL with a real schema (users, posts, or any domain you choose)',d:'M',link:'https://www.baeldung.com/spring-data-jpa-guide'},
+  {n:'Write 5 unit + 3 integration tests for your API endpoints',d:'M',link:'https://www.baeldung.com/integration-testing-in-spring'},
+]},
+{id:'bp02',s:'proj',w:7,h:5,t:'🛠 Project Checkpoint 2 — Add Redis caching + CI/CD pipeline',qs:[
+  {n:'Add Redis cache-aside for your most-read endpoint (user profile, feed)',d:'M',link:'https://www.baeldung.com/spring-cache-tutorial'},
+  {n:'GitHub Actions: run tests on every PR, fail the build if coverage drops below 80%',d:'M',link:'https://docs.github.com/en/actions'},
+  {n:'Add rate limiting middleware using Redis INCR + EXPIRE',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Performance test: use k6 or artillery to load test your API at 100 req/sec',d:'M'},
+]},
+{id:'bp03',s:'proj',w:11,h:5,t:'🛠 Project Checkpoint 3 — Dockerize + deploy + add observability',qs:[
+  {n:'Write a multi-stage Dockerfile for your API and run it locally',d:'M',link:'https://docs.docker.com/develop/develop-images/multistage-build/'},
+  {n:'Deploy to a free cloud tier (Render/Railway/Fly.io) with environment secrets',d:'M'},
+  {n:'Add structured JSON logging (request_id, user_id, latency, status code)',d:'M',link:'https://www.baeldung.com/java-log-json-output'},
+  {n:'Add /healthz and /metrics endpoints — document your API with OpenAPI/Swagger',d:'M'},
+]},
+
+// ══ BLENDED: AI integration checkpoints woven into FAANG weeks ═══════════════
+{id:'ba01',s:'ai',w:4,h:4,t:'🤖 AI Blend 1 — Build your first LLM-powered feature using an API',qs:[
+  {n:'Call the Claude or OpenAI API from your language — understand tokens and pricing',d:'E',link:'https://docs.anthropic.com/en/api/getting-started'},
+  {n:'Build a simple Q&A chatbot over a small dataset (10-20 docs)',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Add a "summarize this" feature to your portfolio project using an LLM API',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+]},
+{id:'ba02',s:'ai',w:8,h:4,t:'🤖 AI Blend 2 — Add semantic search (RAG) to your portfolio project',qs:[
+  {n:'Add pgvector to your PostgreSQL DB, store embeddings for your content',d:'M',link:'https://github.com/pgvector/pgvector'},
+  {n:'Build a basic RAG pipeline: chunk documents → embed → retrieve top-3 → generate answer',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Measure retrieval quality: does the right chunk get retrieved for 10 test queries?',d:'M',link:'https://docs.ragas.io/'},
+]},
+{id:'ba03',s:'ai',w:12,h:4,t:'🤖 AI Blend 3 — Add an AI agent with tool use to your project',qs:[
+  {n:'Define 2-3 tools (e.g. search_db, send_email, get_weather) and wire to Claude tool_use',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Build an agent that can answer "what was the revenue last week?" by querying your DB',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Add guardrails: max turns, fallback to human, log all LLM calls for audit',d:'M',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
+]},
+
+// ══ STARTUP TRACK: S1–S8 (Weeks 17–24) ═══════════════════════════════════════
+// ── S1 (Wk 17): Clean Code · TDD · Code Review ────────────────────────────────
+{id:'sp01',s:'prac',w:17,h:6,t:'Clean Code — naming, functions, DRY, YAGNI, KISS',qs:[
+  {n:'Rename variables/functions in a messy 50-line function to be self-documenting',d:'E',link:'https://refactoring.guru/refactoring/techniques/composing-methods'},
+  {n:'Extract a 100-line God function into single-responsibility helpers',d:'M',link:'https://refactoring.guru/extract-method'},
+  {n:'Find all YAGNI and KISS violations in a given codebase snippet',d:'M',link:'https://refactoring.guru/refactoring'},
+  {n:'Magic Number smell: replace all magic numbers with named constants',d:'E',link:'https://refactoring.guru/replace-magic-number-with-symbolic-constant'},
+]},
+{id:'sp02',s:'prac',w:17,h:6,t:'Test-Driven Development — Red-Green-Refactor, unit tests, mocks',qs:[
+  {n:'TDD: implement a password validator using strict Red-Green-Refactor',d:'M',link:'https://www.baeldung.com/java-test-driven-list'},
+  {n:'Write unit tests for an authentication function that currently has none',d:'M',link:'https://www.baeldung.com/java-unit-testing-best-practices'},
+  {n:'Mock an external payment API dependency in your service layer tests',d:'M',link:'https://www.baeldung.com/mockito-series'},
+  {n:'Integration test: test a REST endpoint hitting a real in-memory DB',d:'H',link:'https://www.baeldung.com/integration-testing-in-spring'},
+]},
+{id:'sp03',s:'prac',w:17,h:5,t:'Code Review — checklist, PR etiquette, giving & receiving feedback',qs:[
+  {n:'Review a 200-line PR: find bugs, naming issues, missing tests, and security problems',d:'M',link:'https://google.github.io/eng-practices/review/reviewer/'},
+  {n:'Write a PR description for a complex feature — what must it include?',d:'E',link:'https://google.github.io/eng-practices/review/developer/cl-descriptions.html'},
+  {n:'When should you request changes vs approve with comments vs just comment?',d:'M',link:'https://google.github.io/eng-practices/review/reviewer/standard.html'},
+]},
+{id:'sp04',s:'prac',w:17,h:4,t:'Refactoring techniques — extract, rename, move, eliminate duplication',qs:[
+  {n:'Apply Strangler Fig Pattern to incrementally extract a feature from a monolith',d:'H',link:'https://refactoring.guru/refactoring/techniques'},
+  {n:'Replace Conditional with Polymorphism: switch on type → Strategy pattern',d:'M',link:'https://refactoring.guru/replace-conditional-with-polymorphism'},
+  {n:'Introduce Parameter Object: a method with 6+ parameters',d:'E',link:'https://refactoring.guru/introduce-parameter-object'},
+]},
+// ── S2 (Wk 18): REST APIs · SQL · Auth ────────────────────────────────────────
+{id:'sp05',s:'fs',w:18,h:6,t:'REST API Design — status codes, versioning, pagination, error formats',qs:[
+  {n:'Design a RESTful API for a Twitter-like feed: endpoints, pagination, auth headers',d:'M',link:'https://www.baeldung.com/rest-api-pagination-in-spring'},
+  {n:'Status codes: what does 400 vs 422 vs 409 vs 429 vs 503 mean for an API consumer?',d:'E',link:'https://www.baeldung.com/rest-api-error-handling-best-practices'},
+  {n:'Implement API versioning: /v1/users vs /v2/users with backward compatibility',d:'M',link:'https://www.baeldung.com/rest-api-versioning'},
+  {n:'Design idempotent endpoints: POST /payments should be safe to retry',d:'H',link:'https://www.baeldung.com/cs/idempotent-operations'},
+]},
+{id:'sp06',s:'fs',w:18,h:7,t:'SQL Deep Dive — joins, window functions, EXPLAIN, indexes, transactions',qs:[
+  {n:'Write a query: top 3 users by post count in the last 30 days using window functions',d:'M',link:'https://www.postgresqltutorial.com/postgresql-window-function/'},
+  {n:'EXPLAIN ANALYZE a slow query and add the right index to fix it',d:'H',link:'https://www.postgresql.org/docs/current/using-explain.html'},
+  {n:'Design a schema for a multi-tenant SaaS — row-level security vs separate schemas',d:'H',link:'https://www.postgresql.org/docs/current/ddl-rowsecurity.html'},
+  {n:'Fix the N+1 problem: ORM generates 101 queries for a 100-post feed — fix with JOIN',d:'M',link:'https://www.baeldung.com/hibernate-common-performance-problems-in-logs'},
+  {n:'Serializable vs REPEATABLE READ vs READ COMMITTED — when does each matter?',d:'M',link:'https://www.postgresql.org/docs/current/transaction-iso.html'},
+]},
+{id:'sp07',s:'fs',w:18,h:5,t:'Authentication & Authorization — JWT, OAuth2, RBAC, refresh tokens',qs:[
+  {n:'Implement JWT refresh token rotation — access token expires in 15min, refresh in 7 days',d:'H',link:'https://www.baeldung.com/spring-security-oauth-jwt'},
+  {n:'OAuth2 flows: auth code vs client credentials vs implicit — when to use each',d:'M',link:'https://www.baeldung.com/spring-security-oauth-authorization-code-flow'},
+  {n:'RBAC: users have roles, roles have permissions, enforce in middleware (not UI)',d:'M',link:'https://www.baeldung.com/spring-security-role-filter-registered'},
+  {n:'HTTPS: what does TLS actually do? What is a man-in-the-middle attack?',d:'E',link:'https://www.baeldung.com/cs/https-urls-encrypted'},
+]},
+// ── S3 (Wk 19): Data Layer · Redis · Schema Design ────────────────────────────
+{id:'sp08',s:'fs',w:19,h:6,t:'Database Schema Design — normalization, ERD, constraints, trade-offs',qs:[
+  {n:'Design an e-commerce schema: Users, Products, Orders, OrderItems, Payments',d:'M',link:'https://www.geeksforgeeks.org/how-to-design-a-database-for-an-e-commerce-website/'},
+  {n:'1NF vs 2NF vs 3NF vs BCNF — when is denormalization the right choice?',d:'M',link:'https://www.postgresql.org/docs/current/ddl.html'},
+  {n:'Soft deletes vs hard deletes — implement and choose when to use each',d:'M',link:'https://www.baeldung.com/jpa-soft-delete'},
+  {n:'Design a multi-tenancy model: one DB vs schema-per-tenant vs DB-per-tenant',d:'H',link:'https://www.baeldung.com/hibernate-5-multitenancy'},
+]},
+{id:'sp09',s:'fs',w:19,h:5,t:'Redis Practical — caching, pub/sub, sorted sets, Lua, rate limiting',qs:[
+  {n:'Cache-aside pattern: cache user profiles with TTL + explicit invalidation on update',d:'M',link:'https://www.baeldung.com/spring-cache-tutorial'},
+  {n:'Real-time leaderboard using Redis ZADD / ZRANGE with scores and ranks',d:'M',link:'https://redis.io/docs/data-types/sorted-sets/'},
+  {n:'Rate limiting per user: Redis INCR + EXPIRE — atomic with Lua script',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Redis pub/sub for real-time notifications — what are its limitations vs Kafka?',d:'M',link:'https://redis.io/docs/manual/pubsub/'},
+]},
+{id:'sp10',s:'fs',w:19,h:4,t:'ORM Patterns — N+1, eager/lazy loading, raw SQL when needed, migrations',qs:[
+  {n:'Zero-downtime DB migration: add a NOT NULL column to a 50M-row table',d:'H',link:'https://www.baeldung.com/db-migrations-with-flyway'},
+  {n:'Flyway vs Liquibase: when to use each, how to handle rollbacks',d:'M',link:'https://www.baeldung.com/liquibase-vs-flyway'},
+  {n:'When to drop the ORM and write raw SQL — performance threshold and patterns',d:'M',link:'https://www.baeldung.com/spring-data-jpa-query'},
+]},
+// ── S4 (Wk 20): HTTP · React basics · API Integration ─────────────────────────
+{id:'sp11',s:'fs',w:20,h:5,t:'HTTP/HTTPS Deep Dive — headers, CORS, cookies, status codes, TLS',qs:[
+  {n:'CORS: why does it exist? How does preflight work? Fix a common CORS error',d:'M',link:'https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS'},
+  {n:'Cookie attributes: HttpOnly, Secure, SameSite=Strict vs Lax vs None',d:'M',link:'https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies'},
+  {n:'HTTP/2 vs HTTP/1.1: head-of-line blocking, multiplexing, header compression',d:'M',link:'https://www.baeldung.com/http-2'},
+  {n:'TLS handshake: what happens between client and server before the first byte?',d:'M',link:'https://www.baeldung.com/cs/https-urls-encrypted'},
+]},
+{id:'sp12',s:'prac',w:20,h:5,t:'React/TypeScript Essentials — enough to navigate and contribute to a frontend',qs:[
+  {n:'React component lifecycle: when does useEffect run vs useLayoutEffect?',d:'M',link:'https://react.dev/learn/lifecycle-of-reactive-effects'},
+  {n:'State management: useState vs useReducer vs Context vs Zustand — when to use each',d:'M',link:'https://react.dev/learn/managing-state'},
+  {n:'TypeScript: interfaces vs types, generics, discriminated unions for API response types',d:'M',link:'https://www.typescriptlang.org/docs/handbook/2/everyday-types.html'},
+  {n:'Implement a debounced search input with proper loading/error/empty states',d:'M',link:'https://react.dev/reference/react/useCallback'},
+]},
+{id:'sp13',s:'prac',w:20,h:4,t:'API Integration Patterns — error handling, retries, circuit breaker',qs:[
+  {n:'Implement exponential backoff with jitter for a flaky external API call',d:'M',link:'https://www.baeldung.com/resilience4j-backoff-jitter'},
+  {n:'Circuit breaker pattern: implement open/closed/half-open states in code',d:'H',link:'https://www.baeldung.com/resilience4j-circuit-breaker-spring-boot2'},
+  {n:'Idempotency key pattern: make a POST endpoint safe to retry on network failure',d:'H',link:'https://www.baeldung.com/cs/idempotent-operations'},
+]},
+// ── S5 (Wk 21): Docker · CI/CD · AWS Essentials ───────────────────────────────
+{id:'sp14',s:'devops',w:21,h:6,t:'Docker — Dockerfile, multi-stage, docker-compose, volumes, networking',qs:[
+  {n:'Write a multi-stage Dockerfile for a Node.js app (dev vs production image)',d:'M',link:'https://docs.docker.com/develop/develop-images/multistage-build/'},
+  {n:'docker-compose.yml: app + PostgreSQL + Redis with health checks and named volumes',d:'M',link:'https://docs.docker.com/compose/'},
+  {n:'CMD vs ENTRYPOINT: what is the difference and when to use each?',d:'E',link:'https://docs.docker.com/engine/reference/builder/'},
+  {n:'Debug a container that exits immediately: common causes and fixes',d:'M',link:'https://docs.docker.com/config/containers/logging/'},
+]},
+{id:'sp15',s:'devops',w:21,h:5,t:'CI/CD with GitHub Actions — test, build, deploy, secrets',qs:[
+  {n:'Write a workflow: run tests → build Docker image → push to ECR → deploy to EC2',d:'H',link:'https://docs.github.com/en/actions/publishing-packages/publishing-docker-images'},
+  {n:'Branch protection: PRs require passing CI + 1 review before merge',d:'E',link:'https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches'},
+  {n:'Secrets management in CI: GitHub Secrets vs AWS Secrets Manager vs .env files',d:'M',link:'https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions'},
+  {n:'Blue-green vs canary deployment — implement with GitHub Actions',d:'H',link:'https://docs.github.com/en/actions/deployment/targeting-different-environments'},
+]},
+{id:'sp16',s:'devops',w:21,h:6,t:'AWS Core Services — EC2, S3, RDS, Lambda, IAM, VPC, basic architecture',qs:[
+  {n:'Design a startup AWS architecture: ALB → EC2 Auto Scaling → RDS + Read Replica → S3 + CloudFront',d:'H',link:'https://aws.amazon.com/architecture/'},
+  {n:'IAM least privilege: create a role that can only read from a specific S3 bucket',d:'M',link:'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'},
+  {n:'Lambda vs EC2 vs ECS vs EKS — choose the right compute for each workload type',d:'M',link:'https://aws.amazon.com/products/compute/'},
+  {n:'RDS vs Aurora vs DynamoDB — when would you pick each for a startup?',d:'M',link:'https://aws.amazon.com/rds/'},
+  {n:'VPC basics: public vs private subnet, NAT gateway, security groups vs NACLs',d:'M',link:'https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html'},
+]},
+// ── S6 (Wk 22): Kubernetes · Observability · Production Ops ───────────────────
+{id:'sp17',s:'devops',w:22,h:6,t:'Kubernetes Basics — pods, deployments, services, ingress, HPA, ConfigMaps',qs:[
+  {n:'Write a Deployment + ClusterIP Service + Ingress for a containerized REST API',d:'M',link:'https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'},
+  {n:'ConfigMap + Secret: inject config without rebuilding the container image',d:'M',link:'https://kubernetes.io/docs/concepts/configuration/configmap/'},
+  {n:'HPA: auto-scale pods when CPU > 70% — write the HorizontalPodAutoscaler manifest',d:'M',link:'https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/'},
+  {n:'Liveness vs Readiness probes: how Kubernetes decides when a pod is healthy',d:'M',link:'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/'},
+]},
+{id:'sp18',s:'devops',w:22,h:5,t:'Observability — structured logging, metrics, distributed tracing',qs:[
+  {n:'Add structured JSON logging to a REST API — what fields should every log line include?',d:'M',link:'https://www.baeldung.com/java-log-json-output'},
+  {n:'Design SLO: 99.9% availability = how many minutes of downtime per month allowed?',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+  {n:'Prometheus metrics: what 4 golden signals should every API expose?',d:'M',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'Distributed tracing: how does trace_id propagate across 3 microservices?',d:'H',link:'https://www.baeldung.com/spring-cloud-sleuth-single-application'},
+]},
+{id:'sp19',s:'devops',w:22,h:4,t:'Production Incident Response — on-call, runbooks, SLO/SLA, postmortems',qs:[
+  {n:'Write a runbook for: "API error rate spikes above 5% for 5 minutes"',d:'M',link:'https://sre.google/sre-book/being-on-call/'},
+  {n:'Conduct a blameless postmortem: 5-whys analysis for a real (past) incident',d:'M',link:'https://sre.google/sre-book/postmortem-culture/'},
+  {n:'SLO vs SLA vs SLI — define each for a payment processing API',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+]},
+// ── S7 (Wk 23): Startup System Design · Build vs Buy · Tech Debt ──────────────
+{id:'sp20',s:'prod',w:23,h:7,t:'Startup System Design — design for 0→1K→100K users step by step',qs:[
+  {n:'Design a URL shortener starting from a single server — when and how to scale',d:'M',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md'},
+  {n:'Design a real-time chat app MVP: what does v1 look like vs v2 at 10K users?',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Design Notion/Airtable at startup scale — relational vs document vs hybrid storage',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'You have 2 weeks: design an MVP ride-sharing backend — what do you cut?',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Design a multi-tenant SaaS billing system at startup scale',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'sp21',s:'prod',w:23,h:5,t:'Build vs Buy Decisions — off-the-shelf vs custom, vendor evaluation',qs:[
+  {n:'Auth: build your own vs Auth0 vs Cognito — decision framework with cost/complexity matrix',d:'M',link:'https://martinfowler.com/articles/build-vs-buy.html'},
+  {n:'Payments: Stripe vs build — what does Stripe actually save you from building?',d:'E',link:'https://stripe.com/docs'},
+  {n:'Search: Elasticsearch vs Algolia vs PostgreSQL full-text — choose for a 1M-doc corpus',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Infrastructure: managed k8s (EKS/GKE) vs raw EC2 vs serverless for a 3-person team',d:'M',link:'https://aws.amazon.com/products/compute/'},
+]},
+{id:'sp22',s:'prod',w:23,h:4,t:'Technical Debt — identify, quantify, prioritize, manage',qs:[
+  {n:'Identify tech debt in a codebase: tight coupling, no tests, magic numbers, hardcoded URLs',d:'M',link:'https://refactoring.guru/refactoring/technical-debt'},
+  {n:'Strangler Fig Pattern: replace a monolith payment endpoint with a microservice incrementally',d:'H',link:'https://martinfowler.com/bliki/StranglerFigApplication.html'},
+  {n:'Engineering metrics: DORA — deployment frequency, lead time, MTTR, change failure rate',d:'M',link:'https://dora.dev/devops-capabilities/'},
+  {n:'When is tech debt worth taking on intentionally? Write a tech debt register entry',d:'M',link:'https://martinfowler.com/bliki/TechnicalDebt.html'},
+]},
+// ── S8 (Wk 24): Take-Home Prep · Startup Behavioral · Offer ───────────────────
+{id:'sp23',s:'prod',w:24,h:6,t:'Take-Home Assignment Strategy — README first, tests, Docker, time-boxing',qs:[
+  {n:'Given "Build a REST API for a todo app in 4h" — write your approach plan first',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'What must a 10/10 take-home submission include? (tests, Docker, README, trade-offs doc)',d:'M',link:'https://google.github.io/eng-practices/'},
+  {n:'Time-box 4 hours: what do you build first vs skip, and how do you communicate that?',d:'M',link:'https://google.github.io/eng-practices/'},
+  {n:'Avoid the two biggest take-home mistakes: over-engineering and missing tests',d:'E',link:'https://refactoring.guru/refactoring'},
+]},
+{id:'sp24',s:'beh',w:24,h:5,t:'Startup Behavioral — ambiguity, ownership, wearing many hats',qs:[
+  {n:'Why startups, not FAANG? Must be specific, not generic — what problem excites you?',d:'M'},
+  {n:'Tell me about a time you built something from scratch with no clear spec',d:'M'},
+  {n:'Describe a time you wore many hats: coding + talking to users + on-call + hiring',d:'M'},
+  {n:'How do you decide what NOT to build when resources are limited?',d:'M'},
+  {n:'Tell me about a time a product you built failed — what did you learn?',d:'M'},
+]},
+{id:'sp25',s:'prod',w:24,h:4,t:'Startup Company Research — product-market fit, stage, stack, culture',qs:[
+  {n:'Research the company: what stage (pre-seed/seed/A/B), burn rate, growth signals?',d:'E',link:'https://www.ycombinator.com/library'},
+  {n:'What is their core technical challenge? Read their engineering blog if it exists',d:'E',link:'https://www.ycombinator.com/library'},
+  {n:'What does their tech stack tell you about engineering culture and debt?',d:'M'},
+  {n:'What would you change about their product in the first 90 days?',d:'M'},
+]},
+{id:'sp26',s:'prod',w:24,h:4,t:'Offer Negotiation — equity, vesting, cliff, strike price, dilution',qs:[
+  {n:'ISOs vs NSOs: tax treatment difference and when it matters at exit',d:'M',link:'https://www.ycombinator.com/library/9l-what-are-stock-options'},
+  {n:'Evaluate this offer: $120K + 0.5% equity, Series A, 4yr vest + 1yr cliff, $200M post-money',d:'H',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+  {n:'What questions must you ask before signing: liquidation preference, pro-rata, 409A valuation',d:'H',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+  {n:'How to negotiate: counter-offer, competing offers, base vs equity vs title vs remote',d:'M',link:'https://www.ycombinator.com/library/6j-equity-compensation'},
+]},
+
+// ══ MONTH 5 — WEEK 25: Machine Coding Round ══════════════════════════════════
+{id:'mc01',s:'mcr',w:25,h:5,t:'MCR Strategy — approach, time-boxing, README-first, what evaluators look for',qs:[
+  {n:'60-90 min breakdown: 15m design → 35m core code → 10m tests → polish',d:'M',link:'https://github.com/kumaransg/LLD'},
+  {n:'README-first: write class diagram + key decisions before typing code',d:'M',link:'https://github.com/kumaransg/LLD'},
+  {n:'Evaluation checklist: working demo, OOP, extensibility, edge cases, tests',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'How to handle MCR under pressure: what to skip, what to fake, how to narrate',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc02',s:'mcr',w:25,h:8,t:'In-Memory Systems — LRU/LFU Cache, Rate Limiter, Task Scheduler (live code)',qs:[
+  {n:'LRU Cache in 45 min — O(1) get/put with HashMap + DoublyLinkedList',lc:146,d:'M',co:['G','M','A','Ms']},
+  {n:'LFU Cache — frequency map + doubly linked list per frequency bucket',lc:460,d:'H',co:['G','M']},
+  {n:'Thread-safe Rate Limiter: token bucket, in-memory, no external deps',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Task Scheduler: schedule tasks with delay + cron expressions, thread-safe',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'In-memory Key-Value store with TTL, background expiry, pub/sub (Mini Redis)',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc03',s:'mcr',w:25,h:7,t:'Event & Messaging Systems — Pub-Sub, Notification, Message Queue',qs:[
+  {n:'Type-safe event bus: multiple subscribers, async dispatch, error isolation',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Multi-channel notification system: email/SMS/push, priority, dedup, retry',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'In-memory message queue: producer, consumer, DLQ for failed messages',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc04',s:'mcr',w:25,h:8,t:'Real Business Problems — Splitwise, Booking, Order Management (timed)',qs:[
+  {n:'Expense Splitter (Splitwise): track expenses, simplify debts, group management',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Parking Lot live coding — 60 min hard time-box, working + clean',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Food ordering system: restaurant → menu → cart → order → delivery (working)',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Order management: place, pay, cancel, refund — full state machine in code',d:'H',link:'https://github.com/ashishps1/awesome-low-level-design'},
+  {n:'Mini URL shortener: encode/decode, collision handling, in-memory persistence',d:'M',link:'https://github.com/ashishps1/awesome-low-level-design'},
+]},
+{id:'mc05',s:'mcr',w:25,h:7,t:'MCR Mock Sessions — timed full rounds with feedback',qs:[
+  {n:'MCR Mock 1: Design + implement Splitwise in 90 min (peer/solo)',d:'H'},
+  {n:'MCR Mock 2: Design + implement a thread-safe in-memory cache in 60 min',d:'H'},
+  {n:'MCR Mock 3: Design + implement a notification system in 90 min',d:'H'},
+  {n:'Self-review: record and review your code quality, naming, test coverage',d:'M'},
+]},
+
+// ══ WEEK 26: Advanced Queries ═════════════════════════════════════════════════
+{id:'q01',s:'query',w:26,h:6,t:'SQL Advanced — Window Functions, CTEs, Recursive Queries, EXPLAIN',qs:[
+  {n:'RANK vs DENSE_RANK vs ROW_NUMBER: salary leaderboard with ties',d:'M',link:'https://www.postgresqltutorial.com/postgresql-window-function/'},
+  {n:'LAG/LEAD: calculate day-over-day revenue change per product',d:'M',link:'https://www.postgresqltutorial.com/postgresql-lag-function/'},
+  {n:'Recursive CTE: find all managers in an org hierarchy up to the root',d:'H',link:'https://www.postgresqltutorial.com/postgresql-recursive-query/'},
+  {n:'EXPLAIN ANALYZE: identify sequential scan vs index scan, fix with composite index',d:'H',link:'https://www.postgresql.org/docs/current/using-explain.html'},
+  {n:'Materialized view: cache a slow aggregation query, refresh strategy',d:'M',link:'https://www.postgresql.org/docs/current/rules-materializedviews.html'},
+  {n:'Partitioned tables: partition a 1B-row events table by month, query pruning',d:'H',link:'https://www.postgresql.org/docs/current/ddl-partitioning.html'},
+]},
+{id:'q02',s:'query',w:26,h:6,t:'NoSQL Design — MongoDB Aggregation, Cassandra Partition Keys, DynamoDB Single-Table',qs:[
+  {n:'MongoDB $lookup + $unwind + $group: build a social feed aggregation pipeline',d:'H',link:'https://www.mongodb.com/docs/manual/core/aggregation-pipeline/'},
+  {n:'MongoDB: when to embed vs reference — comments in a blog post',d:'M',link:'https://www.mongodb.com/docs/manual/data-modeling/'},
+  {n:'Cassandra partition key design: time-series IoT data, avoid hot partitions',d:'H',link:'https://cassandra.apache.org/doc/stable/cassandra/data_modeling/data_modeling_rdbms.html'},
+  {n:'DynamoDB single-table design: User + Orders + Products in one table with GSI',d:'H',link:'https://www.alexdebrie.com/posts/dynamodb-single-table/'},
+  {n:'DynamoDB sparse GSI: index only items that have a specific attribute (pending orders)',d:'M',link:'https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html'},
+]},
+{id:'q03',s:'query',w:26,h:5,t:'Time Series & Analytics — InfluxDB, TimescaleDB, Retention, Downsampling',qs:[
+  {n:'Design a time-series schema: raw events + hourly + daily rollups — storage trade-offs',d:'H',link:'https://docs.timescale.com/timescaledb/latest/overview/core-concepts/'},
+  {n:'TimescaleDB continuous aggregate: automatically maintain hourly CPU avg',d:'M',link:'https://docs.timescale.com/timescaledb/latest/how-to-guides/continuous-aggregates/'},
+  {n:'Retention policy: auto-drop raw data after 7 days, keep hourly for 90 days',d:'M',link:'https://docs.influxdata.com/influxdb/v2/process-data/task-options/'},
+  {n:'Querying overlapping time windows: find sessions that span midnight',d:'H',link:'https://www.postgresql.org/docs/current/functions-datetime.html'},
+]},
+{id:'q04',s:'query',w:26,h:6,t:'Redis Advanced — Streams, Cluster, Lua, Complex Patterns for Senior SWE',qs:[
+  {n:'Redis Streams: XADD, XREAD, XGROUP, consumer groups, message acknowledgment',d:'H',link:'https://redis.io/docs/data-types/streams/'},
+  {n:'Redis Cluster: hash slots, key tags {user}.session for co-location',d:'H',link:'https://redis.io/docs/management/scaling/'},
+  {n:'Lua scripting: atomic check-and-set across multiple keys without MULTI/EXEC',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'Distributed lock (Redlock): acquire, heartbeat, safe release pattern',d:'H',link:'https://redis.io/docs/manual/patterns/distributed-locks/'},
+  {n:'Redis BITFIELD / HyperLogLog / Bloom filter — when to use each',d:'M',link:'https://redis.io/docs/data-types/'},
+]},
+{id:'q05',s:'query',w:26,h:6,t:'Kafka Advanced — Streams, Consumer Groups, Exactly-Once, Schema Registry',qs:[
+  {n:'Kafka Streams: stateful aggregation with windowing (count events per minute)',d:'H',link:'https://kafka.apache.org/documentation/streams/'},
+  {n:'Consumer group rebalancing: eager vs cooperative, rebalance storms at scale',d:'H',link:'https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/'},
+  {n:'Exactly-once: idempotent producer + transactional consumer — implement end-to-end',d:'H',link:'https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-kafka-does-it/'},
+  {n:'Schema Registry + Avro: forward/backward compatibility, schema evolution rules',d:'M',link:'https://docs.confluent.io/platform/current/schema-registry/index.html'},
+  {n:'Kafka vs Redis Streams vs RabbitMQ: choose for given workload (latency, ordering, scale)',d:'M',link:'https://www.confluent.io/blog/kafka-fastest-messaging-system/'},
+]},
+{id:'q06',s:'query',w:26,h:5,t:'API Design (Senior) — GraphQL N+1, Pagination, Gateway, Webhooks',qs:[
+  {n:'GraphQL N+1: implement DataLoader for batching + caching DB calls per request',d:'H',link:'https://www.baeldung.com/java-n-plus-1-problem-graphql'},
+  {n:'Cursor-based pagination vs offset vs keyset — implement and compare at 10M rows',d:'H',link:'https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/'},
+  {n:'API gateway: rate limiting, auth, request routing, circuit breaker, logging in one layer',d:'H',link:'https://microservices.io/patterns/apigateway.html'},
+  {n:'Webhook design: delivery guarantee, retries, signatures, replay protection',d:'H',link:'https://webhooks.fyi/'},
+  {n:'BFF pattern (Backend for Frontend): mobile vs web vs CLI clients need different APIs',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+
+// ══ WEEK 27: AI/ML for Senior SWE ═════════════════════════════════════════════
+{id:'ai01',s:'ai',w:27,h:6,t:'LLMs & GenAI Fundamentals — tokens, context, hallucination, fine-tuning vs RAG',qs:[
+  {n:'How do LLMs work? Transformer architecture, attention, tokens — for SWE interviews',d:'M',link:'https://www.anthropic.com/research'},
+  {n:'Hallucination: why does it happen? How do you detect and mitigate it in production?',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Fine-tuning vs RAG vs few-shot prompting — choose the right approach for your use case',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Context window limits: chunking strategies, sliding window, hierarchical summarization',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'LLM cost/latency trade-offs: GPT-4o vs Claude vs Gemini vs local models',d:'M',link:'https://artificialanalysis.ai/'},
+]},
+{id:'ai02',s:'ai',w:27,h:6,t:'RAG Systems & Vector Databases — embeddings, chunking, reranking, pgvector',qs:[
+  {n:'Build a RAG pipeline: chunk → embed → store → retrieve → augment → generate',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Chunking strategies: fixed-size vs sentence vs paragraph vs semantic — trade-offs',d:'M',link:'https://www.pinecone.io/learn/chunking-strategies/'},
+  {n:'Embedding models: OpenAI text-embedding-3 vs open-source (BGE, E5) — benchmark',d:'M',link:'https://huggingface.co/blog/mteb'},
+  {n:'pgvector: add vector search to PostgreSQL — cosine vs L2 vs dot product similarity',d:'M',link:'https://github.com/pgvector/pgvector'},
+  {n:'Reranking: why top-k retrieval is not enough — cross-encoder reranker pattern',d:'H',link:'https://www.sbert.net/examples/applications/retrieve_rerank/'},
+  {n:'Evaluate RAG quality: faithfulness, answer relevance, context precision (RAGAS)',d:'H',link:'https://docs.ragas.io/'},
+]},
+{id:'ai03',s:'ai',w:27,h:6,t:'ML System Design — Recommendation, Semantic Search, Fraud Detection',qs:[
+  {n:'Design a recommendation system: collaborative filtering + content-based + two-tower model',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Semantic search: embed queries + docs, ANN index (HNSW/FAISS), latency budget',d:'H',link:'https://www.pinecone.io/learn/vector-search-basics/'},
+  {n:'Fraud detection pipeline: feature engineering, real-time scoring, model refresh cadence',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'A/B testing an ML model: traffic splitting, metric selection, statistical significance',d:'H',link:'https://netflixtechblog.com/its-all-a-bout-testing-the-netflix-experimentation-platform-4e1ca458c15b'},
+  {n:'Feature store: offline vs online features, point-in-time correctness, backfill',d:'H',link:'https://www.tecton.ai/blog/what-is-a-feature-store/'},
+]},
+{id:'ai04',s:'ai',w:27,h:5,t:'MLOps & Model Serving — deployment, monitoring, drift, CI/CD for ML',qs:[
+  {n:'Model serving: REST vs gRPC vs batch inference — latency/throughput trade-offs',d:'M',link:'https://docs.bentoml.com/'},
+  {n:'Model monitoring: data drift vs concept drift — detect and respond in production',d:'H',link:'https://evidentlyai.com/'},
+  {n:'Shadow mode deployment: run new model in parallel, compare outputs before switching',d:'M',link:'https://www.databricks.com/glossary/mlops'},
+  {n:'ML CI/CD: trigger retraining on data drift, automated evaluation gate before promote',d:'H',link:'https://mlflow.org/'},
+]},
+{id:'ai05',s:'ai',w:27,h:5,t:'Prompt Engineering & AI APIs — Claude, GPT, Gemini, tool use, structured output',qs:[
+  {n:'System prompt design: constrain model behavior, define persona, set output format',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview'},
+  {n:'Chain-of-thought prompting: when does it help? Measure reasoning quality',d:'M',link:'https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought'},
+  {n:'Tool use / function calling: build an AI agent that can query your DB and send emails',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/tool-use'},
+  {n:'Structured output: force JSON schema output reliably from any LLM',d:'M',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency'},
+  {n:'AI safety for SWE: prompt injection, jailbreaks, PII leakage — how to defend',d:'H',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
+]},
+
+// ══ WEEK 28: Office Project Planning ══════════════════════════════════════════
+{id:'pl01',s:'prod',w:28,h:20,t:'🗺️ Office Project Planning Block — 20h dedicated to your current work project',qs:[
+  {n:'Write a Technical RFC: problem, proposed solution, alternatives, open questions',d:'M',link:'https://www.ietf.org/standards/rfcs/'},
+  {n:'Write an Architecture Decision Record (ADR) for a key decision in your project',d:'M',link:'https://adr.github.io/'},
+  {n:'Break project into milestones: prioritize with MoSCoW, estimate with T-shirt sizes',d:'M',link:'https://www.productplan.com/glossary/moscow-prioritization/'},
+  {n:'Identify technical risks: likelihood × impact matrix, mitigation plan per risk',d:'M'},
+  {n:'Cross-team alignment doc: who is impacted, what they need, timeline, dependencies',d:'M'},
+  {n:'Define success metrics: how do you know when this project is done and successful?',d:'M'},
+]},
+{id:'pl02',s:'prod',w:28,h:5,t:'Sprint Planning & Engineering Estimation — size, risk, velocity',qs:[
+  {n:'Planning poker: why story points ≠ hours, and how to calibrate a new team',d:'M',link:'https://www.mountaingoatsoftware.com/agile/planning-poker'},
+  {n:'Break a large feature into < 1-week tickets — decomposition techniques',d:'M'},
+  {n:'Estimation with uncertainty: use ranges (best/expected/worst) not single numbers',d:'M'},
+  {n:'Detect hidden dependencies before sprint start: pre-sprint checklist',d:'M'},
+]},
+{id:'pl03',s:'prod',w:28,h:5,t:'Final Review — assess weak areas, set Month 6+ plan',qs:[
+  {n:'Review all ↻ Revisit-tagged topics: schedule re-attempt sessions',d:'H'},
+  {n:'DSA self-assessment: solve 5 random problems, measure first-attempt success rate',d:'H'},
+  {n:'SD self-assessment: whiteboard 2 problems you have not done from scratch before',d:'H'},
+  {n:'Schedule first real interviews: warm-up companies first, target companies last',d:'M'},
+]},
+
+// ══ MICROSERVICES ASSIGNMENTS — hands-on builds (blended Wk 13-16) ═══════════
+{id:'ms01',s:'proj',w:13,h:8,t:'🧩 MS Assignment 1 — Split a monolith into 3 microservices',qs:[
+  {n:'Take your portfolio app and carve out Auth, Orders, and Notifications as separate services',d:'H',link:'https://microservices.io/patterns/decomposition/decompose-by-business-capability.html'},
+  {n:'Define service boundaries using Domain-Driven Design bounded contexts',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'Each service owns its own database — no shared tables (Database-per-Service)',d:'M',link:'https://microservices.io/patterns/data/database-per-service.html'},
+  {n:'Expose each service via REST; document contracts with OpenAPI',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+{id:'ms02',s:'proj',w:14,h:8,t:'🧩 MS Assignment 2 — Inter-service communication (sync + async)',qs:[
+  {n:'Wire synchronous calls between services using REST + a typed client',d:'M',link:'https://microservices.io/patterns/communication-style/messaging.html'},
+  {n:'Add async event-driven flow: Order service publishes to Kafka, Notification consumes',d:'H',link:'https://microservices.io/patterns/data/event-driven-architecture.html'},
+  {n:'Implement Saga pattern for a distributed Order→Payment→Inventory transaction',d:'H',link:'https://microservices.io/patterns/data/saga.html'},
+  {n:'Add a Circuit Breaker (Resilience4j) so a down service does not cascade failures',d:'H',link:'https://microservices.io/patterns/reliability/circuit-breaker.html'},
+  {n:'Implement idempotent consumers so duplicate Kafka messages are safe',d:'H',link:'https://microservices.io/patterns/communication-style/idempotent-consumer.html'},
+]},
+{id:'ms03',s:'proj',w:15,h:8,t:'🧩 MS Assignment 3 — API Gateway, Service Discovery, Config',qs:[
+  {n:'Add an API Gateway that routes, authenticates, and rate-limits all traffic',d:'H',link:'https://microservices.io/patterns/apigateway.html'},
+  {n:'Service discovery: register services and resolve them dynamically (Consul/Eureka)',d:'H',link:'https://microservices.io/patterns/service-registry.html'},
+  {n:'Centralized config + secrets management across all services',d:'M',link:'https://microservices.io/patterns/externalized-configuration.html'},
+  {n:'Implement the Backend-for-Frontend (BFF) pattern for web vs mobile',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+{id:'ms04',s:'proj',w:16,h:8,t:'🧩 MS Assignment 4 — Observability, Deployment & Testing',qs:[
+  {n:'Distributed tracing: propagate trace_id across all 3 services (OpenTelemetry)',d:'H',link:'https://opentelemetry.io/docs/'},
+  {n:'Centralized structured logging + a dashboard (Grafana/Loki or ELK)',d:'M',link:'https://microservices.io/patterns/observability/distributed-tracing.html'},
+  {n:'Containerize all services + docker-compose for local; Helm chart for k8s',d:'H',link:'https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'},
+  {n:'Contract testing between services with Pact (consumer-driven contracts)',d:'H',link:'https://docs.pact.io/'},
+  {n:'Health checks + graceful shutdown + readiness/liveness probes per service',d:'M',link:'https://microservices.io/patterns/observability/health-check-api.html'},
+]},
+
+// ══ THEMED DEEP-DIVES (staff/principal expectation level) ════════════════════
+{id:'dd01',s:'mt',w:9,h:6,t:'🔬 Concurrency Deep-Dive — memory model, lock-free, false sharing',qs:[
+  {n:'Explain the Java Memory Model: happens-before, why a non-volatile write may never be seen by another thread',d:'H',link:'https://gee.cs.oswego.edu/dl/jmm/cookbook.html'},
+  {n:'Implement a lock-free SPSC ring buffer; explain the memory barriers you need and why',d:'H',link:'https://www.baeldung.com/lock-free-programming'},
+  {n:'False sharing: two threads update adjacent fields and throughput collapses — diagnose and fix with padding',d:'H',link:'https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html'},
+  {n:'CAS + the ABA problem — when does it bite, and how does a versioned/tagged pointer fix it?',d:'H',link:'https://en.wikipedia.org/wiki/ABA_problem'},
+  {n:'Why is a striped lock faster than one big lock — and when does striping make things worse?',d:'H',link:'https://www.baeldung.com/guava-striped'},
+  {n:'Reentrant vs non-reentrant locks; show a deadlock that only reentrancy prevents',d:'M',link:'https://www.baeldung.com/java-concurrent-locks'},
+  {n:'Thread-pool sizing: derive the right pool size for CPU-bound vs IO-bound work (Little\'s Law)',d:'H',link:'https://en.wikipedia.org/wiki/Little%27s_law'},
+]},
+{id:'dd02',s:'hld',w:12,h:6,t:'🔬 Kafka Internals — log, ISR, rebalance, exactly-once',qs:[
+  {n:'How does the partition log + segment + index work on disk? Why is Kafka fast (zero-copy, sequential IO)?',d:'H',link:'https://kafka.apache.org/documentation/#design'},
+  {n:'ISR (in-sync replicas): what exactly makes a replica fall out of ISR, and what does acks=all guarantee?',d:'H',link:'https://kafka.apache.org/documentation/#replication'},
+  {n:'min.insync.replicas + acks=all + replication=3 — walk the failure matrix for 1 and 2 broker losses',d:'H',link:'https://kafka.apache.org/documentation/#design'},
+  {n:'Consumer group rebalance: eager vs cooperative (incremental) — why do rebalance storms happen?',d:'H',link:'https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/'},
+  {n:'Exactly-once: how do idempotent producer (PID + sequence) and transactions actually achieve it?',d:'H',link:'https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-kafka-does-it/'},
+  {n:'Consumer lag is growing — list the 5 root causes and how you would distinguish them',d:'H',link:'https://kafka.apache.org/documentation/#monitoring'},
+  {n:'Log compaction vs retention — when do you use compaction, and what is the tombstone gotcha?',d:'M',link:'https://kafka.apache.org/documentation/#compaction'},
+]},
+{id:'dd03',s:'query',w:26,h:6,t:'🔬 Redis Complexities — persistence, single-thread, cluster, eviction',qs:[
+  {n:'Redis is single-threaded — how does it serve 100K+ ops/sec, and what command will stall the whole server?',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'AOF vs RDB vs hybrid: walk the exact data-loss window for each on a crash',d:'H',link:'https://redis.io/docs/management/persistence/'},
+  {n:'Big-key / hot-key problem: how do you detect it and what breaks when one key is 5GB?',d:'H',link:'https://redis.io/docs/management/optimization/'},
+  {n:'Redis Cluster: hash slots, MOVED vs ASK redirects, why multi-key ops need hash tags',d:'H',link:'https://redis.io/docs/management/scaling/'},
+  {n:'Eviction policies (allkeys-lru, volatile-ttl, etc.) — pick one for a cache vs a session store and defend it',d:'M',link:'https://redis.io/docs/reference/eviction/'},
+  {n:'Distributed lock with Redis: why is naive SETNX unsafe, and what does Redlock add (and its critics)?',d:'H',link:'https://redis.io/docs/manual/patterns/distributed-locks/'},
+  {n:'Pipelining vs transactions (MULTI/EXEC) vs Lua — when is each the right atomicity tool?',d:'M',link:'https://redis.io/docs/manual/transactions/'},
+]},
+{id:'dd04',s:'lld',w:11,h:6,t:'🔬 Domain-Driven Design — aggregates, bounded contexts, events',qs:[
+  {n:'What is an aggregate root, and what invariant rule tells you where the aggregate boundary should be?',d:'H',link:'https://martinfowler.com/bliki/DDD_Aggregate.html'},
+  {n:'Bounded contexts: model "Customer" differently in Sales vs Support — show the context map',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'Entity vs Value Object — give a case where the same concept is one in context A and the other in B',d:'M',link:'https://martinfowler.com/bliki/EvansClassification.html'},
+  {n:'Domain events vs integration events — who publishes, who consumes, and where do you draw the transaction boundary?',d:'H',link:'https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation'},
+  {n:'Anti-corruption layer: integrate a legacy billing system without leaking its model into yours',d:'H',link:'https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer'},
+  {n:'When is DDD overkill? Identify a CRUD app where tactical DDD adds cost with no benefit',d:'M',link:'https://martinfowler.com/bliki/AnemicDomainModel.html'},
+  {n:'Map aggregates → microservice boundaries: when should one service own multiple aggregates?',d:'H',link:'https://microservices.io/patterns/decomposition/decompose-by-subdomain.html'},
+]},
+{id:'dd05',s:'beh',w:16,h:5,t:'🔬 Staff-Engineer Behavioral — influence, ambiguity, technical leadership',qs:[
+  {n:'Tell me about a time you drove technical direction across multiple teams without authority',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'Describe a high-stakes technical decision you made with incomplete information — how did you de-risk it?',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'A time you killed a project (yours or a team\'s) for the right reasons — how did you handle the people side?',d:'H'},
+  {n:'How have you grown senior engineers? Give a specific example of sponsorship vs mentorship',d:'M',link:'https://staffeng.com/guides/'},
+  {n:'Tell me about disagreeing with a Director/VP on technical strategy — what did you do?',d:'H'},
+  {n:'Describe creating org-wide leverage: a tool, standard, or platform others built on',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'A time you were wrong at scale — the blast radius and how you rebuilt trust',d:'H'},
+]},
+
+// ══ CTO / EXECUTIVE TRACK (Week 28+) ═════════════════════════════════════════
+{id:'cto01',s:'cto',w:29,h:5,t:'👔 Engineering Org Design — team topologies, scaling, Conway\'s Law',qs:[
+  {n:'Design an eng org from 10 → 100 → 500 engineers: when do you reorg and why?',d:'H',link:'https://teamtopologies.com/'},
+  {n:'Conway\'s Law: how does your org chart leak into your architecture? Use it deliberately',d:'H',link:'https://martinfowler.com/bliki/ConwaysLaw.html'},
+  {n:'Stream-aligned vs platform vs enabling vs complicated-subsystem teams — design the split',d:'H',link:'https://teamtopologies.com/key-concepts'},
+  {n:'Span of control: how many reports per EM, how many EMs per Director? Defend it',d:'M'},
+  {n:'Centralized vs embedded model for SRE/Security/Data — trade-offs at 200 engineers',d:'H'},
+]},
+{id:'cto02',s:'cto',w:29,h:5,t:'👔 Technical Strategy & Roadmap — vision, bets, sequencing',qs:[
+  {n:'Write a 3-year technical vision for a company at Series B — what are your 3 big bets?',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'Balance feature velocity vs platform investment: defend a 70/20/10 split to the CEO',d:'H'},
+  {n:'A competitor ships faster — how do you decide whether to copy, leapfrog, or ignore?',d:'H'},
+  {n:'Sunset a legacy product line: technical, customer, and team impact plan',d:'H'},
+  {n:'How do you keep architecture decisions aligned with business strategy as both change?',d:'M',link:'https://adr.github.io/'},
+]},
+{id:'cto03',s:'cto',w:29,h:5,t:'👔 Budget, Cloud Cost & FinOps — spend, ROI, vendor management',qs:[
+  {n:'Cloud bill grew 3× but revenue grew 1.5× — how do you diagnose and cut without slowing teams?',d:'H',link:'https://www.finops.org/introduction/what-is-finops/'},
+  {n:'Build a FinOps practice: unit economics (cost per request/tenant), showback vs chargeback',d:'H',link:'https://www.finops.org/framework/'},
+  {n:'Justify a $2M platform investment to the board with a 3-year ROI model',d:'H'},
+  {n:'Negotiate an enterprise cloud committed-use contract — what levers do you have?',d:'M'},
+  {n:'Build vs buy at company scale: framework weighing TCO, lock-in, focus, and time-to-market',d:'H',link:'https://martinfowler.com/articles/build-vs-buy.html'},
+]},
+{id:'cto04',s:'cto',w:29,h:5,t:'👔 Hiring, Leveling & Performance — talent strategy at scale',qs:[
+  {n:'Design a leveling framework (L3→L7 + staff/principal track) and calibration process',d:'H',link:'https://www.levels.fyi/'},
+  {n:'Scale hiring to 100 engineers/year without dropping the bar — pipeline + interview design',d:'H'},
+  {n:'Handle a high performer who is toxic to the team — concrete steps and timeline',d:'H'},
+  {n:'Build vs retain: when do you hire senior externally vs promote from within?',d:'M'},
+  {n:'Design an IC vs management dual-ladder so senior ICs are not forced into management',d:'M',link:'https://staffeng.com/'},
+]},
+{id:'cto05',s:'cto',w:29,h:5,t:'👔 Reliability Culture & Incident Command — SLOs, on-call, postmortems',qs:[
+  {n:'Roll out an error-budget policy company-wide — how do you get product VPs to buy in?',d:'H',link:'https://sre.google/sre-book/embracing-risk/'},
+  {n:'Stand up an incident-command process (IC roles, sev levels, comms) from scratch',d:'H',link:'https://sre.google/sre-book/managing-incidents/'},
+  {n:'Blameless postmortems: how do you change a blame culture without losing accountability?',d:'H',link:'https://sre.google/sre-book/postmortem-culture/'},
+  {n:'Set org-wide SLOs: who owns them, how do they cascade, what happens when breached?',d:'M',link:'https://sre.google/sre-book/service-level-objectives/'},
+]},
+{id:'cto06',s:'cto',w:29,h:5,t:'👔 Security, Compliance & Risk — SOC2, GDPR, threat posture',qs:[
+  {n:'Get to SOC 2 Type II in 6 months — what controls, evidence, and team effort?',d:'H',link:'https://www.vanta.com/resources/soc-2-compliance'},
+  {n:'GDPR + data residency for a global product: architecture and process implications',d:'H',link:'https://gdpr.eu/'},
+  {n:'Build a security program for a 100-person startup: where do you spend the first $500K?',d:'H'},
+  {n:'A breach just happened — walk the first 24 hours as the exec on point',d:'H'},
+  {n:'Risk register: how do you quantify and communicate tech risk to a non-technical board?',d:'M'},
+]},
+{id:'cto07',s:'cto',w:29,h:5,t:'👔 Board, Investors & M&A — communication and due diligence',qs:[
+  {n:'Present an engineering update to the board: what 3 metrics and what narrative?',d:'H'},
+  {n:'Technical due diligence on an acquisition target — your 2-week checklist',d:'H',link:'https://martinfowler.com/bliki/TechnicalDebt.html'},
+  {n:'Explain a major re-platforming investment to investors who want features now',d:'H'},
+  {n:'Translate technical risk into business risk for a CFO — give 3 concrete examples',d:'M'},
+  {n:'Post-acquisition integration: merge two eng teams, two stacks, two cultures',d:'H'},
+]},
+{id:'cto08',s:'cto',w:29,h:4,t:'👔 Data & AI Strategy (Exec) — governance, platform, build-vs-buy',qs:[
+  {n:'Define a company-wide data strategy: governance, lineage, privacy, self-serve analytics',d:'H',link:'https://www.montecarlodata.com/blog-what-is-data-governance/'},
+  {n:'AI strategy: where do you build vs buy vs fine-tune, and how do you measure ROI?',d:'H',link:'https://docs.anthropic.com/en/docs/build-with-claude/overview'},
+  {n:'Set an AI governance & safety policy for the company (PII, model risk, shadow AI)',d:'H',link:'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/'},
+  {n:'Make the platform-vs-product investment call for an internal data platform',d:'M'},
+]},
+
+// ══ SENIOR/PRINCIPAL GAP-FILLERS ════════════════════════════════════════════
+{id:'wc01',s:'beh',w:16,h:5,t:'✍️ Writing & Communication (Principal) — design docs, RFC review, tech radar',qs:[
+  {n:'Write a design doc that a Director reads in 5 min and approves: structure, TL;DR, decision log',d:'H',link:'https://www.industrialempathy.com/posts/design-docs-at-google/'},
+  {n:'Review someone else\'s RFC at scale: what 5 questions do you always ask before approving?',d:'H',link:'https://google.github.io/eng-practices/review/reviewer/'},
+  {n:'Build a Tech Radar for your org (adopt/trial/assess/hold) — how do you decide placement?',d:'M',link:'https://www.thoughtworks.com/radar'},
+  {n:'Write a 1-pager that aligns 3 disagreeing teams on a single technical direction',d:'H'},
+  {n:'Communicate a hard "no" to a senior stakeholder in writing — keep trust, keep the relationship',d:'M'},
+  {n:'Async-first communication: turn a 1-hour meeting into a doc + 3 comments. When does it fail?',d:'M',link:'https://www.industrialempathy.com/posts/design-docs-at-google/'},
+]},
+{id:'api01',s:'hld',w:12,h:5,t:'🔁 API Idempotency & Evolution (deep) — keys, retries, versioning, contracts',qs:[
+  {n:'Design idempotency keys for POST /payments: storage, TTL, what to return on a replayed key',d:'H',link:'https://stripe.com/docs/api/idempotent_requests'},
+  {n:'Exactly-once API illusion: client retries on a 5xx but the write succeeded — how do you stay correct?',d:'H',link:'https://brandur.org/idempotency-keys'},
+  {n:'Evolve a public API without breaking callers: additive change, deprecation policy, sunset headers',d:'H',link:'https://cloud.google.com/apis/design/versioning'},
+  {n:'Backward + forward compatibility in payloads: tolerant reader, default fields, never-remove rule',d:'M',link:'https://martinfowler.com/articles/consumerDrivenContracts.html'},
+  {n:'Pagination contracts at scale: cursor vs offset, and why offset breaks under concurrent writes',d:'H',link:'https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/'},
+  {n:'Rate-limit + retry-after + exponential backoff: design the full client/server contract',d:'M',link:'https://learn.microsoft.com/en-us/azure/architecture/patterns/retry'},
+]},
+{id:'obs01',s:'devops',w:22,h:4,t:'🔭 Observability as Design (Senior) — SLO-driven reviews, golden signals',qs:[
+  {n:'Add an "observability section" to a design doc: what dashboards/alerts ship WITH the feature?',d:'H',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'The 4 golden signals (latency, traffic, errors, saturation) — instrument a new service from day one',d:'M',link:'https://sre.google/sre-book/monitoring-distributed-systems/'},
+  {n:'Design alerts that page on symptoms not causes — avoid alert fatigue with SLO burn rate',d:'H',link:'https://sre.google/workbook/alerting-on-slos/'},
+  {n:'Cardinality explosion in metrics/traces: how do you keep observability costs sane at scale?',d:'H',link:'https://www.honeycomb.io/blog/observability-cost'},
+]},
+
+// ══ WEEKLY MOCK + SPACED REVIEW (FAANG sprint backbone, Wk 3–14) ═════════════
+{id:'wk03',s:'dsa',w:3, h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk1 problems COLD',qs:[
+  {n:'45-min timed coding mock (2 mediums) — narrate out loud, no IDE autocomplete',d:'M'},
+  {n:'Spaced review: re-solve 3 Week-1 problems from scratch, no notes — log any you forgot',d:'M'},
+]},
+{id:'wk04',s:'dsa',w:4, h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk2 problems COLD',qs:[
+  {n:'45-min timed coding mock (1 medium + 1 hard) — track time-to-first-correct-approach',d:'M'},
+  {n:'Spaced review: re-solve 3 Week-2 problems cold; anything marked ↻ Revisit gets priority',d:'M'},
+]},
+{id:'wk05',s:'dsa',w:5, h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk3 problems COLD',qs:[
+  {n:'45-min coding mock (graphs/trees focus) — practice clarifying-questions phase explicitly',d:'M'},
+  {n:'Spaced review: re-solve 3 Week-3 problems cold; re-derive complexity from scratch',d:'M'},
+]},
+{id:'wk06',s:'hld',w:6, h:3,t:'🎤 Weekly Mock + Review (3h) — First System Design mock + DSA recall',qs:[
+  {n:'45-min SD mock using only HLD Foundations 1–3 (design a URL shortener end to end)',d:'M'},
+  {n:'Spaced review: re-solve 3 problems from Weeks 1–4 you found hardest',d:'M'},
+]},
+{id:'wk07',s:'dsa',w:7, h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk5 problems COLD',qs:[
+  {n:'45-min coding mock (backtracking/greedy) — practice stating brute force before optimizing',d:'M'},
+  {n:'Spaced review: re-solve 3 Week-5 problems cold; redo any failed approach twice',d:'M'},
+]},
+{id:'wk08',s:'beh',w:8, h:3,t:'🎤 Weekly Mock + Review (3h) — First Behavioral mock + DSA recall',qs:[
+  {n:'30-min behavioral mock: 4 STAR stories under time pressure, recorded — review filler words',d:'M'},
+  {n:'Spaced review: re-solve 3 DP problems from Week 8 cold',d:'M'},
+]},
+{id:'wk09',s:'dsa',w:9, h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk7 problems COLD',qs:[
+  {n:'45-min coding mock (mixed, company-tagged set) — simulate a real Google/Meta round',d:'M'},
+  {n:'Spaced review: re-solve 3 Week-7 problems cold',d:'M'},
+]},
+{id:'wk10',s:'hld',w:10,h:3,t:'🎤 Weekly Mock + Review (3h) — System Design mock + DSA recall',qs:[
+  {n:'45-min SD mock: design a rate limiter or news feed — practice driving the conversation',d:'M'},
+  {n:'Spaced review: re-solve 3 graph/DP problems from Weeks 5–9 cold',d:'M'},
+]},
+{id:'wk11',s:'dsa',w:11,h:3,t:'🎤 Weekly Mock + Review (3h) — Coding mock + re-solve Wk9 problems COLD',qs:[
+  {n:'45-min coding mock (hard-leaning) — practice recovering gracefully when stuck',d:'H'},
+  {n:'Spaced review: re-solve 3 Week-9 DP problems cold',d:'M'},
+]},
+{id:'wk13',s:'hld',w:13,h:3,t:'🎤 Weekly Mock + Review (3h) — System Design mock + LLD recall',qs:[
+  {n:'45-min SD mock: design Twitter or WhatsApp — full requirements → scale → deep-dive',d:'H'},
+  {n:'Spaced review: re-do 2 LLD designs from Weeks 11–12 from a blank sheet',d:'M'},
+]},
+{id:'wk14',s:'beh',w:14,h:3,t:'🎤 Weekly Mock + Review (3h) — Behavioral mock + weak-area DSA',qs:[
+  {n:'30-min behavioral mock focused on staff-level influence/conflict stories',d:'H'},
+  {n:'Spaced review: re-solve every problem still marked ↻ Revisit — cold',d:'H'},
+]},
+
+// ══ INTERVIEW PROCESS & LOGISTICS (the gates around the knowledge) ═══════════
+{id:'ip01',s:'beh',w:1, h:3,t:'📋 Sprint Kickoff — how to run this plan + recruiter/OA prep',qs:[
+  {n:'Set your weekly rhythm: ~16h DSA / 12h system design / 4h LLD / 8h behavioral+mocks',d:'E'},
+  {n:'Recruiter phone screen: prep your 2-min intro, "why now", and salary-expectation deflection',d:'M',link:'https://www.levels.fyi/blog/how-to-negotiate-your-salary.html'},
+  {n:'Online Assessment (OA) prep: Amazon 2-problem + work-style survey, format & time pressure',d:'M',link:'https://leetcode.com/discuss/interview-question/'},
+  {n:'Build your tracker habit: mark Done/Revisit honestly, write weekly notes, use Next-incomplete',d:'E'},
+]},
+{id:'ip02',s:'beh',w:2, h:3,t:'🏢 Company-Specific Playbooks — Google, Meta, Amazon, Microsoft loops',qs:[
+  {n:'Google: "Googleyness", no fixed LPs, code-quality bar, hiring-committee packet — tailor for it',d:'M',link:'https://www.google.com/about/careers/applications/how-we-hire/'},
+  {n:'Meta: signal-based rubric (Coding/Design/Behavioral "Jedi"), Move Fast, ownership signals',d:'M',link:'https://www.metacareers.com/life/preparing-for-your-software-engineering-interview-at-meta/'},
+  {n:'Amazon: all 16 Leadership Principles + Bar Raiser round — 2 LP stories per principle',d:'H',link:'https://www.amazon.jobs/content/en/our-workplace/leadership-principles'},
+  {n:'Microsoft: collaborative problem-solving, "as appropriate" rounds, manager+team fit',d:'M',link:'https://careers.microsoft.com/'},
+  {n:'Map your story bank to each company\'s rubric — which stories work where?',d:'M'},
+]},
+{id:'ip03',s:'beh',w:15,h:3,t:'💰 FAANG Comp & Negotiation — bands, RSU, competing offers',qs:[
+  {n:'Decode an offer: base + sign-on + RSU (4yr vest, cliff vs monthly), refreshers, target band',d:'H',link:'https://www.levels.fyi/'},
+  {n:'Negotiation: never give a number first; use competing offers; negotiate band/level not just $',d:'H',link:'https://www.levels.fyi/blog/how-to-negotiate-your-salary.html'},
+  {n:'Down-level risk: how to push for L5 vs L4 (or L6 vs L5) with evidence before the offer',d:'H'},
+  {n:'Compare total comp across companies correctly: vesting schedule, refresh, stock growth assumptions',d:'M',link:'https://www.levels.fyi/'},
+]},
+{id:'ip04',s:'beh',w:16,h:3,t:'✅ Final Readiness Checklist — resume, logistics, day-of',qs:[
+  {n:'Resume: 1 page, impact-and-metrics bullets, tailored to senior/staff scope (not task lists)',d:'M',link:'https://www.levels.fyi/blog/'},
+  {n:'Story bank locked: 12+ STAR stories mapped to leadership, conflict, failure, ambiguity, scope',d:'M'},
+  {n:'Logistics: IDE/CoderPad setup, water, quiet room, backup internet, timezone confirmed',d:'E'},
+  {n:'Day-of routine: sleep, light warm-up problem, no new learning, calm-down ritual',d:'E'},
+  {n:'Post-interview: send thank-you, log every question asked while fresh, update story bank',d:'E'},
+]},
+
+]; // end T
+
+const FAANG_ONLY=new Set([
+  'd21',       // DP Intervals / Bitmask (Burst Balloons, TSP)
+  'd23',       // Segment Tree & BIT
+  'd24',       // Math & Number Theory (competitive-programming level)
+  'd25',       // Advanced Graphs: SCC, Bridges, Articulation Points
+  'd26',       // DSA Hard Marathon × 15
+  'd27',       // DSA Mock Interviews × 4
+  'h13',       // Raft / Paxos / Consensus
+  'h14',       // 2PC / Saga / Distributed Transactions
+  'h15',       // Google Search — web-scale crawler + inverted index
+  'h18',       // HLD Mock Sessions × 3
+]);
+// Topics only in the startup track
+const STARTUP_ONLY=new Set(T.filter(t=>t.w>=17).map(t=>t.id));
+function getPlan(t){if(STARTUP_ONLY.has(t.id))return'startup';if(FAANG_ONLY.has(t.id))return'faang';return'both';}
