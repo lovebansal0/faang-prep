@@ -1507,6 +1507,53 @@ const T=[
   {n:'Health checks + graceful shutdown + readiness/liveness probes per service',d:'M',link:'https://microservices.io/patterns/observability/health-check-api.html'},
 ]},
 
+// ══ THEMED DEEP-DIVES (staff/principal expectation level) ════════════════════
+{id:'dd01',s:'mt',w:9,h:6,t:'🔬 Concurrency Deep-Dive — memory model, lock-free, false sharing',qs:[
+  {n:'Explain the Java Memory Model: happens-before, why a non-volatile write may never be seen by another thread',d:'H',link:'https://gee.cs.oswego.edu/dl/jmm/cookbook.html'},
+  {n:'Implement a lock-free SPSC ring buffer; explain the memory barriers you need and why',d:'H',link:'https://www.baeldung.com/lock-free-programming'},
+  {n:'False sharing: two threads update adjacent fields and throughput collapses — diagnose and fix with padding',d:'H',link:'https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html'},
+  {n:'CAS + the ABA problem — when does it bite, and how does a versioned/tagged pointer fix it?',d:'H',link:'https://en.wikipedia.org/wiki/ABA_problem'},
+  {n:'Why is a striped lock faster than one big lock — and when does striping make things worse?',d:'H',link:'https://www.baeldung.com/guava-striped'},
+  {n:'Reentrant vs non-reentrant locks; show a deadlock that only reentrancy prevents',d:'M',link:'https://www.baeldung.com/java-concurrent-locks'},
+  {n:'Thread-pool sizing: derive the right pool size for CPU-bound vs IO-bound work (Little\'s Law)',d:'H',link:'https://en.wikipedia.org/wiki/Little%27s_law'},
+]},
+{id:'dd02',s:'hld',w:12,h:6,t:'🔬 Kafka Internals — log, ISR, rebalance, exactly-once',qs:[
+  {n:'How does the partition log + segment + index work on disk? Why is Kafka fast (zero-copy, sequential IO)?',d:'H',link:'https://kafka.apache.org/documentation/#design'},
+  {n:'ISR (in-sync replicas): what exactly makes a replica fall out of ISR, and what does acks=all guarantee?',d:'H',link:'https://kafka.apache.org/documentation/#replication'},
+  {n:'min.insync.replicas + acks=all + replication=3 — walk the failure matrix for 1 and 2 broker losses',d:'H',link:'https://kafka.apache.org/documentation/#design'},
+  {n:'Consumer group rebalance: eager vs cooperative (incremental) — why do rebalance storms happen?',d:'H',link:'https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/'},
+  {n:'Exactly-once: how do idempotent producer (PID + sequence) and transactions actually achieve it?',d:'H',link:'https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-kafka-does-it/'},
+  {n:'Consumer lag is growing — list the 5 root causes and how you would distinguish them',d:'H',link:'https://kafka.apache.org/documentation/#monitoring'},
+  {n:'Log compaction vs retention — when do you use compaction, and what is the tombstone gotcha?',d:'M',link:'https://kafka.apache.org/documentation/#compaction'},
+]},
+{id:'dd03',s:'query',w:26,h:6,t:'🔬 Redis Complexities — persistence, single-thread, cluster, eviction',qs:[
+  {n:'Redis is single-threaded — how does it serve 100K+ ops/sec, and what command will stall the whole server?',d:'H',link:'https://redis.io/docs/manual/programmability/'},
+  {n:'AOF vs RDB vs hybrid: walk the exact data-loss window for each on a crash',d:'H',link:'https://redis.io/docs/management/persistence/'},
+  {n:'Big-key / hot-key problem: how do you detect it and what breaks when one key is 5GB?',d:'H',link:'https://redis.io/docs/management/optimization/'},
+  {n:'Redis Cluster: hash slots, MOVED vs ASK redirects, why multi-key ops need hash tags',d:'H',link:'https://redis.io/docs/management/scaling/'},
+  {n:'Eviction policies (allkeys-lru, volatile-ttl, etc.) — pick one for a cache vs a session store and defend it',d:'M',link:'https://redis.io/docs/reference/eviction/'},
+  {n:'Distributed lock with Redis: why is naive SETNX unsafe, and what does Redlock add (and its critics)?',d:'H',link:'https://redis.io/docs/manual/patterns/distributed-locks/'},
+  {n:'Pipelining vs transactions (MULTI/EXEC) vs Lua — when is each the right atomicity tool?',d:'M',link:'https://redis.io/docs/manual/transactions/'},
+]},
+{id:'dd04',s:'lld',w:11,h:6,t:'🔬 Domain-Driven Design — aggregates, bounded contexts, events',qs:[
+  {n:'What is an aggregate root, and what invariant rule tells you where the aggregate boundary should be?',d:'H',link:'https://martinfowler.com/bliki/DDD_Aggregate.html'},
+  {n:'Bounded contexts: model "Customer" differently in Sales vs Support — show the context map',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'Entity vs Value Object — give a case where the same concept is one in context A and the other in B',d:'M',link:'https://martinfowler.com/bliki/EvansClassification.html'},
+  {n:'Domain events vs integration events — who publishes, who consumes, and where do you draw the transaction boundary?',d:'H',link:'https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation'},
+  {n:'Anti-corruption layer: integrate a legacy billing system without leaking its model into yours',d:'H',link:'https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer'},
+  {n:'When is DDD overkill? Identify a CRUD app where tactical DDD adds cost with no benefit',d:'M',link:'https://martinfowler.com/bliki/AnemicDomainModel.html'},
+  {n:'Map aggregates → microservice boundaries: when should one service own multiple aggregates?',d:'H',link:'https://microservices.io/patterns/decomposition/decompose-by-subdomain.html'},
+]},
+{id:'dd05',s:'beh',w:16,h:5,t:'🔬 Staff-Engineer Behavioral — influence, ambiguity, technical leadership',qs:[
+  {n:'Tell me about a time you drove technical direction across multiple teams without authority',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'Describe a high-stakes technical decision you made with incomplete information — how did you de-risk it?',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'A time you killed a project (yours or a team\'s) for the right reasons — how did you handle the people side?',d:'H'},
+  {n:'How have you grown senior engineers? Give a specific example of sponsorship vs mentorship',d:'M',link:'https://staffeng.com/guides/'},
+  {n:'Tell me about disagreeing with a Director/VP on technical strategy — what did you do?',d:'H'},
+  {n:'Describe creating org-wide leverage: a tool, standard, or platform others built on',d:'H',link:'https://staffeng.com/guides/'},
+  {n:'A time you were wrong at scale — the blast radius and how you rebuilt trust',d:'H'},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
