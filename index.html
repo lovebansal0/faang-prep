@@ -155,8 +155,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:va
 .wk-label{font-size:12px;color:var(--muted2);flex:1;min-width:0}
 .wk-prog{font-size:11px;color:var(--muted2);white-space:nowrap}
 .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:10px}
-.topic-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;transition:border-color .2s}
-.topic-card:hover{border-color:var(--border2)}
+.topic-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;transition:border-color .2s,transform .15s,box-shadow .2s;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.topic-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.22)}
 .topic-card.done{border-color:rgba(74,222,128,.25);background:linear-gradient(145deg,rgba(74,222,128,.04),var(--surface))}
 .topic-card.revisit{border-color:rgba(251,146,60,.25);background:linear-gradient(145deg,rgba(251,146,60,.04),var(--surface))}
 .card-top{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start}
