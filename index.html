@@ -225,6 +225,19 @@ a.prob-name:hover{color:#60a5fa}
 .eta-banner{background:linear-gradient(90deg,rgba(129,140,248,.08),rgba(52,211,153,.06));border-bottom:1px solid var(--border);padding:7px 24px;font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .eta-banner b{color:var(--text);font-weight:700}
 .eta-pill{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:2px 10px}
+/* this-week banner */
+.thisweek-banner{background:linear-gradient(90deg,rgba(56,189,248,.10),rgba(52,211,153,.06));border-bottom:1px solid var(--border);padding:10px 24px}
+.tw-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.tw-week{font-size:13px;font-weight:800;color:var(--text)}
+.tw-dates{font-size:11px;color:var(--muted2);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px 9px}
+.tw-status{font-size:11px;font-weight:700;border-radius:10px;padding:2px 10px}
+.tw-status.ontrack{background:rgba(52,211,153,.15);color:var(--done)}
+.tw-status.behind{background:rgba(251,146,60,.15);color:var(--revisit)}
+.tw-status.ahead{background:rgba(56,189,248,.15);color:#38bdf8}
+.tw-focus{font-size:12px;color:var(--muted2);line-height:1.5}
+.tw-focus b{color:var(--text)}
+.tw-jump{margin-left:auto;font-size:11px;font-weight:600;border:1px solid #38bdf855;background:#38bdf815;color:#38bdf8;border-radius:10px;padding:3px 11px;cursor:pointer;white-space:nowrap}
+.tw-jump:hover{background:#38bdf830}
 @media(max-width:640px){.header{flex-direction:column;align-items:flex-start}.stats-row{flex-wrap:wrap}.content{padding:14px}.topic-grid{grid-template-columns:1fr}.sync-btns{margin-left:0}.scroll-top{bottom:16px;right:16px}}
 </style>
 </head>
@@ -266,6 +279,7 @@ a.prob-name:hover{color:#60a5fa}
   <div class="global-bar"><div class="global-bar-fill" id="gbar" style="width:0%"></div></div>
 </div>
 <div class="eta-banner" id="eta-banner"></div>
+<div class="thisweek-banner" id="thisweek-banner"></div>
 <div class="search-wrap">
   <div class="search-row">
     <span class="search-icon">🔍</span>
@@ -2028,7 +2042,55 @@ function renderContent(){
   }).join('');
 }
 function setTab(k){activeTab=k;render();}
-function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();}
+// ── THIS WEEK banner (date-driven, reads live progress) ───────────────────────
+const PLAN_START=new Date(2026,4,31); // May 31, 2026 (Sat) — Week 1 begins
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function renderThisWeek(){
+  const el=document.getElementById('thisweek-banner');
+  if(!el)return;
+  const today=new Date();
+  const days=Math.floor((today-PLAN_START)/86400000);
+  let wk=Math.floor(days/7)+1;
+  // before start
+  if(days<0){
+    const dleft=Math.ceil(-days);
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off Saturday — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
+    return;
+  }
+  const maxWk=16; // FAANG+ sprint length
+  const capped=Math.min(wk,maxWk);
+  const wkStart=new Date(PLAN_START.getTime()+(capped-1)*7*86400000);
+  const wkEnd=new Date(wkStart.getTime()+6*86400000);
+  // this week's topics (respect active plan)
+  const list=planList();
+  const thisWeekTopics=list.filter(t=>t.w===capped);
+  // cumulative target vs done (weeks 1..capped)
+  const target=list.filter(t=>t.w>=1&&t.w<=capped).length;
+  const done=list.filter(t=>t.w>=1&&t.w<=capped&&state[t.id]==='done').length;
+  const diff=done-target;
+  let statusCls,statusTxt;
+  if(diff>=0){statusCls='ahead';statusTxt=diff===0?'🎯 On the target line':`🚀 ${diff} ahead`;}
+  else if(diff>=-5){statusCls='ontrack';statusTxt=`On track (${-diff} to catch up)`;}
+  else {statusCls='behind';statusTxt=`⚠ ${-diff} behind the Week ${capped} target`;}
+  const focus=WK[capped]||'';
+  const sample=thisWeekTopics.slice(0,4).map(t=>t.t.split('—')[0].trim()).join(' · ');
+  const overLabel=wk>maxWk?` <span class="tw-dates">sprint wrapped — now in review/extended track</span>`:'';
+  el.innerHTML=`
+    <div class="tw-top">
+      <span class="tw-week">📅 This Week — Week ${capped}</span>
+      <span class="tw-dates">${fmtDate(wkStart)} – ${fmtDate(wkEnd)}</span>
+      <span class="tw-status ${statusCls}">${statusTxt}</span>${overLabel}
+      <button class="tw-jump" onclick="goToWeek(${capped})">Jump to Week ${capped} ▾</button>
+    </div>
+    <div class="tw-focus"><b>Focus:</b> ${focus}${sample?` &nbsp;·&nbsp; <span style="color:var(--muted)">${sample}${thisWeekTopics.length>4?` +${thisWeekTopics.length-4} more`:''}</span>`:''}</div>`;
+}
+function goToWeek(w){
+  collapsedWeeks.delete(w);
+  document.getElementById('wk-sel').value='all';activeWeek='all';
+  renderContent();
+  setTimeout(()=>document.getElementById('wg-'+w)?.scrollIntoView({behavior:'smooth',block:'start'}),60);
+}
+function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();renderThisWeek();}
 // scroll-to-top visibility
 window.addEventListener('scroll',()=>{
   const b=document.getElementById('scroll-top');
