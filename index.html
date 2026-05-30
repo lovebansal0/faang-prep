@@ -1332,6 +1332,34 @@ const T=[
   {n:'Schedule first real interviews: warm-up companies first, target companies last',d:'M'},
 ]},
 
+// ══ MICROSERVICES ASSIGNMENTS — hands-on builds (blended Wk 13-16) ═══════════
+{id:'ms01',s:'proj',w:13,h:8,t:'🧩 MS Assignment 1 — Split a monolith into 3 microservices',qs:[
+  {n:'Take your portfolio app and carve out Auth, Orders, and Notifications as separate services',d:'H',link:'https://microservices.io/patterns/decomposition/decompose-by-business-capability.html'},
+  {n:'Define service boundaries using Domain-Driven Design bounded contexts',d:'H',link:'https://martinfowler.com/bliki/BoundedContext.html'},
+  {n:'Each service owns its own database — no shared tables (Database-per-Service)',d:'M',link:'https://microservices.io/patterns/data/database-per-service.html'},
+  {n:'Expose each service via REST; document contracts with OpenAPI',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+{id:'ms02',s:'proj',w:14,h:8,t:'🧩 MS Assignment 2 — Inter-service communication (sync + async)',qs:[
+  {n:'Wire synchronous calls between services using REST + a typed client',d:'M',link:'https://microservices.io/patterns/communication-style/messaging.html'},
+  {n:'Add async event-driven flow: Order service publishes to Kafka, Notification consumes',d:'H',link:'https://microservices.io/patterns/data/event-driven-architecture.html'},
+  {n:'Implement Saga pattern for a distributed Order→Payment→Inventory transaction',d:'H',link:'https://microservices.io/patterns/data/saga.html'},
+  {n:'Add a Circuit Breaker (Resilience4j) so a down service does not cascade failures',d:'H',link:'https://microservices.io/patterns/reliability/circuit-breaker.html'},
+  {n:'Implement idempotent consumers so duplicate Kafka messages are safe',d:'H',link:'https://microservices.io/patterns/communication-style/idempotent-consumer.html'},
+]},
+{id:'ms03',s:'proj',w:15,h:8,t:'🧩 MS Assignment 3 — API Gateway, Service Discovery, Config',qs:[
+  {n:'Add an API Gateway that routes, authenticates, and rate-limits all traffic',d:'H',link:'https://microservices.io/patterns/apigateway.html'},
+  {n:'Service discovery: register services and resolve them dynamically (Consul/Eureka)',d:'H',link:'https://microservices.io/patterns/service-registry.html'},
+  {n:'Centralized config + secrets management across all services',d:'M',link:'https://microservices.io/patterns/externalized-configuration.html'},
+  {n:'Implement the Backend-for-Frontend (BFF) pattern for web vs mobile',d:'M',link:'https://microservices.io/patterns/apigateway.html'},
+]},
+{id:'ms04',s:'proj',w:16,h:8,t:'🧩 MS Assignment 4 — Observability, Deployment & Testing',qs:[
+  {n:'Distributed tracing: propagate trace_id across all 3 services (OpenTelemetry)',d:'H',link:'https://opentelemetry.io/docs/'},
+  {n:'Centralized structured logging + a dashboard (Grafana/Loki or ELK)',d:'M',link:'https://microservices.io/patterns/observability/distributed-tracing.html'},
+  {n:'Containerize all services + docker-compose for local; Helm chart for k8s',d:'H',link:'https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'},
+  {n:'Contract testing between services with Pact (consumer-driven contracts)',d:'H',link:'https://docs.pact.io/'},
+  {n:'Health checks + graceful shutdown + readiness/liveness probes per service',d:'M',link:'https://microservices.io/patterns/observability/health-check-api.html'},
+]},
+
 ]; // end T
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -1480,16 +1508,15 @@ function card(t){
   const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
   const probsHtml=qCount?`
     <button class="probs-toggle" id="pb-${t.id}" data-label="${label}" onclick="toggleProbs('${t.id}')">
-      ▸ ${label}${recentCount?` <span class="prob-new">🔥 ${recentCount} new</span>`:''}
+      ▸ ${label}
     </button>
     <div class="probs-panel" id="pp-${t.id}">${t.qs.map(q=>{
       const href=q.lc?`https://leetcode.com/problems/${lcSlug(q.n)}/`:q.link||null;
-      const newBadge=q.recent?`<span class="prob-new">2025</span>`:'';
       const nameEl=href
         ?`<a class="prob-name" href="${href}" target="_blank" rel="noopener">${q.n}${q.lc?` <span class="prob-lc">#${q.lc}</span>`:' <span class="prob-lc">↗</span>'}</a>`
         :`<span class="prob-name">${q.n}</span>`;
       const _co=q.co&&q.co.length?`<span class="prob-co">${q.co.map(c=>{const d=_ci[c]||[c,'#888'];return`<span class="co-tag" title="${d[0]}" style="background:${d[1]}22;color:${d[1]}">${c}</span>`;}).join('')}</span>`:'';
-      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${newBadge}${_co}</div>`;
+      return`<div class="prob-row"><span class="diff ${q.d}">${q.d}</span>${nameEl}${_co}</div>`;
     }).join('')}</div>`:''
   ;
   // custom questions
@@ -1506,7 +1533,6 @@ function card(t){
       <span class="mtag" style="color:${sec.color};border-color:${sec.color}44;background:${sec.color}11">${sec.label}</span>
       <span class="mtag">~${t.h}h</span>
       <span class="mtag">Wk ${t.w<=28?t.w:'—'}</span>
-      ${recentCount?`<span class="mtag" style="color:#fb923c;border-color:#fb923c44;background:#fb923c11">🔥 ${recentCount} new</span>`:''}
     </div>
     <div class="card-btns">
       <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
