@@ -1930,8 +1930,9 @@ function filtered(){
 function card(t){
   const sec=S[t.s],st=status(t.id),qCount=t.qs?t.qs.length:0;
   const recentCount=t.qs?t.qs.filter(q=>q.recent).length:0;
-  const qdone=topicQDone(t);
-  const label=`${qCount} ${['dsa','mcr','query'].includes(t.s)?'problems':'questions'}${qdone?` · ${qdone}/${qCount} ✓`:''}`;
+  const qs=topicQStats(t);
+  const noun=['dsa','mcr','query'].includes(t.s)?'problems':'questions';
+  const label=`${qs.total} ${noun}${qs.attempted?` · ✓${qs.done}${qs.rev?` ↻${qs.rev}`:''}`:''}`;
   const _ci={G:['Google','#4285f4'],M:['Meta','#1877f2'],A:['Amazon','#ff9900'],Ms:['Microsoft','#00a4ef'],Ub:['Uber','#9b9b9b']};
   const pqBtns=(k,ps)=>`<span class="pq-btns"><button class="pq-btn done ${ps==='done'?'on':''}" title="Mark done" onclick="event.stopPropagation();togglePQ('${k}','done')">✓</button><button class="pq-btn rev ${ps==='revisit'?'on':''}" title="Mark revisit" onclick="event.stopPropagation();togglePQ('${k}','revisit')">↻</button></span>`;
   const probsHtml=qCount?`
@@ -1967,6 +1968,7 @@ function card(t){
       <span class="mtag" style="color:${sec.color};border-color:${sec.color}44;background:${sec.color}11">${sec.label}</span>
       <span class="mtag">~${t.h}h</span>
       <span class="mtag">${t.w<=28?'Wk '+t.w:t.w===29?'CTO':'—'}</span>
+      ${qs.attempted?`<span class="mtag qstat" title="Attempted / total · done · retake">📊 ${qs.attempted}/${qs.total}<b style="color:var(--done)"> ${qs.done}✓</b>${qs.rev?`<b style="color:var(--revisit)"> ${qs.rev}↻</b>`:''}</span>`:''}
     </div>
     <div class="card-btns">
       <button class="cbtn done-btn ${st==='done'?'on':''}" onclick="toggle('${t.id}','done')">✓ Done</button>
@@ -2194,12 +2196,13 @@ function togglePQ(k,val){
   savePS();
   renderContent();
 }
-function topicQDone(t){
-  if(!t.qs)return 0;
-  let n=t.qs.filter(q=>pstate[pkey(t.id,q)]==='done').length;
-  (customQs[t.id]||[]).forEach(q=>{if(pstate[pkey(t.id,q)]==='done')n++;});
-  return n;
+function topicQStats(t){
+  let done=0,rev=0,total=0;
+  (t.qs||[]).forEach(q=>{total++;const s=pstate[pkey(t.id,q)];if(s==='done')done++;else if(s==='revisit')rev++;});
+  (customQs[t.id]||[]).forEach(q=>{total++;const s=pstate[pkey(t.id,q)];if(s==='done')done++;else if(s==='revisit')rev++;});
+  return {done,rev,total,attempted:done+rev};
 }
+function topicQDone(t){return topicQStats(t).done;}
 
 // ── CUSTOM QUESTIONS ──────────────────────────────────────────────────────────
 const CQK='faang_cq'; let customQs={};
