@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FAANG+ Prep Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -21,8 +24,9 @@ body.light{
   --text:#1f2b33;--muted:#8197a3;--muted2:#5b6f7a;
   --done:#0d9488;--revisit:#ea7a18;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);min-height:100vh;font-size:14px;
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;letter-spacing:-0.005em;
   background:radial-gradient(1200px 600px at 80% -10%, var(--bg2), var(--bg) 60%) fixed;}
+h1,h2,h3{letter-spacing:-0.02em}
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#38bdf8,#34d399);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -239,6 +243,15 @@ a.prob-name:hover{color:#60a5fa}
 /* sync */
 .sync-btns{display:flex;gap:6px;margin-left:8px}
 .sync-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+/* tools dropdown */
+.tools-menu{position:relative;margin-left:8px}
+.tools-btn{padding:7px 13px;border-radius:9px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tools-btn:hover{border-color:#38bdf8;color:#38bdf8}
+.tools-dropdown{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border2);border-radius:11px;padding:6px;min-width:210px;box-shadow:0 14px 40px rgba(0,0,0,.45);display:none;z-index:150}
+.tools-dropdown.open{display:block}
+.tools-dropdown button{display:block;width:100%;text-align:left;padding:8px 11px;border:none;background:transparent;color:var(--text);font-size:12.5px;border-radius:7px;cursor:pointer;transition:background .12s}
+.tools-dropdown button:hover{background:var(--surface2)}
+.tools-sep{height:1px;background:var(--border);margin:5px 8px}
 .sync-btn:hover{border-color:#818cf8;color:#818cf8}
 .sync-btn.import{border-color:#34d399;color:#34d399}
 .sync-btn.import:hover{background:rgba(52,211,153,.08)}
@@ -323,12 +336,17 @@ a.prob-name:hover{color:#60a5fa}
       </svg>
       <div class="pct-text" id="s-pct">0%</div>
     </div>
-    <div class="sync-btns">
-      <button class="sync-btn" onclick="copySyncLink()" title="Copy a link that restores your progress on any device">📤 Sync Link</button>
-      <button class="sync-btn import" onclick="openImport()" title="Paste a sync link or code to restore progress">📥 Import</button>
-      <button class="sync-btn" onclick="backupAll()" title="Download a full backup file (includes code + design images)">💾 Backup</button>
-      <button class="sync-btn" onclick="document.getElementById('restore-file').click()" title="Restore everything from a backup file">♻️ Restore</button>
-      <button class="sync-btn" onclick="toggleHeatmap()" title="Show your activity heatmap">📅 Activity</button>
+    <div class="tools-menu">
+      <button class="tools-btn" onclick="toggleTools(event)">Tools ▾</button>
+      <div class="tools-dropdown" id="tools-dropdown">
+        <button onclick="copySyncLink();closeTools()">📤 Copy sync link</button>
+        <button onclick="openImport();closeTools()">📥 Import from link</button>
+        <div class="tools-sep"></div>
+        <button onclick="backupAll();closeTools()">💾 Back up to file</button>
+        <button onclick="document.getElementById('restore-file').click();closeTools()">♻️ Restore from file</button>
+        <div class="tools-sep"></div>
+        <button onclick="toggleHeatmap();closeTools()">📅 Activity heatmap</button>
+      </div>
       <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
@@ -446,6 +464,19 @@ a.prob-name:hover{color:#60a5fa}
       <a href="https://excalidraw.com/" target="_blank" rel="noopener">Excalidraw (design diagrams)</a>
       <a href="https://leetcode.com/discuss/interview-question/" target="_blank" rel="noopener">LeetCode Discuss (recent questions)</a>
       <a href="https://docs.anthropic.com/en/docs/build-with-claude/overview" target="_blank" rel="noopener">Claude API docs (AI/ML topics)</a>
+    </div>
+    <div class="ref-col">
+      <h3>📄 Foundational Papers</h3>
+      <a href="https://research.google/pubs/pub62/" target="_blank" rel="noopener">MapReduce — Google (2004)</a>
+      <a href="https://research.google/pubs/pub51/" target="_blank" rel="noopener">Google File System (2003)</a>
+      <a href="https://research.google/pubs/pub27898/" target="_blank" rel="noopener">Bigtable — Google (2006)</a>
+      <a href="https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf" target="_blank" rel="noopener">Dynamo — Amazon (2007)</a>
+      <a href="https://research.google/pubs/pub39966/" target="_blank" rel="noopener">Spanner — Google (2012)</a>
+      <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener">Raft consensus (2014)</a>
+      <a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" target="_blank" rel="noopener">Paxos Made Simple — Lamport</a>
+      <a href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf" target="_blank" rel="noopener">Time, Clocks & Ordering — Lamport</a>
+      <a href="https://notes.stephenholiday.com/Kafka.pdf" target="_blank" rel="noopener">Kafka — LinkedIn (2011)</a>
+      <a href="https://research.facebook.com/publications/scaling-memcache-at-facebook/" target="_blank" rel="noopener">Scaling Memcache — Facebook</a>
     </div>
   </div>
 </section>
@@ -2134,6 +2165,9 @@ function toggleTheme(){
   localStorage.setItem('faang_theme',next);
   applyTheme(next);
 }
+function toggleTools(e){if(e)e.stopPropagation();document.getElementById('tools-dropdown').classList.toggle('open');}
+function closeTools(){document.getElementById('tools-dropdown')?.classList.remove('open');}
+document.addEventListener('click',e=>{const m=document.querySelector('.tools-menu');if(m&&!m.contains(e.target))closeTools();});
 applyTheme(localStorage.getItem('faang_theme')||'dark');
 function collapseAll(){filtered().forEach(t=>collapsedWeeks.add(t.w));renderContent();}
 function expandAll(){collapsedWeeks.clear();renderContent();}
