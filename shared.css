@@ -1,6 +1,7 @@
 /* shared.css — styles for the discipline pages (cool/calm theme, matches main tracker) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 :root{
   --bg:#0d1620;--bg2:#11202c;--surface:#14202e;--surface2:#1b2c3c;
   --border:#243748;--border2:#30485c;

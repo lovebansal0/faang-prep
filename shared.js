@@ -148,7 +148,7 @@ applyTheme(localStorage.getItem('faang_theme')||'dark');
     '📄 Foundational Papers':[['MapReduce — Google (2004)','https://research.google/pubs/pub62/'],['Google File System (2003)','https://research.google/pubs/pub51/'],['Bigtable — Google (2006)','https://research.google/pubs/pub27898/'],['Dynamo — Amazon (2007)','https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf'],['Spanner — Google (2012)','https://research.google/pubs/pub39966/'],['Raft consensus (2014)','https://raft.github.io/raft.pdf'],['Paxos Made Simple — Lamport','https://lamport.azurewebsites.net/pubs/paxos-simple.pdf'],['Time, Clocks & Ordering — Lamport','https://lamport.azurewebsites.net/pubs/time-clocks.pdf'],['Kafka — LinkedIn (2011)','https://notes.stephenholiday.com/Kafka.pdf'],['Scaling Memcache — Facebook','https://research.facebook.com/publications/scaling-memcache-at-facebook/']]
   };
   function mount(){
-    const sec=document.createElement('section');sec.className='refs';
+    const sec=document.createElement('section');sec.className='refs';sec.id='refs';
     sec.innerHTML='<h2>📚 Study References</h2><p class="refs-sub">The resources this plan draws from — bookmark these.</p><div class="refs-grid">'+
       Object.entries(R).map(([cat,links])=>`<div class="ref-col"><h3>${cat}</h3>${links.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('')}</div>`).join('')+
       '</div>';
