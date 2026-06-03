@@ -31,28 +31,28 @@ back. Shared assets: `data.js` (curriculum), `shared.css`, `shared.js`.
 ## 🚀 How to run this plan
 
 ### 1. Pick your track (top toggle)
-| Plan | Topics | Approx hours | Timeline |
+| Plan | Topics | Approx hours | Timeline @ 60h/wk |
 |------|--------|------|----------|
-| 🏢 **FAANG+** | ~145 | ~700h | ~17 weeks @ 40h/wk |
+| 🏢 **FAANG+** | ~145 | ~700h | ~12 weeks |
 | 🚀 **Startup** | ~116 | — | practical / full-stack focus |
-| **All Topics** | 210 | ~960h | the full library |
+| **All Topics** | 210 | ~960h | ~16 weeks (full library) |
 
 **Pick ONE track and ignore the rest** — the others are a library, not your sprint. For a
 FAANG Senior/Staff (L5/L6) goal, flip on **🏢 FAANG+**. (Startup and CTO/Exec content is
 there when you want it.)
 
-### 2. Set your weekly rhythm (≈40h/week sprint)
-- **~16h DSA** — patterns, then the weekly coding mock
-- **~12h System Design** — foundations → real systems → deep-dives
-- **~4h LLD / OOD** — patterns + machine coding
-- **~8h Behavioral + Mocks** — story bank + the weekly recorded mock
+### 2. Set your weekly rhythm (8h/day · ≈60h/week sprint)
+- **~24h DSA** — patterns, then the weekly coding mock
+- **~18h System Design** — foundations → real systems → deep-dives
+- **~6h LLD / OOD** — patterns + machine coding
+- **~12h Behavioral + Mocks** — story bank + the weekly recorded mock
 
 ### 3. Work week-by-week
 Each week blends DSA + a system-design/LLD thread + a 🎤 weekly mock + spaced review.
 - **✓ Done** / **↻ Revisit** on each topic *and* each individual problem.
 - Click **▸ N problems** to expand the question list (LeetCode + external links,
   company tags G/M/A/Ms/Ub, E/M/H difficulty).
-- The **📅 This Week** banner (plan starts **June 3, 2026**) shows the current week's focus
+- The **📅 This Week** banner (plan starts **June 5, 2026**) shows the current week's focus
   and whether you're on track / behind, computed live from your progress.
 
 ### 4. The non-negotiables

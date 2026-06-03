@@ -297,7 +297,7 @@ a.prob-name:hover{color:#60a5fa}
     <div class="logo-icon">🎯</div>
     <div>
       <h1>FAANG+ Interview Prep</h1>
-      <p>Senior SWE · 10 YOE · 6h/day · 16-Week Blended Plan</p>
+      <p>Senior SWE · 10 YOE · 8h/day · 60h/week · Blended Plan</p>
     </div>
   </div>
   <div class="stats-row">
@@ -2036,12 +2036,12 @@ function renderEta(){
   const pending=list.filter(t=>!state[t.id]||state[t.id]==='pending');
   const hoursLeft=pending.reduce((s,t)=>s+(t.h||0),0);
   const totalHours=list.reduce((s,t)=>s+(t.h||0),0);
-  const daysAt6=Math.ceil(hoursLeft/6);
-  const weeks=(daysAt6/7).toFixed(1);
+  const daysAt8=Math.ceil(hoursLeft/8);
+  const weeks=(hoursLeft/60).toFixed(1);
   const el=document.getElementById('eta-banner');
   if(!el)return;
   el.innerHTML=`<span class="eta-pill">⏳ <b>${hoursLeft}h</b> remaining of ${totalHours}h</span>`+
-    `<span class="eta-pill">📅 <b>~${daysAt6} days</b> @ 6h/day (≈${weeks} weeks)</span>`+
+    `<span class="eta-pill">📅 <b>~${daysAt8} days</b> @ 8h/day · ≈${weeks} wks @ 60h/wk</span>`+
     `<span class="eta-pill">✅ <b>${pending.length}</b> topics left</span>`;
 }
 
@@ -2247,7 +2247,7 @@ function renderContent(){
 }
 function setTab(k){activeTab=k;render();}
 // ── THIS WEEK banner (date-driven, reads live progress) ───────────────────────
-const PLAN_START=new Date(2026,5,3); // June 3, 2026 — Week 1 begins
+const PLAN_START=new Date(2026,5,5); // June 5, 2026 — Week 1 begins
 function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function renderThisWeek(){
   const el=document.getElementById('thisweek-banner');
@@ -2258,7 +2258,7 @@ function renderThisWeek(){
   // before start
   if(days<0){
     const dleft=Math.ceil(-days);
-    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off June 3 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off June 5 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
     return;
   }
   const maxWk=16; // FAANG+ sprint length
