@@ -257,6 +257,17 @@ a.prob-name:hover{color:#60a5fa}
 /* scroll to top */
 .scroll-top{position:fixed;bottom:24px;right:24px;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#60a5fa);border:none;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .15s;z-index:150}
 .scroll-top.show{opacity:1;pointer-events:auto}
+/* study references footer */
+.refs{max-width:1500px;margin:10px auto 50px;padding:22px 24px;border-top:1px solid var(--border)}
+.refs h2{font-size:17px;font-weight:800;color:var(--text)}
+.refs-sub{font-size:12px;color:var(--muted2);margin:4px 0 18px}
+.refs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.ref-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.ref-col h3{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
+.ref-col a{display:block;font-size:12px;color:var(--muted2);text-decoration:none;padding:4px 0;border-bottom:1px solid var(--border);transition:color .15s}
+.ref-col a:last-child{border-bottom:none}
+.ref-col a:hover{color:#38bdf8}
+.ref-col a::before{content:"↗ ";color:var(--muted);font-size:10px}
 /* theme toggle */
 .theme-toggle{width:34px;height:34px;border-radius:9px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:15px;cursor:pointer;transition:all .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .theme-toggle:hover{border-color:var(--dsa);transform:translateY(-1px)}
@@ -380,6 +391,63 @@ a.prob-name:hover{color:#60a5fa}
   <span class="co-legend">Company tags: <b style="color:#4285f4">G</b>oogle · <b style="color:#1877f2">M</b>eta · <b style="color:#ff9900">A</b>mazon · <b style="color:#00a4ef">Ms</b> · <b style="color:#9b9b9b">Ub</b>er · verified 2025-26</span>
 </div>
 <div class="content" id="content"></div>
+
+<section class="refs">
+  <h2>📚 Study References</h2>
+  <p class="refs-sub">The resources this plan draws from — bookmark these. (Doesn't count toward your topics or ETA.)</p>
+  <div class="refs-grid">
+    <div class="ref-col">
+      <h3>🧮 DSA & Coding</h3>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a>
+      <a href="https://neetcode.io/practice" target="_blank" rel="noopener">NeetCode (150 / Blind 75 roadmap)</a>
+      <a href="https://www.designgurus.io/course/grokking-the-coding-interview" target="_blank" rel="noopener">Grokking the Coding Interview (patterns)</a>
+      <a href="https://algo.monster/" target="_blank" rel="noopener">AlgoMonster</a>
+      <a href="https://cses.fi/problemset/" target="_blank" rel="noopener">CSES Problem Set</a>
+      <a href="https://visualgo.net/" target="_blank" rel="noopener">VisuAlgo (algorithm visualizations)</a>
+    </div>
+    <div class="ref-col">
+      <h3>🏛 System Design (HLD)</h3>
+      <a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">System Design Primer (GitHub)</a>
+      <a href="https://www.designgurus.io/course/grokking-the-system-design-interview" target="_blank" rel="noopener">Grokking the System Design Interview</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener">ByteByteGo (Alex Xu)</a>
+      <a href="https://www.puneetpatwari.in/vault" target="_blank" rel="noopener">Puneet Patwari Vault (93 Q&A)</a>
+      <a href="https://layrs.me/" target="_blank" rel="noopener">Layrs (HLD/LLD practice canvas)</a>
+      <a href="http://highscalability.com/" target="_blank" rel="noopener">High Scalability (real architectures)</a>
+    </div>
+    <div class="ref-col">
+      <h3>🧩 LLD / OOD</h3>
+      <a href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener">Refactoring.Guru (patterns + smells)</a>
+      <a href="https://github.com/ashishps1/awesome-low-level-design" target="_blank" rel="noopener">Awesome Low-Level Design (GitHub)</a>
+      <a href="https://github.com/kumaransg/LLD" target="_blank" rel="noopener">kumaransg / LLD (GitHub)</a>
+      <a href="https://www.baeldung.com/cs/uml-class-diagram" target="_blank" rel="noopener">UML class diagrams (Baeldung)</a>
+    </div>
+    <div class="ref-col">
+      <h3>⚙️ Concurrency & Backend</h3>
+      <a href="https://www.baeldung.com/java-concurrency" target="_blank" rel="noopener">Baeldung — Java Concurrency</a>
+      <a href="https://redis.io/docs/" target="_blank" rel="noopener">Redis Docs</a>
+      <a href="https://kafka.apache.org/documentation/" target="_blank" rel="noopener">Apache Kafka Docs</a>
+      <a href="https://www.confluent.io/blog/" target="_blank" rel="noopener">Confluent Blog (Kafka deep-dives)</a>
+      <a href="https://sre.google/books/" target="_blank" rel="noopener">Google SRE Books (free)</a>
+    </div>
+    <div class="ref-col">
+      <h3>💬 Behavioral & Career</h3>
+      <a href="https://staffeng.com/guides/" target="_blank" rel="noopener">StaffEng (staff/principal guides)</a>
+      <a href="https://www.levels.fyi/" target="_blank" rel="noopener">Levels.fyi (comp + negotiation)</a>
+      <a href="https://www.amazon.jobs/content/en/our-workplace/leadership-principles" target="_blank" rel="noopener">Amazon Leadership Principles</a>
+      <a href="https://google.github.io/eng-practices/" target="_blank" rel="noopener">Google Eng Practices (code review)</a>
+      <a href="https://www.industrialempathy.com/posts/design-docs-at-google/" target="_blank" rel="noopener">Design Docs at Google</a>
+    </div>
+    <div class="ref-col">
+      <h3>🎤 Practice & Tools</h3>
+      <a href="https://www.pramp.com/" target="_blank" rel="noopener">Pramp (free peer mocks)</a>
+      <a href="https://interviewing.io/" target="_blank" rel="noopener">interviewing.io (mocks)</a>
+      <a href="https://excalidraw.com/" target="_blank" rel="noopener">Excalidraw (design diagrams)</a>
+      <a href="https://leetcode.com/discuss/interview-question/" target="_blank" rel="noopener">LeetCode Discuss (recent questions)</a>
+      <a href="https://docs.anthropic.com/en/docs/build-with-claude/overview" target="_blank" rel="noopener">Claude API docs (AI/ML topics)</a>
+    </div>
+  </div>
+</section>
+
 <div class="toast" id="toast"></div>
 <button class="scroll-top" id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 <!-- Add Topic Modal -->
