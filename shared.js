@@ -135,3 +135,23 @@ function renderAll(){
 }
 
 applyTheme(localStorage.getItem('faang_theme')||'dark');
+
+// ── study references footer (shared across discipline pages) ──
+(function(){
+  const R={
+    '🧮 DSA & Coding':[['LeetCode','https://leetcode.com/'],['NeetCode (150 / Blind 75)','https://neetcode.io/practice'],['Grokking the Coding Interview','https://www.designgurus.io/course/grokking-the-coding-interview'],['AlgoMonster','https://algo.monster/'],['CSES Problem Set','https://cses.fi/problemset/'],['VisuAlgo','https://visualgo.net/']],
+    '🏛 System Design (HLD)':[['System Design Primer','https://github.com/donnemartin/system-design-primer'],['Grokking the System Design Interview','https://www.designgurus.io/course/grokking-the-system-design-interview'],['ByteByteGo (Alex Xu)','https://bytebytego.com/'],['Puneet Patwari Vault (93 Q&A)','https://www.puneetpatwari.in/vault'],['Layrs (HLD/LLD canvas)','https://layrs.me/'],['High Scalability','http://highscalability.com/']],
+    '🧩 LLD / OOD':[['Refactoring.Guru','https://refactoring.guru/design-patterns'],['Awesome Low-Level Design','https://github.com/ashishps1/awesome-low-level-design'],['kumaransg / LLD','https://github.com/kumaransg/LLD'],['UML class diagrams (Baeldung)','https://www.baeldung.com/cs/uml-class-diagram']],
+    '⚙️ Concurrency & Backend':[['Baeldung — Java Concurrency','https://www.baeldung.com/java-concurrency'],['Redis Docs','https://redis.io/docs/'],['Apache Kafka Docs','https://kafka.apache.org/documentation/'],['Confluent Blog','https://www.confluent.io/blog/'],['Google SRE Books','https://sre.google/books/']],
+    '💬 Behavioral & Career':[['StaffEng','https://staffeng.com/guides/'],['Levels.fyi','https://www.levels.fyi/'],['Amazon Leadership Principles','https://www.amazon.jobs/content/en/our-workplace/leadership-principles'],['Google Eng Practices','https://google.github.io/eng-practices/'],['Design Docs at Google','https://www.industrialempathy.com/posts/design-docs-at-google/']],
+    '🎤 Practice & Tools':[['Pramp (free peer mocks)','https://www.pramp.com/'],['interviewing.io','https://interviewing.io/'],['Excalidraw','https://excalidraw.com/'],['LeetCode Discuss','https://leetcode.com/discuss/interview-question/'],['Claude API docs','https://docs.anthropic.com/en/docs/build-with-claude/overview']]
+  };
+  function mount(){
+    const sec=document.createElement('section');sec.className='refs';
+    sec.innerHTML='<h2>📚 Study References</h2><p class="refs-sub">The resources this plan draws from — bookmark these.</p><div class="refs-grid">'+
+      Object.entries(R).map(([cat,links])=>`<div class="ref-col"><h3>${cat}</h3>${links.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('')}</div>`).join('')+
+      '</div>';
+    document.body.appendChild(sec);
+  }
+  if(document.body)mount(); else document.addEventListener('DOMContentLoaded',mount);
+})();

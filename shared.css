@@ -111,6 +111,17 @@ a.prob-name:hover{color:#38bdf8}
 .annot-img-url:focus{border-color:#38bdf8}
 .annot-preview{margin-top:10px;border:1px dashed var(--border2);border-radius:8px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
 .annot-preview img{max-width:100%;max-height:340px;border-radius:6px}
+/* study references footer */
+.refs{max-width:1500px;margin:10px auto 50px;padding:22px 24px;border-top:1px solid var(--border)}
+.refs h2{font-size:17px;font-weight:800;color:var(--text)}
+.refs-sub{font-size:12px;color:var(--muted2);margin:4px 0 18px}
+.refs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.ref-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.ref-col h3{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
+.ref-col a{display:block;font-size:12px;color:var(--muted2);text-decoration:none;padding:4px 0;border-bottom:1px solid var(--border);transition:color .15s}
+.ref-col a:last-child{border-bottom:none}
+.ref-col a:hover{color:#38bdf8}
+.ref-col a::before{content:"↗ ";color:var(--muted);font-size:10px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#38bdf8,#34d399);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
 .toast.show{opacity:1}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
