@@ -1439,6 +1439,42 @@ const T=[
   {n:'Shuffle an Array (Fisher-Yates)',lc:384,d:'M',co:['G','A']},
 ]},
 
+// ══ GAPS from DesignGurus / Layrs review ═════════════════════════════════════
+{id:'sdf01',s:'hld',w:10,h:3,t:'⭐ System Design Interview Framework — the structured method',qs:[
+  {n:'The 7 steps: clarify requirements → back-of-envelope estimate → API → data model → high-level → deep-dive → bottlenecks & trade-offs',d:'M',link:'https://github.com/donnemartin/system-design-primer#how-to-approach-a-system-design-interview-question'},
+  {n:'Functional vs non-functional requirements: drive the design from scale/latency/consistency numbers',d:'M',link:'https://github.com/donnemartin/system-design-primer#step-1-outline-use-cases-constraints-and-assumptions'},
+  {n:'Back-of-envelope: QPS, storage/day, bandwidth, cache size — practice on 3 problems',d:'M',link:'https://github.com/donnemartin/system-design-primer#appendix'},
+  {n:'Drive the conversation: state assumptions, propose, justify trade-offs, then deep-dive one component',d:'M',link:'https://github.com/donnemartin/system-design-primer#how-to-approach-a-system-design-interview-question'},
+]},
+{id:'h23',s:'hld',w:14,h:4,t:'HLD: Instagram — photo/video sharing, feed, stories, CDN',qs:[
+  {n:'Media upload + storage: object store + CDN, thumbnail/transcode pipeline, pre-signed URLs',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'News feed generation: fan-out-on-write vs read, ranking, the celebrity problem',d:'H',link:'https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md'},
+  {n:'Stories: ephemeral content, TTL, per-viewer seen-state at scale',d:'H',link:'https://github.com/donnemartin/system-design-primer'},
+  {n:'Follow graph + counters: denormalized follower/following counts, hot accounts',d:'M',link:'https://github.com/donnemartin/system-design-primer'},
+]},
+{id:'pat08',s:'dsa',w:11,h:4,t:'Matrix Traversal — spiral, rotate, in-place, search',qs:[
+  {n:'Spiral Matrix',lc:54,d:'M',co:['G','M','A']},
+  {n:'Rotate Image',lc:48,d:'M',co:['G','M','A']},
+  {n:'Set Matrix Zeroes',lc:73,d:'M',co:['G','A']},
+  {n:'Game of Life',lc:289,d:'M',co:['G','A']},
+  {n:'Search a 2D Matrix II',lc:240,d:'M',co:['G','A']},
+  {n:'Diagonal Traverse',lc:498,d:'M',co:['G']},
+]},
+{id:'pat09',s:'dsa',w:11,h:4,t:'Ordered Set / TreeMap patterns — calendar, range queries',qs:[
+  {n:'My Calendar I',lc:729,d:'M',co:['G']},
+  {n:'My Calendar II',lc:731,d:'M',co:['G']},
+  {n:'Data Stream as Disjoint Intervals',lc:352,d:'H',co:['G','A']},
+  {n:'Contains Duplicate III',lc:220,d:'H',co:['G']},
+  {n:'Sliding Window Median',lc:480,d:'H',co:['G','A']},
+  {n:'Count of Range Sum',lc:327,d:'H',co:['G']},
+]},
+{id:'l16',s:'lld',w:10,h:3,t:'LLD: UML & Class Modeling — translate requirements into classes',qs:[
+  {n:'Class diagram notation: association vs aggregation vs composition vs inheritance',d:'M',link:'https://www.baeldung.com/cs/uml-class-diagram'},
+  {n:'Sequence diagram: model the runtime interaction of a checkout flow',d:'M',link:'https://www.baeldung.com/cs/uml-sequence-diagrams'},
+  {n:'State diagram: model an order / elevator / vending-machine lifecycle',d:'M',link:'https://refactoring.guru/design-patterns/state'},
+  {n:'Turn a written requirement into classes, responsibilities & relationships (noun/verb extraction)',d:'M',link:'https://www.baeldung.com/cs/uml-class-diagram'},
+]},
+
 ]; // end T
 
 const FAANG_ONLY=new Set([
