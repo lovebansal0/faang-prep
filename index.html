@@ -63,10 +63,13 @@ h1,h2,h3{letter-spacing:-0.02em}
 .global-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#38bdf8,#22d3ee,#34d399);transition:width .5s ease}
 .section-pills{display:flex;gap:8px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .section-pills::-webkit-scrollbar{display:none}
-.sec-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .18s;color:var(--muted2);display:flex;align-items:center;gap:6px}
-.sec-pill:hover{border-color:var(--border2);color:var(--text)}
-.sec-pill.active{color:#fff;border-color:transparent}
-.sec-pill .pill-cnt{font-size:10px;padding:1px 5px;border-radius:6px;background:rgba(255,255,255,.08)}
+.sec-pill{--pc:#7dd3fc;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .18s;color:var(--muted2);display:flex;align-items:center;gap:7px}
+.sec-pill .pill-dot{width:7px;height:7px;border-radius:50%;background:var(--pc);box-shadow:0 0 7px var(--pc);flex-shrink:0;transition:all .18s}
+.sec-pill:hover{border-color:var(--pc);color:var(--text);transform:translateY(-1px)}
+.sec-pill.active{color:#08131d;font-weight:700;border-color:transparent;background:linear-gradient(135deg,var(--pc),color-mix(in srgb,var(--pc) 75%,#000));box-shadow:0 3px 14px -2px var(--pc)}
+.sec-pill.active .pill-dot{background:#08131d;box-shadow:none}
+.sec-pill .pill-cnt{font-size:10px;font-weight:700;padding:1px 6px;border-radius:7px;background:color-mix(in srgb,var(--pc) 18%,transparent);color:var(--pc)}
+.sec-pill.active .pill-cnt{background:rgba(0,0,0,.18);color:#08131d}
 .section-cards{display:flex;gap:10px;padding:12px 24px;overflow-x:auto;scrollbar-width:none}
 .section-cards::-webkit-scrollbar{display:none}
 .sec-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px;cursor:pointer;transition:border-color .2s}
@@ -2206,8 +2209,7 @@ function renderPills(){
   document.getElementById('pills').innerHTML=tabs.map(tab=>{
     const cnt=tab.key==='all'?T.length:tab.key==='revisit'?T.filter(t=>state[t.id]==='revisit').length:tab.key==='mytopics'?customTopics.length:secTopics(tab.key).length;
     const on=activeTab===tab.key;
-    const st=on?`background:${tab.color}22;border-color:${tab.color}55;color:${tab.color}`:'';
-    return`<button class="sec-pill ${on?'active':''}" style="${st}" onclick="setTab('${tab.key}')">${tab.label}<span class="pill-cnt">${cnt}</span></button>`;
+    return`<button class="sec-pill ${on?'active':''}" style="--pc:${tab.color}" onclick="setTab('${tab.key}')"><span class="pill-dot"></span>${tab.label}<span class="pill-cnt">${cnt}</span></button>`;
   }).join('');
 }
 function renderSecCards(){
