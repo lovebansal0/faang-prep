@@ -4,7 +4,7 @@
 // (the Supabase anon key is safe to expose in frontend WHEN Row Level Security is enabled).
 (function () {
   const URL_FALLBACK  = 'https://bxtqwyxtdlknwdjflrnl.supabase.co';
-  const ANON_FALLBACK = ''; // <-- paste your Supabase anon public key here to lock all devices
+  const ANON_FALLBACK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4dHF3eXh0ZGxrbndkamZscm5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTYxNDIsImV4cCI6MjA5NjA5MjE0Mn0.O1SJVbr__XdrmTAgaZd7n9tIi8O3i8MF7Q_zHb0UJcY';
 
   const SUPABASE_URL = (localStorage.getItem('faang_api') || URL_FALLBACK).replace(/\/+$/, '');
   const ANON = localStorage.getItem('faang_api_key') || ANON_FALLBACK;
