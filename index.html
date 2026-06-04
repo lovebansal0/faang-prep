@@ -541,8 +541,10 @@ a.prob-name:hover{color:#60a5fa}
   <div class="modal" style="max-width:480px">
     <h3>☁️ Cloud Sync (Postgres)</h3>
     <p>Sync everything — status, per-problem progress, notes, custom questions/topics, code &amp; design images — across devices via your own sync server. Use the same API URL &amp; key on every device.</p>
-    <div class="annot-section-label">API URL</div>
-    <input class="annot-img-url" id="cloud-api" placeholder="https://your-api.onrender.com" style="width:100%">
+    <div class="annot-section-label">API URL (Supabase project URL, or your own server)</div>
+    <input class="annot-img-url" id="cloud-api" placeholder="https://xxxx.supabase.co" style="width:100%">
+    <div class="annot-section-label">API key (Supabase <b>anon public</b> key — leave blank if using your own server)</div>
+    <input class="annot-img-url" id="cloud-anon" placeholder="eyJhbGciOi… (Supabase anon key)" style="width:100%">
     <div class="annot-section-label">Sync key (any private string, same on all your devices)</div>
     <input class="annot-img-url" id="cloud-key" placeholder="e.g. love-faang-2026" style="width:100%">
     <div id="cloud-status" style="font-size:11px;color:var(--muted2);margin-top:12px;line-height:1.5"></div>
@@ -2198,16 +2200,22 @@ function toggleTools(e){if(e)e.stopPropagation();document.getElementById('tools-
 function openCloud(){
   const c=(window.cloud&&window.cloud.cfg())||{};
   document.getElementById('cloud-api').value=c.api||'';
+  document.getElementById('cloud-anon').value=c.anon||'';
   document.getElementById('cloud-key').value=c.key||'';
+  const sb=window.cloud&&window.cloud.isSupabase&&window.cloud.isSupabase();
   document.getElementById('cloud-status').textContent=(window.cloud&&window.cloud.configured())
-    ?'✓ Connected. Changes sync automatically across your devices.'
-    :'Not connected. Enter your API URL + a private key, then Connect.';
+    ?`✓ Connected${sb?' (Supabase)':''}. Changes sync automatically across your devices.`
+    :'Not connected. Fill in the fields, then Connect.';
   document.getElementById('cloud-modal').style.display='flex';
 }
 function closeCloud(){document.getElementById('cloud-modal').style.display='none';}
 function cloudConnect(){
   if(!window.cloud)return;
-  window.cloud.connect(document.getElementById('cloud-api').value,document.getElementById('cloud-key').value);
+  window.cloud.connect(
+    document.getElementById('cloud-api').value,
+    document.getElementById('cloud-key').value,
+    document.getElementById('cloud-anon').value
+  );
   closeCloud();
 }
 function cloudDisconnect(){if(window.cloud)window.cloud.disconnect();closeCloud();}

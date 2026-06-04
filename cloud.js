@@ -6,8 +6,12 @@
   const KEYS = ['faang_v3','faang_pstate','faang_annot','faang_notes','faang_cq','faang_ct','faang_done_ts','faang_activity','faang_theme'];
   const CFG_API = 'faang_api', CFG_KEY = 'faang_sync_key';
 
-  function cfg() { return { api: localStorage.getItem(CFG_API), key: localStorage.getItem(CFG_KEY) }; }
+  const CFG_ANON = 'faang_api_key';
+  function cfg() { return { api: localStorage.getItem(CFG_API), key: localStorage.getItem(CFG_KEY), anon: localStorage.getItem(CFG_ANON) }; }
   function configured() { const { api, key } = cfg(); return !!(api && key); }
+  // Supabase mode = a supabase.co URL + an anon key (talks to its REST API directly,
+  // no custom server needed). Otherwise it uses the bundled Express server's /api/data.
+  function isSupabase() { const { api, anon } = cfg(); return !!(anon && /supabase\.co/i.test(api || '')); }
 
   let pulling = false, pushTimer = null;
 
@@ -23,36 +27,66 @@
     pushTimer = setTimeout(cloudPush, 1500);
   }
 
-  async function cloudPush() {
-    const { api, key } = cfg();
-    if (!api || !key) return;
+  function collectBlob() {
     const blob = {};
     KEYS.forEach(k => { const v = localStorage.getItem(k); if (v != null) blob[k] = v; });
+    return blob;
+  }
+  function applyBlob(data) {
+    pulling = true;
+    Object.entries(data).forEach(([k, v]) => { if (KEYS.includes(k)) localStorage.setItem(k, v); });
+    pulling = false;
+  }
+
+  async function cloudPush() {
+    const { api, key, anon } = cfg();
+    if (!api || !key) return;
+    const blob = collectBlob();
     setDot('sync');
     try {
-      const r = await fetch(`${api}/api/data/${encodeURIComponent(key)}`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: blob })
-      });
+      let r;
+      if (isSupabase()) {
+        // PostgREST upsert into user_data (on conflict user_id)
+        r = await fetch(`${api}/rest/v1/user_data`, {
+          method: 'POST',
+          headers: {
+            apikey: anon, Authorization: `Bearer ${anon}`,
+            'Content-Type': 'application/json',
+            Prefer: 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify([{ user_id: key, data: blob, updated_at: new Date().toISOString() }])
+        });
+      } else {
+        r = await fetch(`${api}/api/data/${encodeURIComponent(key)}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: blob })
+        });
+      }
       setDot(r.ok ? 'on' : 'err');
     } catch (e) { setDot('err'); }
   }
 
   async function cloudPull() {
-    const { api, key } = cfg();
+    const { api, key, anon } = cfg();
     if (!api || !key) return false;
     setDot('sync');
     try {
-      const r = await fetch(`${api}/api/data/${encodeURIComponent(key)}`);
-      if (!r.ok) { setDot('err'); return false; }
-      const j = await r.json();
-      setDot('on');
-      if (j && j.data) {
-        pulling = true;
-        Object.entries(j.data).forEach(([k, v]) => { if (KEYS.includes(k)) localStorage.setItem(k, v); });
-        pulling = false;
-        return true;
+      let data = null;
+      if (isSupabase()) {
+        const r = await fetch(`${api}/rest/v1/user_data?user_id=eq.${encodeURIComponent(key)}&select=data`, {
+          headers: { apikey: anon, Authorization: `Bearer ${anon}` }
+        });
+        if (!r.ok) { setDot('err'); return false; }
+        const rows = await r.json();
+        data = Array.isArray(rows) && rows.length ? rows[0].data : null;
+      } else {
+        const r = await fetch(`${api}/api/data/${encodeURIComponent(key)}`);
+        if (!r.ok) { setDot('err'); return false; }
+        const j = await r.json();
+        data = j && j.data;
       }
+      setDot('on');
+      if (data && typeof data === 'object') { applyBlob(data); return true; }
       return false;
     } catch (e) { setDot('err'); return false; }
   }
@@ -64,15 +98,18 @@
   // public API
   window.cloud = {
     cfg, configured,
-    connect(api, key) {
+    connect(api, key, anon) {
       api = (api || '').trim().replace(/\/+$/, '');
       key = (key || '').trim();
+      anon = (anon || '').trim();
       if (!api || !key) { toast('Enter both API URL and sync key.'); return; }
       localStorage.setItem(CFG_API, api);
       localStorage.setItem(CFG_KEY, key);
+      if (anon) localStorage.setItem(CFG_ANON, anon); else localStorage.removeItem(CFG_ANON);
       this.sync(true);
     },
-    disconnect() { localStorage.removeItem(CFG_API); localStorage.removeItem(CFG_KEY); setDot('off'); toast('Cloud sync disconnected.'); },
+    disconnect() { localStorage.removeItem(CFG_API); localStorage.removeItem(CFG_KEY); localStorage.removeItem(CFG_ANON); setDot('off'); toast('Cloud sync disconnected.'); },
+    isSupabase,
     async sync(pullFirst) {
       if (!configured()) return;
       if (pullFirst) {
