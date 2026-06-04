@@ -349,9 +349,6 @@ a.prob-name:hover{color:#60a5fa}
     <div class="tools-menu">
       <button class="tools-btn" onclick="toggleTools(event)">Tools ▾</button>
       <div class="tools-dropdown" id="tools-dropdown">
-        <button onclick="copySyncLink();closeTools()">📤 Copy sync link</button>
-        <button onclick="openImport();closeTools()">📥 Import from link</button>
-        <div class="tools-sep"></div>
         <button onclick="backupAll();closeTools()">💾 Back up to file</button>
         <button onclick="document.getElementById('restore-file').click();closeTools()">♻️ Restore from file</button>
         <div class="tools-sep"></div>
@@ -527,18 +524,6 @@ a.prob-name:hover{color:#60a5fa}
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="import-modal" style="display:none" onclick="if(event.target===this)closeImport()">
-  <div class="modal">
-    <h3>📥 Import Progress</h3>
-    <p>Paste a sync link (or just the code after <code style="color:#818cf8">#</code>) that you copied from another device. Your current progress will be replaced.</p>
-    <textarea id="import-input" placeholder="https://lovebansal0.github.io/faang-prep/#eyJkMDEiOiJkb25lIn0..."></textarea>
-    <div class="modal-btns">
-      <button class="modal-btn secondary" onclick="closeImport()">Cancel</button>
-      <button class="modal-btn primary" onclick="applyImport()">Apply &amp; Sync</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" id="cloud-modal" style="display:none" onclick="if(event.target===this)closeCloud()">
   <div class="modal" style="max-width:480px">
     <h3>☁️ Cloud Sync (Postgres)</h3>
@@ -2718,21 +2703,6 @@ function delCustomTopic(id){
 }
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
-function encodeBundle(){
-  // bundle topic state + per-problem state; only non-pending entries
-  const slimT={}; Object.entries(state).forEach(([k,v])=>{if(v&&v!=='pending')slimT[k]=v;});
-  const slimP={}; Object.entries(pstate).forEach(([k,v])=>{if(v&&v!=='pending')slimP[k]=v;});
-  return btoa(unescape(encodeURIComponent(JSON.stringify({t:slimT,p:slimP}))));
-}
-
-function decodeBundle(raw){
-  const code = raw.includes('#') ? raw.split('#').pop() : raw.trim();
-  const obj = JSON.parse(decodeURIComponent(escape(atob(code))));
-  // new format {t,p}; old format was a flat topic-state map
-  if(obj && (obj.t || obj.p)) return {t:obj.t||{}, p:obj.p||{}};
-  return {t:obj||{}, p:{}};
-}
-
 // ── FULL FILE BACKUP / RESTORE (covers everything, incl. images) ──────────────
 const BACKUP_KEYS=['faang_v3','faang_pstate','faang_annot','faang_notes','faang_cq','faang_ct','faang_theme','faang_done_ts','faang_activity'];
 function backupAll(){
@@ -2769,56 +2739,6 @@ function restoreAll(input){
   };
   reader.readAsText(f);
 }
-
-function copySyncLink(){
-  const code = encodeBundle();
-  const url  = 'https://lovebansal0.github.io/faang-prep/#' + code;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>showToast('📤 Sync link copied! Open it on any device.'));
-  } else {
-    prompt('Copy this sync link:', url);
-  }
-}
-
-function openImport(){
-  document.getElementById('import-modal').style.display='flex';
-  document.getElementById('import-input').value='';
-  setTimeout(()=>document.getElementById('import-input').focus(),50);
-}
-
-function closeImport(){
-  document.getElementById('import-modal').style.display='none';
-}
-
-function applyImport(){
-  const raw = document.getElementById('import-input').value.trim();
-  if(!raw){showToast('Paste a sync link first.');return;}
-  try{
-    const b = decodeBundle(raw);
-    const count = Object.keys(b.t).length;
-    const pcount = Object.keys(b.p).length;
-    state = b.t; pstate = b.p;
-    save(); savePS();
-    closeImport();
-    render();
-    showToast(`✅ Synced! ${count} topics + ${pcount} problems restored.`);
-  }catch(e){
-    showToast('❌ Invalid sync code. Copy the full link.');
-  }
-}
-
-// auto-load from URL hash on first visit
-(function(){
-  const hash = location.hash.slice(1);
-  if(!hash)return;
-  try{
-    const b = decodeBundle(hash);
-    state = b.t; pstate = b.p;
-    save(); savePS();
-    history.replaceState(null,'',location.pathname); // clean URL
-    showToast('✅ Progress synced from link!');
-  }catch(e){}
-})();
 
 render();
 </script>
