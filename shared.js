@@ -136,6 +136,16 @@ function renderAll(){
 
 applyTheme(localStorage.getItem('faang_theme')||'dark');
 
+// re-read stores after a cloud pull and re-render
+window.reloadFromStorage=function(){
+  try{state=JSON.parse(localStorage.getItem('faang_v3')||'{}')}catch{state={}}
+  try{pstate=JSON.parse(localStorage.getItem('faang_pstate')||'{}')}catch{pstate={}}
+  try{customQs=JSON.parse(localStorage.getItem('faang_cq')||'{}')}catch{customQs={}}
+  try{annot=JSON.parse(localStorage.getItem('faang_annot')||'{}')}catch{annot={}}
+  applyTheme(localStorage.getItem('faang_theme')||'dark');
+  renderAll();
+};
+
 // ── study references footer (shared across discipline pages) ──
 (function(){
   const R={
