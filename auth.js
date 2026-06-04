@@ -41,7 +41,6 @@
         <p style="text-align:center;margin:14px 0 0;font-size:12px;color:#587286">
           ${mode === 'login' ? `No account? <a href="#" id="auth-switch" style="color:#38bdf8;text-decoration:none">Create one</a>` : `Have an account? <a href="#" id="auth-switch" style="color:#38bdf8;text-decoration:none">Sign in</a>`}
         </p>
-        <p style="text-align:center;margin:12px 0 0"><a href="#" id="auth-skip" style="color:#587286;font-size:11px">Continue without signing in →</a></p>
       </div>`;
     wire();
   }
@@ -94,8 +93,6 @@
     ['auth-email', 'auth-pw'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') submit(); }));
     const sw = document.getElementById('auth-switch');
     if (sw) sw.addEventListener('click', e => { e.preventDefault(); mode = mode === 'login' ? 'signup' : 'login'; render(); });
-    const skip = document.getElementById('auth-skip');
-    if (skip) skip.addEventListener('click', e => { e.preventDefault(); ov.remove(); if (window.reloadFromStorage) window.reloadFromStorage(); });
   }
 
   function mount() { document.body.appendChild(ov); render(); document.getElementById('auth-email')?.focus(); }
