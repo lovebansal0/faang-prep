@@ -317,6 +317,7 @@ a.prob-name:hover{color:#60a5fa}
 </style>
 </head>
 <body>
+<script src="auth.js"></script>
 <script src="cloud.js"></script>
 <svg width="0" height="0" style="position:absolute">
   <defs>
@@ -357,6 +358,7 @@ a.prob-name:hover{color:#60a5fa}
         <button onclick="toggleHeatmap();closeTools()">📅 Activity heatmap</button>
         <div class="tools-sep"></div>
         <button onclick="openCloud();closeTools()"><span id="cloud-dot" class="cloud-dot" data-state="off"></span> Cloud sync (Postgres)</button>
+        <button onclick="if(window.signOut)window.signOut()">🔓 Sign out</button>
       </div>
       <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
