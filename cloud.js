@@ -12,6 +12,11 @@
   // Supabase mode = a supabase.co URL + an anon key (talks to its REST API directly,
   // no custom server needed). Otherwise it uses the bundled Express server's /api/data.
   function isSupabase() { const { api, anon } = cfg(); return !!(anon && /supabase\.co/i.test(api || '')); }
+  // prefer the logged-in user's token (so RLS can scope data to auth.uid()); fall back to anon
+  function bearer(anon) {
+    try { const s = JSON.parse(localStorage.getItem('faang_sb_session') || 'null'); if (s && s.access_token && s.expires_at * 1000 > Date.now()) return s.access_token; } catch (e) {}
+    return anon;
+  }
 
   let pulling = false, pushTimer = null;
 
@@ -50,7 +55,7 @@
         r = await fetch(`${api}/rest/v1/user_data`, {
           method: 'POST',
           headers: {
-            apikey: anon, Authorization: `Bearer ${anon}`,
+            apikey: anon, Authorization: `Bearer ${bearer(anon)}`,
             'Content-Type': 'application/json',
             Prefer: 'resolution=merge-duplicates,return=minimal'
           },
@@ -74,7 +79,7 @@
       let data = null;
       if (isSupabase()) {
         const r = await fetch(`${api}/rest/v1/user_data?user_id=eq.${encodeURIComponent(key)}&select=data`, {
-          headers: { apikey: anon, Authorization: `Bearer ${anon}` }
+          headers: { apikey: anon, Authorization: `Bearer ${bearer(anon)}` }
         });
         if (!r.ok) { setDot('err'); return false; }
         const rows = await r.json();

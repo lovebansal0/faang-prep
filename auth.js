@@ -41,7 +41,7 @@
         <p style="text-align:center;margin:14px 0 0;font-size:12px;color:#587286">
           ${mode === 'login' ? `No account? <a href="#" id="auth-switch" style="color:#38bdf8;text-decoration:none">Create one</a>` : `Have an account? <a href="#" id="auth-switch" style="color:#38bdf8;text-decoration:none">Sign in</a>`}
         </p>
-        ${noCfg ? `<p style="text-align:center;margin:12px 0 0"><a href="#" id="auth-skip" style="color:#587286;font-size:11px">Continue without sign-in (this device)</a></p>` : ''}
+        <p style="text-align:center;margin:12px 0 0"><a href="#" id="auth-skip" style="color:#587286;font-size:11px">Continue without signing in →</a></p>
       </div>`;
     wire();
   }
@@ -75,7 +75,14 @@
           user: j.user
         };
         localStorage.setItem(SESSION_KEY, JSON.stringify(sess));
+        // UNIFY auth + sync: point cloud sync at this account automatically, then pull your data
+        try {
+          localStorage.setItem('faang_api', SUPABASE_URL);
+          if (ANON) localStorage.setItem('faang_api_key', ANON);
+          if (sess.user && sess.user.id) localStorage.setItem('faang_sync_key', sess.user.id);
+        } catch (e) {}
         ov.remove();
+        if (window.cloud && window.cloud.sync) window.cloud.sync(true); // pull this user's progress
       } else {
         err(j.error_description || j.msg || j.error || 'Authentication failed.');
       }
@@ -88,7 +95,7 @@
     const sw = document.getElementById('auth-switch');
     if (sw) sw.addEventListener('click', e => { e.preventDefault(); mode = mode === 'login' ? 'signup' : 'login'; render(); });
     const skip = document.getElementById('auth-skip');
-    if (skip) skip.addEventListener('click', e => { e.preventDefault(); ov.remove(); });
+    if (skip) skip.addEventListener('click', e => { e.preventDefault(); ov.remove(); if (window.reloadFromStorage) window.reloadFromStorage(); });
   }
 
   function mount() { document.body.appendChild(ov); render(); document.getElementById('auth-email')?.focus(); }
