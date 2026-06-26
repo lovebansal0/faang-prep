@@ -136,57 +136,6 @@ function renderAll(){
 
 applyTheme(localStorage.getItem('faang_theme')||'dark');
 
-// ── cloud sync modal (injected; config shared with main page via localStorage) ──
-(function(){
-  function mount(){
-    const m=document.createElement('div');
-    m.className='modal-overlay';m.id='cloud-modal';m.style.display='none';
-    m.addEventListener('click',e=>{if(e.target===m)closeCloud();});
-    m.innerHTML=`<div class="modal" style="max-width:480px">
-      <h3>☁️ Cloud Sync (Postgres)</h3>
-      <p style="font-size:12px;color:var(--muted2);margin:4px 0 14px;line-height:1.5">Sync everything across devices. Use the same API URL &amp; key on every device and every page.</p>
-      <div class="annot-section-label">API URL (Supabase project URL, or your own server)</div>
-      <input class="annot-img-url" id="cloud-api" placeholder="https://xxxx.supabase.co" style="width:100%">
-      <div class="annot-section-label">API key (Supabase anon public key — blank for own server)</div>
-      <input class="annot-img-url" id="cloud-anon" placeholder="eyJhbGciOi… (anon key)" style="width:100%">
-      <div class="annot-section-label">Sync key (private string, same on all devices)</div>
-      <input class="annot-img-url" id="cloud-key" placeholder="e.g. love-faang-2026" style="width:100%">
-      <div id="cloud-status" style="font-size:11px;color:var(--muted2);margin-top:12px;line-height:1.5"></div>
-      <div class="modal-btns">
-        <button class="modal-btn secondary" onclick="cloudDisconnect()">Disconnect</button>
-        <button class="modal-btn secondary" onclick="cloudPushNow()">Push now</button>
-        <button class="modal-btn primary" onclick="cloudConnect()">Connect &amp; sync</button>
-      </div></div>`;
-    document.body.appendChild(m);
-  }
-  if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount);
-})();
-window.openCloud=function(){
-  const c=(window.cloud&&window.cloud.cfg())||{};
-  document.getElementById('cloud-api').value=c.api||'';
-  document.getElementById('cloud-anon').value=c.anon||'';
-  document.getElementById('cloud-key').value=c.key||'';
-  const sb=window.cloud&&window.cloud.isSupabase&&window.cloud.isSupabase();
-  document.getElementById('cloud-status').textContent=(window.cloud&&window.cloud.configured())
-    ?`✓ Connected${sb?' (Supabase)':''}. Changes sync automatically.`
-    :'Not connected. Fill in the fields, then Connect.';
-  document.getElementById('cloud-modal').style.display='flex';
-};
-window.closeCloud=function(){const m=document.getElementById('cloud-modal');if(m)m.style.display='none';};
-window.cloudConnect=function(){if(!window.cloud)return;window.cloud.connect(document.getElementById('cloud-api').value,document.getElementById('cloud-key').value,document.getElementById('cloud-anon').value);closeCloud();};
-window.cloudDisconnect=function(){if(window.cloud)window.cloud.disconnect();closeCloud();};
-window.cloudPushNow=function(){if(window.cloud)window.cloud.sync(false);closeCloud();};
-
-// re-read stores after a cloud pull and re-render
-window.reloadFromStorage=function(){
-  try{state=JSON.parse(localStorage.getItem('faang_v3')||'{}')}catch{state={}}
-  try{pstate=JSON.parse(localStorage.getItem('faang_pstate')||'{}')}catch{pstate={}}
-  try{customQs=JSON.parse(localStorage.getItem('faang_cq')||'{}')}catch{customQs={}}
-  try{annot=JSON.parse(localStorage.getItem('faang_annot')||'{}')}catch{annot={}}
-  applyTheme(localStorage.getItem('faang_theme')||'dark');
-  renderAll();
-};
-
 // ── study references footer (shared across discipline pages) ──
 (function(){
   const R={

@@ -87,18 +87,19 @@ Each week blends DSA + a system-design/LLD thread + a 🎤 weekly mock + spaced 
 - ＋ **Add custom questions** to any topic
 - 📌 **My Topics** — track extra topics you discover while studying
 
-**Data portability**
-- 📤 **Sync Link / 📥 Import** — carry topic + per-problem progress to another device via a URL
-- 💾 **Backup / ♻️ Restore** — download/upload a full JSON of **everything**, including
-  code + design images (which are too big for the sync URL). This is your real safety net.
+**Data portability (device-based — no accounts, no server)**
+- 💾 **Backup / ♻️ Restore** — download/upload a full JSON of **everything** (status,
+  per-problem progress, notes, custom questions/topics, code + design images, streak, theme).
+  This is how you move data between devices and your safety net against a cleared browser.
 
 **Appearance**
 - 🌙/☀️ **Theme toggle** — cool/calm dark and soft light, your choice is remembered
 
-> All data lives in your browser's **localStorage** (no server). Keys: `faang_v3` (topics),
-> `faang_pstate` (problems), `faang_annot` (code+images), `faang_notes`, `faang_cq`
+> All data lives in your browser's **localStorage** (no backend, no login). Keys: `faang_v3`
+> (topics), `faang_pstate` (problems), `faang_annot` (code+images), `faang_notes`, `faang_cq`
 > (custom questions), `faang_ct` (custom topics), `faang_done_ts`, `faang_activity`,
-> `faang_theme`. **Use 💾 Backup regularly** — clearing browser data wipes everything.
+> `faang_theme`. **Use 💾 Backup regularly** — clearing browser data wipes everything, and
+> use Restore on another device to carry your data over.
 
 ---
 

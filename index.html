@@ -256,10 +256,6 @@ a.prob-name:hover{color:#60a5fa}
 .tools-dropdown button{display:block;width:100%;text-align:left;padding:8px 11px;border:none;background:transparent;color:var(--text);font-size:12.5px;border-radius:7px;cursor:pointer;transition:background .12s}
 .tools-dropdown button:hover{background:var(--surface2)}
 .tools-sep{height:1px;background:var(--border);margin:5px 8px}
-.cloud-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:5px;vertical-align:middle;transition:all .2s}
-.cloud-dot[data-state="on"]{background:#34d399;box-shadow:0 0 6px #34d399}
-.cloud-dot[data-state="sync"]{background:#fbbf24;box-shadow:0 0 6px #fbbf24}
-.cloud-dot[data-state="err"]{background:#f87171;box-shadow:0 0 6px #f87171}
 .sync-btn:hover{border-color:#818cf8;color:#818cf8}
 .sync-btn.import{border-color:#34d399;color:#34d399}
 .sync-btn.import:hover{background:rgba(52,211,153,.08)}
@@ -317,8 +313,6 @@ a.prob-name:hover{color:#60a5fa}
 </style>
 </head>
 <body>
-<script src="auth.js"></script>
-<script src="cloud.js"></script>
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -353,9 +347,6 @@ a.prob-name:hover{color:#60a5fa}
         <button onclick="document.getElementById('restore-file').click();closeTools()">♻️ Restore from file</button>
         <div class="tools-sep"></div>
         <button onclick="toggleHeatmap();closeTools()">📅 Activity heatmap</button>
-        <div class="tools-sep"></div>
-        <button onclick="openCloud();closeTools()"><span id="cloud-dot" class="cloud-dot" data-state="off"></span> Cloud sync (Postgres)</button>
-        <button onclick="if(window.signOut)window.signOut()">🔓 Sign out</button>
       </div>
       <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
@@ -521,24 +512,6 @@ a.prob-name:hover{color:#60a5fa}
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeAddTopic()">Cancel</button>
       <button class="modal-btn primary" onclick="saveAddTopic()">Add Topic</button>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="cloud-modal" style="display:none" onclick="if(event.target===this)closeCloud()">
-  <div class="modal" style="max-width:480px">
-    <h3>☁️ Cloud Sync (Postgres)</h3>
-    <p>Sync everything — status, per-problem progress, notes, custom questions/topics, code &amp; design images — across devices via your own sync server. Use the same API URL &amp; key on every device.</p>
-    <div class="annot-section-label">API URL (Supabase project URL, or your own server)</div>
-    <input class="annot-img-url" id="cloud-api" placeholder="https://xxxx.supabase.co" style="width:100%">
-    <div class="annot-section-label">API key (Supabase <b>anon public</b> key — leave blank if using your own server)</div>
-    <input class="annot-img-url" id="cloud-anon" placeholder="eyJhbGciOi… (Supabase anon key)" style="width:100%">
-    <div class="annot-section-label">Sync key (any private string, same on all your devices)</div>
-    <input class="annot-img-url" id="cloud-key" placeholder="e.g. love-faang-2026" style="width:100%">
-    <div id="cloud-status" style="font-size:11px;color:var(--muted2);margin-top:12px;line-height:1.5"></div>
-    <div class="modal-btns">
-      <button class="modal-btn secondary" onclick="cloudDisconnect()">Disconnect</button>
-      <button class="modal-btn secondary" onclick="cloudPushNow()">Push now</button>
-      <button class="modal-btn primary" onclick="cloudConnect()">Connect &amp; sync</button>
     </div>
   </div>
 </div>
@@ -2183,30 +2156,6 @@ function toggleTheme(){
   applyTheme(next);
 }
 function toggleTools(e){if(e)e.stopPropagation();document.getElementById('tools-dropdown').classList.toggle('open');}
-// cloud sync modal
-function openCloud(){
-  const c=(window.cloud&&window.cloud.cfg())||{};
-  document.getElementById('cloud-api').value=c.api||'';
-  document.getElementById('cloud-anon').value=c.anon||'';
-  document.getElementById('cloud-key').value=c.key||'';
-  const sb=window.cloud&&window.cloud.isSupabase&&window.cloud.isSupabase();
-  document.getElementById('cloud-status').textContent=(window.cloud&&window.cloud.configured())
-    ?`✓ Connected${sb?' (Supabase)':''}. Changes sync automatically across your devices.`
-    :'Not connected. Fill in the fields, then Connect.';
-  document.getElementById('cloud-modal').style.display='flex';
-}
-function closeCloud(){document.getElementById('cloud-modal').style.display='none';}
-function cloudConnect(){
-  if(!window.cloud)return;
-  window.cloud.connect(
-    document.getElementById('cloud-api').value,
-    document.getElementById('cloud-key').value,
-    document.getElementById('cloud-anon').value
-  );
-  closeCloud();
-}
-function cloudDisconnect(){if(window.cloud)window.cloud.disconnect();closeCloud();}
-function cloudPushNow(){if(window.cloud)window.cloud.sync(false);closeCloud();}
 function closeTools(){document.getElementById('tools-dropdown')?.classList.remove('open');}
 document.addEventListener('click',e=>{const m=document.querySelector('.tools-menu');if(m&&!m.contains(e.target))closeTools();});
 applyTheme(localStorage.getItem('faang_theme')||'dark');
@@ -2476,18 +2425,6 @@ function goToWeek(w){
 }
 function render(){renderStats();renderPills();renderSecCards();renderContent();renderEta();renderThisWeek();if(document.getElementById('heatmap-wrap')?.classList.contains('open'))renderHeatmap();}
 // re-read all stores from localStorage (used after a cloud pull) and re-render
-window.reloadFromStorage=function(){
-  try{state=JSON.parse(localStorage.getItem('faang_v3')||'{}')}catch{state={}}
-  try{pstate=JSON.parse(localStorage.getItem('faang_pstate')||'{}')}catch{pstate={}}
-  try{annot=JSON.parse(localStorage.getItem('faang_annot')||'{}')}catch{annot={}}
-  try{notesState=JSON.parse(localStorage.getItem('faang_notes')||'{}')}catch{notesState={}}
-  try{customQs=JSON.parse(localStorage.getItem('faang_cq')||'{}')}catch{customQs={}}
-  try{customTopics=JSON.parse(localStorage.getItem('faang_ct')||'[]')}catch{customTopics=[]}
-  try{doneTs=JSON.parse(localStorage.getItem('faang_done_ts')||'{}')}catch{doneTs={}}
-  try{activity=JSON.parse(localStorage.getItem('faang_activity')||'{}')}catch{activity={}}
-  applyTheme(localStorage.getItem('faang_theme')||'dark');
-  render();
-};
 // scroll-to-top visibility
 window.addEventListener('scroll',()=>{
   const b=document.getElementById('scroll-top');
