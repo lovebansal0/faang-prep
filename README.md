@@ -52,7 +52,7 @@ Each week blends DSA + a system-design/LLD thread + a 🎤 weekly mock + spaced 
 - **✓ Done** / **↻ Revisit** on each topic *and* each individual problem.
 - Click **▸ N problems** to expand the question list (LeetCode + external links,
   company tags G/M/A/Ms/Ub, E/M/H difficulty).
-- The **📅 This Week** banner (plan starts **June 15, 2026**) shows the current week's focus
+- The **📅 This Week** banner (plan starts **July 2, 2026**) shows the current week's focus
   and whether you're on track / behind, computed live from your progress.
 
 ### 4. The non-negotiables

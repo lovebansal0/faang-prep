@@ -2427,7 +2427,7 @@ function renderContent(){
 }
 function setTab(k){activeTab=k;render();}
 // ── THIS WEEK banner (date-driven, reads live progress) ───────────────────────
-const PLAN_START=new Date(2026,5,15); // June 15, 2026 — Week 1 begins
+const PLAN_START=new Date(2026,6,2); // July 2, 2026 — Week 1 begins
 function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function renderThisWeek(){
   const el=document.getElementById('thisweek-banner');
@@ -2438,7 +2438,7 @@ function renderThisWeek(){
   // before start
   if(days<0){
     const dleft=Math.ceil(-days);
-    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off June 15 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off July 2 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
     return;
   }
   const maxWk=16; // FAANG+ sprint length
