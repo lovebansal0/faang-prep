@@ -181,6 +181,8 @@ body.diff-H .prob-row:not([data-d="H"]){display:none}
 .week-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .wk-badge{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--muted2);white-space:nowrap}
 .wk-month{font-size:10px;color:var(--muted);padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;white-space:nowrap}
+.wk-when{font-size:10px;color:#38bdf8;padding:3px 8px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:4px;white-space:nowrap}
+.wk-when.wdone{color:var(--done);background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25)}
 .wk-label{font-size:12px;color:var(--muted2);flex:1;min-width:0}
 .wk-prog{font-size:11px;color:var(--muted2);white-space:nowrap}
 .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:10px}
@@ -2431,6 +2433,9 @@ function renderContent(){
 
   const byWeek={};
   allList.forEach(t=>(byWeek[t.w]=byWeek[t.w]||[]).push(t));
+  const sched=weekSchedule();
+  const curYear=new Date().getFullYear();
+  const fmtD=d=>fmtDate(d)+(d.getFullYear()!==curYear?" '"+String(d.getFullYear()).slice(2):'');
   el.innerHTML=Object.entries(byWeek).sort(([a],[b])=>+a-+b).map(([w,ts])=>{
     const doneW=ts.filter(t=>state[t.id]==='done').length;
     const pct=Math.round(doneW/ts.length*100);
@@ -2438,11 +2443,16 @@ function renderContent(){
     const collapsed=collapsedWeeks.has(+w);
     const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'CTO';
     const note=getNote(w);
+    const sd=sched[+w];
+    const when=sd?(sd.done
+      ?`<span class="wk-when wdone">✓ complete</span>`
+      :`<span class="wk-when" title="Projected dates at 4h/day from your start date, skipping days off">📆 ${fmtD(sd.from)}${sd.to.getTime()!==sd.from.getTime()?' – '+fmtD(sd.to):''}</span>`):'';
     const progressBar=`<div style="position:absolute;bottom:0;left:0;height:2px;width:${pct}%;background:linear-gradient(90deg,#818cf8,#34d399);border-radius:2px;transition:width .4s"></div>`;
     return`<div class="week-group" id="wg-${w}">
       <div class="week-hdr ${collapsed?'week-collapsed':''}" id="wh-${w}" onclick="toggleWeek(${w})" style="position:relative;padding-bottom:8px">
         <span class="wk-badge">${wLabel}</span>
         <span class="wk-month">${MONTH(+w)}</span>
+        ${when}
         <span class="wk-label">${WK[w]||'Custom week'}</span>
         <span class="wk-hours">~${totalHrs}h</span>
         <span class="wk-prog" style="color:${pct===100?'var(--done)':pct>50?'var(--muted2)':'var(--muted)'}">${doneW}/${ts.length}</span>
@@ -2489,6 +2499,34 @@ function offDaysElapsed(start,today){
   const vs=vacaySet(),day=86400000;let n=0;
   for(let d=new Date(start);d<=today;d=new Date(d.getTime()+day))if(vs.has(isoLocal(d)))n++;
   return n;
+}
+// projected calendar dates per content week: each week's PENDING hours scheduled
+// sequentially from max(today, plan start) at 4h/day, skipping marked days off.
+// Shifts automatically with start date, vacations, and your actual progress.
+function weekSchedule(){
+  const list=planList();
+  const weeks=[...new Set(list.map(t=>t.w))].sort((a,b)=>a-b);
+  const vs=vacaySet(),day=86400000;
+  const start=planStartDate();
+  let cursor=new Date();cursor.setHours(0,0,0,0);
+  if(start>cursor)cursor=new Date(start);
+  const nextStudy=d=>{let g=0;while(vs.has(isoLocal(d))&&g++<1500)d=new Date(d.getTime()+day);return d;};
+  const sched={};
+  for(const w of weeks){
+    const pendH=list.filter(t=>t.w===w&&(!state[t.id]||state[t.id]==='pending')).reduce((s,t)=>s+(t.h||0),0);
+    if(pendH<=0){sched[w]={done:true};continue;}
+    cursor=nextStudy(cursor);
+    const from=new Date(cursor);
+    let rem=pendH,g=0;
+    while(g++<3000){
+      if(!vs.has(isoLocal(cursor)))rem-=DAILY_HOURS;
+      if(rem<=0)break;
+      cursor=new Date(cursor.getTime()+day);
+    }
+    sched[w]={from,to:new Date(cursor)};
+    cursor=new Date(cursor.getTime()+day);
+  }
+  return sched;
 }
 
 // ── THIS WEEK banner (progress-based, vacation-aware) ─────────────────────────
