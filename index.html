@@ -416,7 +416,7 @@ body.light input[type="date"]{color-scheme:light}
   <button class="f-btn" data-diff="M" title="Show only Medium problems">M</button>
   <button class="f-btn" data-diff="H" title="Show only Hard problems">H</button>
   <button class="jump-btn" onclick="pickRandom()" title="Jump to a random unfinished topic in the current view">🎲 Random</button>
-  <select class="week-sel" id="wk-sel"><option value="all">All Weeks</option></select>
+  <select class="week-sel" id="wk-sel"><option value="all">All Phases</option></select>
   <button class="jump-btn" onclick="jumpToNext()" title="Scroll to first incomplete topic">▶ Next incomplete</button>
   <button class="ce-btn" onclick="collapseAll()" title="Collapse all weeks">⊟ Collapse all</button>
   <button class="ce-btn" onclick="expandAll()" title="Expand all weeks">⊞ Expand all</button>
@@ -2441,7 +2441,7 @@ function renderContent(){
     const pct=Math.round(doneW/ts.length*100);
     const totalHrs=ts.reduce((s,t)=>s+t.h,0);
     const collapsed=collapsedWeeks.has(+w);
-    const wLabel=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'CTO';
+    const wLabel=+w<=16?`Phase ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·P${+w-24}`:'CTO';
     const note=getNote(w);
     const sd=sched[+w];
     const when=sd?(sd.done
@@ -2465,7 +2465,7 @@ function renderContent(){
           <div class="topic-grid" style="padding-top:2px">${ts.map(card).join('')}</div>
           <div class="week-notes-area" id="wna-${w}" style="display:none">
             <textarea class="week-notes-ta" id="wnta-${w}"
-              placeholder="Week ${w} notes — patterns noticed, interview experiences, things to revisit, resources found…"
+              placeholder="Phase ${w} notes — patterns noticed, interview experiences, things to revisit, resources found…"
               oninput="setNote(${w},this.value)">${note}</textarea>
           </div>
         </div>
@@ -2539,7 +2539,7 @@ function renderThisWeek(){
   // before start
   if(days<0){
     const dleft=Math.ceil(-days);
-    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(start)}, ${start.getFullYear()}</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span><button class="tw-jump" onclick="openPlanSettings()">🗓 Change</button></div><div class="tw-focus">Week 1 kicks off ${fmtDate(start)} — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(start)}, ${start.getFullYear()}</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span><button class="tw-jump" onclick="openPlanSettings()">🗓 Change</button></div><div class="tw-focus">Phase 1 kicks off ${fmtDate(start)} — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
     return;
   }
   const list=planList();
@@ -2568,7 +2568,7 @@ function renderThisWeek(){
     el.innerHTML=`<div class="tw-top"><span class="tw-week">🏆 Plan content complete!</span><span class="tw-status ahead">${Math.round(doneHours)}h done</span></div><div class="tw-focus">Shift to mock loops, the Weak-Area Sprint (↻ Revisit + 🔁 Due review), and scheduling real interviews.</div>`;
     return;
   }
-  const wkLabel=contentWk<=16?`Week ${contentWk}`:contentWk<=24?`S${contentWk-16}`:`M5·W${contentWk-24}`;
+  const wkLabel=contentWk<=16?`Phase ${contentWk}`:contentWk<=24?`S${contentWk-16}`:`M5·P${contentWk-24}`;
   const pct=wkTotal?Math.round(wkDone/wkTotal*100):0;
   const focus=WK[contentWk]||'';
   // daily target: next incomplete topics (in week order) filling ~4h
@@ -2637,7 +2637,7 @@ function pickRandom(){
 const wkSel=document.getElementById('wk-sel');
 [...new Set(T.map(t=>t.w))].sort((a,b)=>a-b).forEach(w=>{
   const o=document.createElement('option');
-  const label=w<=16?`Week ${w} — ${MONTH(w)}`:w<=24?`S${w-16} — ${MONTH(w)}`:`M5·W${w-24} — ${MONTH(w)}`;
+  const label=w<=16?`Phase ${w} — ${MONTH(w)}`:w<=24?`S${w-16} — ${MONTH(w)}`:`M5·P${w-24} — ${MONTH(w)}`;
   o.value=w;o.textContent=label;wkSel.appendChild(o);
 });
 wkSel.addEventListener('change',e=>{activeWeek=e.target.value;render();});

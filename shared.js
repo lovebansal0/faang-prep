@@ -121,7 +121,7 @@ function renderAll(){
   cEl.innerHTML=Object.entries(byWeek).sort(([a],[b])=>+a-+b).map(([w,ts])=>{
     const dw=ts.filter(t=>state[t.id]==='done').length;
     const isC=collapsed.has(+w);
-    const wl=+w<=16?`Week ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·W${+w-24}`:'CTO';
+    const wl=+w<=16?`Phase ${w}`:+w<=24?`S${+w-16}`:+w<=28?`M5·P${+w-24}`:'CTO';
     return`<div class="week-group">
       <div class="week-hdr" onclick="toggleWeek(${w})">
         <span class="wk-badge">${wl}</span>
