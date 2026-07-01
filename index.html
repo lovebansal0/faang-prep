@@ -307,6 +307,12 @@ a.prob-name:hover{color:#60a5fa}
 .tw-status.ahead{background:rgba(56,189,248,.15);color:#38bdf8}
 .tw-focus{font-size:12px;color:var(--muted2);line-height:1.5}
 .tw-today{font-size:12px;color:var(--text);line-height:1.6;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* plan settings */
+input[type="date"]{color-scheme:dark}
+body.light input[type="date"]{color-scheme:light}
+.ps-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.ps-vitem{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;margin-bottom:6px}
+.ps-vitem button{margin-left:auto}
 .f-btn .fcount{display:inline-block;min-width:16px;padding:0 4px;margin-left:4px;border-radius:8px;background:rgba(251,146,60,.2);color:var(--revisit);font-weight:800;font-size:10px;text-align:center}
 .tw-focus b{color:var(--text)}
 .tw-jump{margin-left:auto;font-size:11px;font-weight:600;border:1px solid #38bdf855;background:#38bdf815;color:#38bdf8;border-radius:10px;padding:3px 11px;cursor:pointer;white-space:nowrap}
@@ -349,6 +355,8 @@ a.prob-name:hover{color:#60a5fa}
         <button onclick="document.getElementById('restore-file').click();closeTools()">♻️ Restore from file</button>
         <div class="tools-sep"></div>
         <button onclick="toggleHeatmap();closeTools()">📅 Activity heatmap</button>
+        <div class="tools-sep"></div>
+        <button onclick="openPlanSettings();closeTools()">🗓 Plan settings (start date &amp; days off)</button>
       </div>
       <input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreAll(this)">
     </div>
@@ -514,6 +522,25 @@ a.prob-name:hover{color:#60a5fa}
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeAddTopic()">Cancel</button>
       <button class="modal-btn primary" onclick="saveAddTopic()">Add Topic</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="plan-modal" style="display:none" onclick="if(event.target===this)closePlanSettings()">
+  <div class="modal" style="max-width:460px">
+    <h3>🗓 Plan Settings</h3>
+    <p>The pace target (30h/week) is computed over study days only — days you mark off are skipped, and your streak survives them.</p>
+    <div class="annot-section-label">Plan start date (Week 1, day 1)</div>
+    <input type="date" class="annot-img-url" id="ps-start" style="width:100%" onchange="savePlanStart()">
+    <div class="annot-section-label">Vacation / non-study days</div>
+    <div class="ps-row">
+      <input type="date" class="annot-img-url" id="ps-vfrom" style="flex:1;min-width:120px">
+      <span style="color:var(--muted2);font-size:12px">to</span>
+      <input type="date" class="annot-img-url" id="ps-vto" style="flex:1;min-width:120px" title="Leave empty for a single day">
+      <button class="annot-upload-btn" onclick="addVacay()">＋ Add</button>
+    </div>
+    <div id="ps-vlist"></div>
+    <div class="modal-btns">
+      <button class="modal-btn primary" onclick="closePlanSettings()">Done</button>
     </div>
   </div>
 </div>
@@ -2039,7 +2066,9 @@ let activity={}; try{activity=JSON.parse(localStorage.getItem('faang_activity')|
 function recordActivity(){const d=new Date().toISOString().slice(0,10);activity[d]=(activity[d]||0)+1;localStorage.setItem('faang_activity',JSON.stringify(activity));}
 function currentStreak(){
   let s=0;const day=86400000;let cur=new Date();cur.setHours(0,0,0,0);
-  const has=d=>activity[new Date(d).toISOString().slice(0,10)];
+  const vs=(typeof vacaySet==='function')?vacaySet():new Set();
+  // a day counts if you were active OR it was a marked day off (vacation bridges the streak)
+  const has=d=>{const dt=new Date(d);return activity[dt.toISOString().slice(0,10)]||vs.has(isoLocal(dt));};
   // allow today OR yesterday as the streak anchor
   if(!has(cur)){cur=new Date(cur-day);if(!has(cur))return 0;}
   while(has(cur)){s++;cur=new Date(cur-day);}
@@ -2159,6 +2188,44 @@ function toggleTheme(){
 }
 function toggleTools(e){if(e)e.stopPropagation();document.getElementById('tools-dropdown').classList.toggle('open');}
 function closeTools(){document.getElementById('tools-dropdown')?.classList.remove('open');}
+// ── plan settings modal ──
+function openPlanSettings(){
+  document.getElementById('ps-start').value=localStorage.getItem('faang_plan_start')||DEFAULT_START;
+  renderVacayList();
+  document.getElementById('plan-modal').style.display='flex';
+}
+function closePlanSettings(){document.getElementById('plan-modal').style.display='none';render();}
+function savePlanStart(){
+  const v=document.getElementById('ps-start').value;
+  if(!v)return;
+  localStorage.setItem('faang_plan_start',v);
+  showToast('🗓 Plan start date set to '+v);
+  render();
+}
+function addVacay(){
+  const f=document.getElementById('ps-vfrom').value;
+  let t=document.getElementById('ps-vto').value;
+  if(!f){showToast('Pick a from-date first.');return;}
+  if(!t||t<f)t=f;
+  vacay.push({f,t});
+  vacay.sort((a,b)=>a.f<b.f?-1:1);
+  saveVacay();
+  document.getElementById('ps-vfrom').value='';document.getElementById('ps-vto').value='';
+  renderVacayList();render();
+  showToast('🏖 Days off added — pace target adjusted.');
+}
+function delVacay(i){vacay.splice(i,1);saveVacay();renderVacayList();render();}
+function renderVacayList(){
+  const el=document.getElementById('ps-vlist');
+  if(!el)return;
+  el.innerHTML=vacay.length
+    ?vacay.map((r,i)=>{
+      const one=!r.t||r.t===r.f;
+      const days=one?1:Math.round((new Date(r.t+'T00:00:00')-new Date(r.f+'T00:00:00'))/86400000)+1;
+      return`<div class="ps-vitem">🏖 ${r.f}${one?'':' → '+r.t} <span style="color:var(--muted)">(${days} day${days>1?'s':''})</span><button class="del-q-btn" title="Remove" onclick="delVacay(${i})">✕</button></div>`;
+    }).join('')
+    :'<div style="font-size:11px;color:var(--muted);padding:2px 0 6px">No days off marked yet.</div>';
+}
 document.addEventListener('click',e=>{const m=document.querySelector('.tools-menu');if(m&&!m.contains(e.target))closeTools();});
 applyTheme(localStorage.getItem('faang_theme')||'dark');
 function collapseAll(){filtered().forEach(t=>collapsedWeeks.add(t.w));renderContent();}
@@ -2172,8 +2239,22 @@ function renderEta(){
   const weeks=(hoursLeft/30).toFixed(1);
   const el=document.getElementById('eta-banner');
   if(!el)return;
+  // projected finish date at 4h/day, skipping marked days off
+  let finishHtml='';
+  if(hoursLeft>0){
+    const vs=vacaySet();
+    let d=new Date();d.setHours(0,0,0,0);
+    let rem=hoursLeft,guard=0;
+    while(rem>0&&guard<2000){
+      if(!vs.has(isoLocal(d)))rem-=4;
+      if(rem>0)d=new Date(d.getTime()+86400000);
+      guard++;
+    }
+    finishHtml=`<span class="eta-pill">🏁 finish ~<b>${fmtDate(d)}${d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():''}</b>${vs.size?' (days off excluded)':''}</span>`;
+  }
   el.innerHTML=`<span class="eta-pill">⏳ <b>${hoursLeft}h</b> remaining of ${totalHours}h</span>`+
     `<span class="eta-pill">📅 <b>~${daysAt8} days</b> @ 4h/day · ≈${weeks} wks @ 30h/wk</span>`+
+    finishHtml+
     `<span class="eta-pill">✅ <b>${pending.length}</b> topics left</span>`;
 }
 
@@ -2383,19 +2464,44 @@ function renderContent(){
   }).join('');
 }
 function setTab(k){activeTab=k;render();}
-// ── THIS WEEK banner (date-driven, reads live progress) ───────────────────────
-const PLAN_START=new Date(2026,6,2); // July 2, 2026 — Week 1 begins
-function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+// ── PLAN SETTINGS: adjustable start date + vacation / non-study days ──────────
+const DEFAULT_START='2026-07-02';
 const WEEKLY_HOURS=30, DAILY_HOURS=4;
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function isoLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function planStartDate(){
+  const v=localStorage.getItem('faang_plan_start')||DEFAULT_START;
+  const [y,m,dd]=v.split('-').map(Number);
+  return new Date(y,m-1,dd);
+}
+let vacay=[]; try{vacay=JSON.parse(localStorage.getItem('faang_vacay')||'[]');}catch{}
+function saveVacay(){localStorage.setItem('faang_vacay',JSON.stringify(vacay));}
+function vacaySet(){
+  const s=new Set(),day=86400000;
+  vacay.forEach(r=>{
+    const a=new Date(r.f+'T00:00:00'),b=new Date((r.t||r.f)+'T00:00:00');
+    for(let d=a;d<=b;d=new Date(d.getTime()+day))s.add(isoLocal(d));
+  });
+  return s;
+}
+// days off that have already elapsed between plan start and today (inclusive)
+function offDaysElapsed(start,today){
+  const vs=vacaySet(),day=86400000;let n=0;
+  for(let d=new Date(start);d<=today;d=new Date(d.getTime()+day))if(vs.has(isoLocal(d)))n++;
+  return n;
+}
+
+// ── THIS WEEK banner (progress-based, vacation-aware) ─────────────────────────
 function renderThisWeek(){
   const el=document.getElementById('thisweek-banner');
   if(!el)return;
-  const today=new Date();
-  const days=Math.floor((today-PLAN_START)/86400000);
+  const start=planStartDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  const days=Math.floor((today-start)/86400000);
   // before start
   if(days<0){
     const dleft=Math.ceil(-days);
-    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off July 2 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(start)}, ${start.getFullYear()}</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span><button class="tw-jump" onclick="openPlanSettings()">🗓 Change</button></div><div class="tw-focus">Week 1 kicks off ${fmtDate(start)} — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
     return;
   }
   const list=planList();
@@ -2409,11 +2515,15 @@ function renderThisWeek(){
     if(doneHours<cum+wh){contentWk=w;wkDone=doneHours-cum;wkTotal=wh;finished=false;break;}
     cum+=wh;
   }
-  // pace: expected hours at 30h/week since start vs actually completed
-  const expected=Math.min(((days+1)/7)*WEEKLY_HOURS, list.reduce((s,t)=>s+(t.h||0),0));
+  // pace: expected hours at 30h/week over STUDY days only (vacation days don't count)
+  const offElapsed=offDaysElapsed(start,today);
+  const studyDays=Math.max(0,(days+1)-offElapsed);
+  const expected=Math.min((studyDays/7)*WEEKLY_HOURS, list.reduce((s,t)=>s+(t.h||0),0));
   const diffH=Math.round(doneHours-expected);
+  const todayOff=vacaySet().has(isoLocal(today));
   let statusCls,statusTxt;
-  if(diffH>=4){statusCls='ahead';statusTxt=`🚀 ${diffH}h ahead of pace`;}
+  if(todayOff){statusCls='ontrack';statusTxt='🏖 Non-study day — enjoy it';}
+  else if(diffH>=4){statusCls='ahead';statusTxt=`🚀 ${diffH}h ahead of pace`;}
   else if(diffH>-4){statusCls='ontrack';statusTxt='🎯 On pace (30h/wk)';}
   else {statusCls='behind';statusTxt=`⚠ ${-diffH}h behind pace — ~${Math.ceil(-diffH/DAILY_HOURS)} day${-diffH>DAILY_HOURS?'s':''} of catch-up`;}
   if(finished){
@@ -2427,12 +2537,15 @@ function renderThisWeek(){
   const pending=list.filter(t=>!state[t.id]||state[t.id]==='pending').sort((a,b)=>a.w-b.w);
   const todays=[];let th=0;
   for(const t of pending){todays.push(t);th+=(t.h||0);if(th>=DAILY_HOURS||todays.length>=3)break;}
-  const todayHtml=todays.length?`<div class="tw-today">☀️ <b>Today's ${DAILY_HOURS}h:</b> ${todays.map(t=>`${t.t.split('—')[0].trim()} <span style="color:var(--muted)">(~${t.h}h)</span>`).join(' → ')} <button class="tw-jump" style="padding:2px 9px;font-size:10px" onclick="goToWeek(${todays[0].w})">Start →</button></div>`:'';
+  const todayHtml=todayOff
+    ?`<div class="tw-today">🏖 Today is marked as a day off — the pace target skips it. Rest up.</div>`
+    :(todays.length?`<div class="tw-today">☀️ <b>Today's ${DAILY_HOURS}h:</b> ${todays.map(t=>`${t.t.split('—')[0].trim()} <span style="color:var(--muted)">(~${t.h}h)</span>`).join(' → ')} <button class="tw-jump" style="padding:2px 9px;font-size:10px" onclick="goToWeek(${todays[0].w})">Start →</button></div>`:'');
   el.innerHTML=`
     <div class="tw-top">
       <span class="tw-week">📍 You're in ${wkLabel} <span style="color:var(--muted2);font-weight:400">(${pct}% through it)</span></span>
-      <span class="tw-dates">${Math.round(doneHours)}h done · day ${days+1} of the plan</span>
+      <span class="tw-dates">${Math.round(doneHours)}h done · day ${days+1}${offElapsed?` (${offElapsed} off)`:''}</span>
       <span class="tw-status ${statusCls}">${statusTxt}</span>
+      <button class="tw-jump" onclick="openPlanSettings()" title="Start date & days off">🗓</button>
       <button class="tw-jump" onclick="goToWeek(${contentWk})">Jump to ${wkLabel} ▾</button>
     </div>
     <div class="tw-focus"><b>Focus:</b> ${focus}</div>
@@ -2662,7 +2775,7 @@ function delCustomTopic(id){
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
 // ── FULL FILE BACKUP / RESTORE (covers everything, incl. images) ──────────────
-const BACKUP_KEYS=['faang_v3','faang_pstate','faang_annot','faang_notes','faang_cq','faang_ct','faang_theme','faang_done_ts','faang_activity'];
+const BACKUP_KEYS=['faang_v3','faang_pstate','faang_annot','faang_notes','faang_cq','faang_ct','faang_theme','faang_done_ts','faang_activity','faang_plan_start','faang_vacay'];
 function backupAll(){
   const dump={_app:'faang-prep',_version:3,_exported:new Date().toISOString()};
   BACKUP_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)dump[k]=v;});
@@ -2690,6 +2803,7 @@ function restoreAll(input){
       try{notesState=JSON.parse(localStorage.getItem('faang_notes')||'{}');}catch{notesState={};}
       try{customQs=JSON.parse(localStorage.getItem('faang_cq')||'{}');}catch{customQs={};}
       try{customTopics=JSON.parse(localStorage.getItem('faang_ct')||'[]');}catch{customTopics=[];}
+      try{vacay=JSON.parse(localStorage.getItem('faang_vacay')||'[]');}catch{vacay=[];}
       applyTheme(localStorage.getItem('faang_theme')||'dark');
       render();
       showToast(`♻️ Restored ${n} data sets from backup.`);
