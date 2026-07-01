@@ -52,8 +52,11 @@ Each week blends DSA + a system-design/LLD thread + a 🎤 weekly mock + spaced 
 - **✓ Done** / **↻ Revisit** on each topic *and* each individual problem.
 - Click **▸ N problems** to expand the question list (LeetCode + external links,
   company tags G/M/A/Ms/Ub, E/M/H difficulty).
-- The **📅 This Week** banner (plan starts **July 2, 2026**) shows the current week's focus
-  and whether you're on track / behind, computed live from your progress.
+- The **📍 progress banner** (plan starts **July 2, 2026**) is progress-based, not
+  calendar-based: it computes which content week you're actually in from your completed
+  hours, compares against the 30h/week pace, and shows a **☀️ Today's 4h** pick of the
+  next topics to do. Weeks are measured in hours done — going slower than the calendar
+  never counts as "behind" as long as you hold 30h/week.
 
 ### 4. The non-negotiables
 - **Spaced review** — re-solve old problems *cold*. Retention > coverage. The **🔁 Due review**

@@ -306,6 +306,8 @@ a.prob-name:hover{color:#60a5fa}
 .tw-status.behind{background:rgba(251,146,60,.15);color:var(--revisit)}
 .tw-status.ahead{background:rgba(56,189,248,.15);color:#38bdf8}
 .tw-focus{font-size:12px;color:var(--muted2);line-height:1.5}
+.tw-today{font-size:12px;color:var(--text);line-height:1.6;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.f-btn .fcount{display:inline-block;min-width:16px;padding:0 4px;margin-left:4px;border-radius:8px;background:rgba(251,146,60,.2);color:var(--revisit);font-weight:800;font-size:10px;text-align:center}
 .tw-focus b{color:var(--text)}
 .tw-jump{margin-left:auto;font-size:11px;font-weight:600;border:1px solid #38bdf855;background:#38bdf815;color:#38bdf8;border-radius:10px;padding:3px 11px;cursor:pointer;white-space:nowrap}
 .tw-jump:hover{background:#38bdf830}
@@ -398,7 +400,7 @@ a.prob-name:hover{color:#60a5fa}
   <button class="f-btn" data-f="pending">Pending</button>
   <button class="f-btn" data-f="done">✓ Done</button>
   <button class="f-btn" data-f="revisit">↻ Revisit</button>
-  <button class="f-btn" data-f="duereview" title="Topics you marked done ≥7 days ago — time to re-test cold">🔁 Due review</button>
+  <button class="f-btn" data-f="duereview" id="duereview-btn" title="Topics you marked done ≥7 days ago — time to re-test cold">🔁 Due review</button>
   <span style="width:1px;height:18px;background:var(--border2);margin:0 2px"></span>
   <button class="f-btn" data-diff="E" title="Show only Easy problems">E</button>
   <button class="f-btn" data-diff="M" title="Show only Medium problems">M</button>
@@ -2144,7 +2146,7 @@ function jumpToNext(){
   renderContent();
   setTimeout(()=>document.getElementById('wg-'+next.w)?.scrollIntoView({behavior:'smooth',block:'start'}),50);
 }
-function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+function showToast(msg,ms){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),ms||3000);}
 function applyTheme(t){
   document.body.classList.toggle('light',t==='light');
   const btn=document.getElementById('theme-toggle');
@@ -2185,6 +2187,12 @@ function renderStats(){
   document.getElementById('gbar').style.width=pct+'%';
   document.getElementById('ring').style.strokeDashoffset=2*Math.PI*22*(1-pct/100);
   const st=document.getElementById('s-streak');if(st)st.textContent=currentStreak();
+  // due-review count badge (spaced repetition debt, visible without clicking)
+  const drb=document.getElementById('duereview-btn');
+  if(drb){
+    const n=planList().filter(t=>isDueReview(t.id)).length;
+    drb.innerHTML=`🔁 Due review${n?` <span class="fcount">${n}</span>`:''}`;
+  }
 }
 function renderPills(){
   const tabs=[
@@ -2378,44 +2386,57 @@ function setTab(k){activeTab=k;render();}
 // ── THIS WEEK banner (date-driven, reads live progress) ───────────────────────
 const PLAN_START=new Date(2026,6,2); // July 2, 2026 — Week 1 begins
 function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+const WEEKLY_HOURS=30, DAILY_HOURS=4;
 function renderThisWeek(){
   const el=document.getElementById('thisweek-banner');
   if(!el)return;
   const today=new Date();
   const days=Math.floor((today-PLAN_START)/86400000);
-  let wk=Math.floor(days/7)+1;
   // before start
   if(days<0){
     const dleft=Math.ceil(-days);
     el.innerHTML=`<div class="tw-top"><span class="tw-week">📅 Plan starts ${fmtDate(PLAN_START)}, 2026</span><span class="tw-dates">${dleft} day${dleft!==1?'s':''} to go</span></div><div class="tw-focus">Week 1 kicks off July 2 — Arrays, Two Pointers, Sliding Window + Thread Lifecycle. Use this time for the <b>Sprint Kickoff</b> card.</div>`;
     return;
   }
-  const maxWk=16; // FAANG+ sprint length
-  const capped=Math.min(wk,maxWk);
-  const wkStart=new Date(PLAN_START.getTime()+(capped-1)*7*86400000);
-  const wkEnd=new Date(wkStart.getTime()+6*86400000);
-  // this week's topics (respect active plan)
   const list=planList();
-  const thisWeekTopics=list.filter(t=>t.w===capped);
-  // cumulative target vs done (weeks 1..capped)
-  const target=list.filter(t=>t.w>=1&&t.w<=capped).length;
-  const done=list.filter(t=>t.w>=1&&t.w<=capped&&state[t.id]==='done').length;
-  const diff=done-target;
+  // PROGRESS-BASED content week: where your completed hours land in the plan,
+  // not the calendar. Weeks have different sizes, so walk cumulative hours.
+  const doneHours=list.filter(t=>state[t.id]==='done').reduce((s,t)=>s+(t.h||0),0);
+  const weeks=[...new Set(list.map(t=>t.w))].sort((a,b)=>a-b);
+  let cum=0, contentWk=weeks[0]||1, wkDone=0, wkTotal=0, finished=true;
+  for(const w of weeks){
+    const wh=list.filter(t=>t.w===w).reduce((s,t)=>s+(t.h||0),0);
+    if(doneHours<cum+wh){contentWk=w;wkDone=doneHours-cum;wkTotal=wh;finished=false;break;}
+    cum+=wh;
+  }
+  // pace: expected hours at 30h/week since start vs actually completed
+  const expected=Math.min(((days+1)/7)*WEEKLY_HOURS, list.reduce((s,t)=>s+(t.h||0),0));
+  const diffH=Math.round(doneHours-expected);
   let statusCls,statusTxt;
-  if(diff>=0){statusCls='ahead';statusTxt=diff===0?'🎯 On the target line':`🚀 ${diff} ahead`;}
-  else if(diff>=-5){statusCls='ontrack';statusTxt=`On track (${-diff} to catch up)`;}
-  else {statusCls='behind';statusTxt=`⚠ ${-diff} behind the Week ${capped} target`;}
-  const focus=WK[capped]||'';
-  const sample=thisWeekTopics.slice(0,4).map(t=>t.t.split('—')[0].trim()).join(' · ');
-  const overLabel=wk>maxWk?` <span class="tw-dates">sprint wrapped — now in review/extended track</span>`:'';
+  if(diffH>=4){statusCls='ahead';statusTxt=`🚀 ${diffH}h ahead of pace`;}
+  else if(diffH>-4){statusCls='ontrack';statusTxt='🎯 On pace (30h/wk)';}
+  else {statusCls='behind';statusTxt=`⚠ ${-diffH}h behind pace — ~${Math.ceil(-diffH/DAILY_HOURS)} day${-diffH>DAILY_HOURS?'s':''} of catch-up`;}
+  if(finished){
+    el.innerHTML=`<div class="tw-top"><span class="tw-week">🏆 Plan content complete!</span><span class="tw-status ahead">${Math.round(doneHours)}h done</span></div><div class="tw-focus">Shift to mock loops, the Weak-Area Sprint (↻ Revisit + 🔁 Due review), and scheduling real interviews.</div>`;
+    return;
+  }
+  const wkLabel=contentWk<=16?`Week ${contentWk}`:contentWk<=24?`S${contentWk-16}`:`M5·W${contentWk-24}`;
+  const pct=wkTotal?Math.round(wkDone/wkTotal*100):0;
+  const focus=WK[contentWk]||'';
+  // daily target: next incomplete topics (in week order) filling ~4h
+  const pending=list.filter(t=>!state[t.id]||state[t.id]==='pending').sort((a,b)=>a.w-b.w);
+  const todays=[];let th=0;
+  for(const t of pending){todays.push(t);th+=(t.h||0);if(th>=DAILY_HOURS||todays.length>=3)break;}
+  const todayHtml=todays.length?`<div class="tw-today">☀️ <b>Today's ${DAILY_HOURS}h:</b> ${todays.map(t=>`${t.t.split('—')[0].trim()} <span style="color:var(--muted)">(~${t.h}h)</span>`).join(' → ')} <button class="tw-jump" style="padding:2px 9px;font-size:10px" onclick="goToWeek(${todays[0].w})">Start →</button></div>`:'';
   el.innerHTML=`
     <div class="tw-top">
-      <span class="tw-week">📅 This Week — Week ${capped}</span>
-      <span class="tw-dates">${fmtDate(wkStart)} – ${fmtDate(wkEnd)}</span>
-      <span class="tw-status ${statusCls}">${statusTxt}</span>${overLabel}
-      <button class="tw-jump" onclick="goToWeek(${capped})">Jump to Week ${capped} ▾</button>
+      <span class="tw-week">📍 You're in ${wkLabel} <span style="color:var(--muted2);font-weight:400">(${pct}% through it)</span></span>
+      <span class="tw-dates">${Math.round(doneHours)}h done · day ${days+1} of the plan</span>
+      <span class="tw-status ${statusCls}">${statusTxt}</span>
+      <button class="tw-jump" onclick="goToWeek(${contentWk})">Jump to ${wkLabel} ▾</button>
     </div>
-    <div class="tw-focus"><b>Focus:</b> ${focus}${sample?` &nbsp;·&nbsp; <span style="color:var(--muted)">${sample}${thisWeekTopics.length>4?` +${thisWeekTopics.length-4} more`:''}</span>`:''}</div>`;
+    <div class="tw-focus"><b>Focus:</b> ${focus}</div>
+    ${todayHtml}`;
 }
 function goToWeek(w){
   collapsedWeeks.delete(w);
@@ -2650,6 +2671,7 @@ function backupAll(){
   const a=document.createElement('a');
   a.href=url;a.download=`faang-prep-backup-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  localStorage.setItem('faang_last_backup',String(Date.now()));
   showToast('💾 Backup downloaded — keep it safe!');
 }
 function restoreAll(input){
@@ -2678,6 +2700,22 @@ function restoreAll(input){
 }
 
 render();
+
+// ── BACKUP NUDGE — localStorage is the only copy of your data ─────────────────
+(function(){
+  if(sessionStorage.getItem('faang_bk_nudged'))return; // once per session
+  // only nudge when there's real progress worth protecting
+  const effort=Object.keys(state).length+Object.keys(pstate).length
+    +Object.keys(annot).length+Object.keys(customQs).length+Object.keys(notesState).length;
+  if(effort<5)return;
+  const last=parseInt(localStorage.getItem('faang_last_backup')||'0',10);
+  const daysAgo=last?Math.floor((Date.now()-last)/86400000):null;
+  if(daysAgo!==null&&daysAgo<7)return;
+  sessionStorage.setItem('faang_bk_nudged','1');
+  setTimeout(()=>showToast(daysAgo===null
+    ?'💾 Your progress lives only in this browser — download a backup (Tools ▾ → Back up to file).'
+    :`💾 Last backup was ${daysAgo} days ago — Tools ▾ → Back up to file.`,7000),1500);
+})();
 </script>
 </body>
 </html>
