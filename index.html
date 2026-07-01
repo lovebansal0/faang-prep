@@ -2454,7 +2454,7 @@ function renderContent(){
         <span class="wk-month">${MONTH(+w)}</span>
         ${when}
         <span class="wk-label">${WK[w]||'Custom week'}</span>
-        <span class="wk-hours">~${totalHrs}h</span>
+        <span class="wk-hours" title="At 4h/day this is ≈${Math.ceil(totalHrs/DAILY_HOURS)} study days — content 'weeks' are phases, not calendar weeks">~${totalHrs}h · ≈${Math.ceil(totalHrs/DAILY_HOURS)}d</span>
         <span class="wk-prog" style="color:${pct===100?'var(--done)':pct>50?'var(--muted2)':'var(--muted)'}">${doneW}/${ts.length}</span>
         <button class="notes-toggle-btn ${note?'has-note':''}" id="ntb-${w}" onclick="event.stopPropagation();toggleNotes(${w})" title="${note?'Notes saved':'Add notes'}">${note?'📝':'📝'} Notes</button>
         <span class="wk-toggle">${collapsed?'▶':'▼'}</span>
