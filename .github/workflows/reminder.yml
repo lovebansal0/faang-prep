@@ -1,0 +1,35 @@
+name: FAANG prep reminder
+
+on:
+  schedule:
+    - cron: '0 2 * * *'    # 07:30 IST (02:00 UTC) — morning
+    - cron: '0 15 * * *'   # 20:30 IST (15:00 UTC) — evening
+  workflow_dispatch:        # manual "Run workflow" button (for testing)
+    inputs:
+      slot:
+        description: 'Which email to send when testing manually'
+        required: false
+        default: 'morning'
+        type: choice
+        options: [morning, evening]
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        working-directory: .github/reminder
+        run: npm install --no-audit --no-fund
+      - name: Send reminder
+        working-directory: .github/reminder
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          INPUT_SLOT: ${{ github.event.inputs.slot }}
+        run: node send-reminder.js

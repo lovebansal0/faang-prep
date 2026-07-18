@@ -1,0 +1,10 @@
+{
+  "name": "faang-prep-reminder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Twice-daily FAANG-prep email reminder (GitHub Actions cron + Gmail SMTP)",
+  "main": "send-reminder.js",
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}
