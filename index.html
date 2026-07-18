@@ -2475,7 +2475,7 @@ function renderContent(){
 }
 function setTab(k){activeTab=k;render();}
 // ── PLAN SETTINGS: adjustable start date + vacation / non-study days ──────────
-const DEFAULT_START='2026-07-02';
+const DEFAULT_START='2026-07-23';
 const WEEKLY_HOURS=30, DAILY_HOURS=4;
 function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function isoLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}

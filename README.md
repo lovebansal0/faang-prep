@@ -52,7 +52,7 @@ Each week blends DSA + a system-design/LLD thread + a 🎤 weekly mock + spaced 
 - **✓ Done** / **↻ Revisit** on each topic *and* each individual problem.
 - Click **▸ N problems** to expand the question list (LeetCode + external links,
   company tags G/M/A/Ms/Ub, E/M/H difficulty).
-- The **📍 progress banner** (default start **July 2, 2026** — changeable) is
+- The **📍 progress banner** (default start **July 23, 2026** — changeable) is
   progress-based, not calendar-based: it computes which content week you're actually in
   from your completed hours, compares against the 30h/week pace, and shows a
   **☀️ Today's 4h** pick of the next topics to do. Weeks are measured in hours done —
